@@ -581,10 +581,11 @@ void SysWindowSetPixelsAutoScaleBw1(SysWindow* instance, uint32_t* pixels, int w
         {
             int _x = x2+i+offsetx;
             int _y = y2+j+offsety;
-            int r = (uint8_t)(pixel >> 8 * 2);
-            int g = (uint8_t)(pixel >> 8 * 1);
-            int b = (uint8_t)(pixel >> 8 * 0);
-            ((uint8_t*)instance->pixels)[_x + _y * _width] = (r + g + b) / 3;
+            // int r = (uint8_t)(pixel >> 8 * 2);
+            // int g = (uint8_t)(pixel >> 8 * 1);
+            // int b = (uint8_t)(pixel >> 8 * 0);
+            // ((uint8_t*)instance->pixels)[_x + _y * _width] = (r + g + b) / 3;
+            ((uint8_t*)instance->pixels)[_x + _y * _width] = (uint8_t)(pixel >> 8 * 0);
         }
     }
 }
