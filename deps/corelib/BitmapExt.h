@@ -3,7 +3,7 @@
 #include "Bitmap.h"
 #include "Models.h"
 
-static inline void BitmapExtFillBorder(Bitmap* bitmap, float color)
+static inline void BitmapExtDrawBorder(Bitmap* bitmap, float color)
 {
     int x = bitmap->width - 1;
     int y = bitmap->height - 1;
@@ -12,7 +12,7 @@ static inline void BitmapExtFillBorder(Bitmap* bitmap, float color)
     for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, 0, i, color);
     for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, x, i, color);
 }
-static inline void BitmapExtFillCross(Bitmap* bitmap, float color)
+static inline void BitmapExtDrawCross(Bitmap* bitmap, float color)
 {
     for (int i = 0; i < bitmap->width;  i++) BitmapSetPixel(bitmap, i, bitmap->height-1 / 2, color);
     for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, bitmap->width-1 / 2, i, color);
