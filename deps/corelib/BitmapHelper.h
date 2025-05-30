@@ -269,7 +269,7 @@ static inline void ZBuffApplyDepth(float* zb, int size)
     {
         float t = zb[i];
         t = (t + 1) / 2;
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorSetLightValueFloat(0x00FFFFFF, t);
     }
 }
 static inline void ZBuffApplyDepthInvert(float* zb, int size)
@@ -281,7 +281,7 @@ static inline void ZBuffApplyDepthInvert(float* zb, int size)
         float t = zb[i];
         t = (t + 1) / 2;
         t = 1 - t;
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorSetLightValueFloat(0x00FFFFFF, t);
     }
 }
 
@@ -297,7 +297,7 @@ static inline void ZBuffApplyDepthAdjusted(float* zb, int size, float neari)
         t *= neari;
         t = 1 - t;
         t = MathClamp(t, 0, 1);
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorSetLightValueFloat(0x00FFFFFF, t);
     }
 }
 static inline void ZBuffApplyDepthAdjustedInvert(float* zb, int size, float neari)
@@ -311,6 +311,6 @@ static inline void ZBuffApplyDepthAdjustedInvert(float* zb, int size, float near
         t = 1 - t;
         t *= neari;
         t = MathClamp(t, 0, 1);
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorSetLightValueFloat(0x00FFFFFF, t);
     }
 }

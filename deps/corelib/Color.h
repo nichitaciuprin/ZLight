@@ -64,7 +64,7 @@ static inline uint32_t ColorCreateBwByte(uint8_t color)
     float fraction = (float)color / 255;
     return 0x00FFFFFF * fraction;
 }
-static inline uint8_t ColorGetLightValue(uint32_t color)
+static inline uint8_t ColorGetValue(uint32_t color)
 {
     int r = (uint8_t)(color >> 8 * 2);
     int g = (uint8_t)(color >> 8 * 1);
@@ -74,7 +74,7 @@ static inline uint8_t ColorGetLightValue(uint32_t color)
 
     return value;
 }
-static inline float ColorGetLightValueF(uint32_t color)
+static inline float ColorGetValueFloat(uint32_t color)
 {
     uint8_t r = color >> (8 * 2);
     uint8_t g = color >> (8 * 1);
@@ -88,7 +88,7 @@ static inline float ColorGetLightValueF(uint32_t color)
 
     return value;
 }
-static inline uint32_t ColorSetLightValueF(uint32_t color, float t)
+static inline uint32_t ColorSetLightValueFloat(uint32_t color, float t)
 {
     // try me, see what happens
     // uint8_t r = (color >> 8 * 2) * t;
