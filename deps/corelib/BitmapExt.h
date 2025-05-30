@@ -33,9 +33,9 @@ static inline void BitmapExtDrawPoligonWire(Bitmap* bitmap, Vector3 v0, Vector3 
     BitmapExtDrawTriangleWire(bitmap, v0, v1, v2);
     BitmapExtDrawTriangleWire(bitmap, v2, v3, v0);
 }
-static inline void BitmapExtDrawCube(Bitmap* bitmap, Vector3 position, Vector3 rotation, Vector3 scale)
+static inline void BitmapExtDrawCube(Bitmap* bitmap, Vector3 pos, Vector3 rot, Vector3 scale)
 {
-    Matrix model = MatrixWorld(position, rotation, scale);
+    Matrix model = MatrixWorld(pos, rot, scale);
 
     #define DRAW(INDEX)                            \
     {                                              \
@@ -62,6 +62,21 @@ static inline void BitmapExtDrawCube(Bitmap* bitmap, Vector3 position, Vector3 r
     DRAW(5)
 
     #undef DRAW
+}
+static inline void BitmapExtDrawCubeWire(Bitmap* bitmap, Vector3 pos, Vector3 rot, Vector3 scale)
+{
+    Matrix model = MatrixWorld(pos, rot, scale);
+
+    for (int i = 0; i < 12; i++)
+    {
+        int i0 = ModelCubeIndecesLine[i][0];
+        int i1 = ModelCubeIndecesLine[i][1];
+        Vector3 v0 = ModelCubeVerteces[i0];
+        Vector3 v1 = ModelCubeVerteces[i1];
+        v0 = MatrixMultiply3L(v0, model);
+        v1 = MatrixMultiply3L(v1, model);
+        BitmapDrawLine(bitmap, v0, v1);
+    }
 }
 static inline void BitmapExtDrawCube2(Bitmap* bitmap, Matrix model)
 {
@@ -91,24 +106,19 @@ static inline void BitmapExtDrawCube2(Bitmap* bitmap, Matrix model)
 
     #undef DRAW
 }
-static inline void BitmapExtDrawCubeWire(Bitmap* bitmap, Vector3 position, Vector3 rotation, Vector3 scale)
+static inline void BitmapExtDrawCube(Bitmap* bitmap, Vector3 pos)
 {
-    Matrix model = MatrixWorld(position, rotation, scale);
-
-    for (int i = 0; i < 12; i++)
-    {
-        int i0 = ModelCubeIndecesLine[i][0];
-        int i1 = ModelCubeIndecesLine[i][1];
-        Vector3 v0 = ModelCubeVerteces[i0];
-        Vector3 v1 = ModelCubeVerteces[i1];
-        v0 = MatrixMultiply3L(v0, model);
-        v1 = MatrixMultiply3L(v1, model);
-        BitmapDrawLine(bitmap, v0, v1);
-    }
+    Vector3 rot = { 0, 0, 0 };
+    Vector3 scale = { 1, 1, 1 };
+    BitmapExtDrawCube(bitmap, pos, rot, scale);
 }
-static inline void BitmapExtDrawSphere(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawCubeLight(Bitmap* bitmap, Vector3 pos)
 {
-    if (Hiden(position, 1.0f, bitmap->view, bitmap->far)) return;
+    BitmapExtDrawCube(bitmap, pos, {}, Vector3One()/2);
+}
+static inline void BitmapExtDrawSphere(Bitmap* bitmap, Vector3 pos)
+{
+    if (Hiden(pos, 1.0f, bitmap->view, bitmap->far)) return;
 
     for (size_t i = 0; i < 60; i++)
     {
@@ -118,13 +128,13 @@ static inline void BitmapExtDrawSphere(Bitmap* bitmap, Vector3 position)
         Vector3 v0 = ModelSphereVerteces[i0];
         Vector3 v1 = ModelSphereVerteces[i1];
         Vector3 v2 = ModelSphereVerteces[i2];
-        v0 = Vector3Add(v0, position);
-        v1 = Vector3Add(v1, position);
-        v2 = Vector3Add(v2, position);
+        v0 = Vector3Add(v0, pos);
+        v1 = Vector3Add(v1, pos);
+        v2 = Vector3Add(v2, pos);
         BitmapDrawTriangle(bitmap, v0, v1, v2);
     }
 }
-static inline void BitmapExtDrawSphereWire(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawSphereWire(Bitmap* bitmap, Vector3 pos)
 {
     for (size_t i = 0; i < 60; i++)
     {
@@ -134,9 +144,9 @@ static inline void BitmapExtDrawSphereWire(Bitmap* bitmap, Vector3 position)
         Vector3 v0 = ModelSphereVerteces[i0];
         Vector3 v1 = ModelSphereVerteces[i1];
         Vector3 v2 = ModelSphereVerteces[i2];
-        v0 = Vector3Add(v0, position);
-        v1 = Vector3Add(v1, position);
-        v2 = Vector3Add(v2, position);
+        v0 = Vector3Add(v0, pos);
+        v1 = Vector3Add(v1, pos);
+        v2 = Vector3Add(v2, pos);
         BitmapExtDrawTriangleWire(bitmap, v0, v1, v2);
     }
 }
@@ -202,96 +212,36 @@ static inline void BitmapExtDrawPlane(Bitmap* bitmap)
 
     BitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
 }
-static inline void BitmapExtDrawPlane(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawPlane(Bitmap* bitmap, Vector3 pos)
 {
     float size = 100;
 
-    Vector3 p0 = { +size, 0, +size }; p0 += position;
-    Vector3 p1 = { +size, 0, -size }; p1 += position;
-    Vector3 p2 = { -size, 0, -size }; p2 += position;
-    Vector3 p3 = { -size, 0, +size }; p3 += position;
+    Vector3 p0 = { +size, 0, +size }; p0 += pos;
+    Vector3 p1 = { +size, 0, -size }; p1 += pos;
+    Vector3 p2 = { -size, 0, -size }; p2 += pos;
+    Vector3 p3 = { -size, 0, +size }; p3 += pos;
 
     BitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
 }
-static inline void BitmapExtDrawPlane(Bitmap* bitmap, Vector3 position, float size)
+static inline void BitmapExtDrawPlane(Bitmap* bitmap, Vector3 pos, float size)
 {
-    Vector3 p0 = { +size, 0, +size }; p0 += position;
-    Vector3 p1 = { +size, 0, -size }; p1 += position;
-    Vector3 p2 = { -size, 0, -size }; p2 += position;
-    Vector3 p3 = { -size, 0, +size }; p3 += position;
+    Vector3 p0 = { +size, 0, +size }; p0 += pos;
+    Vector3 p1 = { +size, 0, -size }; p1 += pos;
+    Vector3 p2 = { -size, 0, -size }; p2 += pos;
+    Vector3 p3 = { -size, 0, +size }; p3 += pos;
 
     BitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
 }
-static inline void BitmapExtDrawCube(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawSpot(Bitmap* bitmap, Vector3 pos)
 {
-    Vector3 rotation = { 0, 0, 0 };
-    Vector3 scale = { 1, 1, 1 };
-    BitmapExtDrawCube(bitmap, position, rotation, scale);
-}
-static inline void BitmapExtDrawCubeLight(Bitmap* bitmap, Vector3 position)
-{
-    BitmapExtDrawCube(bitmap, position, {}, Vector3One()/2);
-}
-static inline void BitmapExtDrawSpot(Bitmap* bitmap, Vector3 position)
-{
-    BitmapExtDrawCube(bitmap, position, {}, Vector3One()/5);
-}
-static inline void BitmapExtDrawBound(Bitmap* bitmap, vector<Vector3>& vs, Vector3 position)
-{
-    float maxx;
-    float maxy;
-    float maxz;
-    float minx;
-    float miny;
-    float minz;
-
-    for (auto& x : vs)
-    {
-        maxx = MathMax(maxx, x.x);
-        maxy = MathMax(maxy, x.y);
-        maxz = MathMax(maxz, x.z);
-        minx = MathMin(minx, x.x);
-        miny = MathMin(miny, x.y);
-        minz = MathMin(minz, x.z);
-    }
-
-    Vector3 p0 = { minx, miny, minz };
-    Vector3 p1 = { minx, miny, maxz };
-    Vector3 p2 = { minx, maxy, minz };
-    Vector3 p3 = { minx, maxy, maxz };
-    Vector3 p4 = { maxx, miny, minz };
-    Vector3 p5 = { maxx, miny, maxz };
-    Vector3 p6 = { maxx, maxy, minz };
-    Vector3 p7 = { maxx, maxy, maxz };
-
-    p0 += position;
-    p1 += position;
-    p2 += position;
-    p3 += position;
-    p4 += position;
-    p5 += position;
-    p6 += position;
-    p7 += position;
-
-    BitmapDrawLine(bitmap, p0, p1);
-    BitmapDrawLine(bitmap, p1, p5);
-    BitmapDrawLine(bitmap, p5, p4);
-    BitmapDrawLine(bitmap, p4, p0);
-    BitmapDrawLine(bitmap, p2, p3);
-    BitmapDrawLine(bitmap, p3, p7);
-    BitmapDrawLine(bitmap, p7, p6);
-    BitmapDrawLine(bitmap, p6, p2);
-    BitmapDrawLine(bitmap, p0, p2);
-    BitmapDrawLine(bitmap, p1, p3);
-    BitmapDrawLine(bitmap, p5, p7);
-    BitmapDrawLine(bitmap, p4, p6);
+    BitmapExtDrawCube(bitmap, pos, {}, Vector3One()/5);
 }
 static inline void BitmapExtDrawCamera(Bitmap* bitmap, Camera* camera)
 {
-    Vector3 position = camera->position;
-    Vector3 rotation = { camera->pitch, -camera->yaw, 0 };
+    Vector3 pos = camera->position;
+    Vector3 rot = { camera->pitch, -camera->yaw, 0 };
     Vector3 scale = Vector3One() / 3;
-    BitmapExtDrawCube(bitmap, position, rotation, scale);
+    BitmapExtDrawCube(bitmap, pos, rot, scale);
 }
 static inline void BitmapExtDrawCamera(Bitmap* bitmap, Vector3 pos)
 {
@@ -420,4 +370,54 @@ static inline void BitmapExtDrawInt(Bitmap* bitmap, int x, int y, int value)
 
     BitmapExtDrawDigit(bitmap, 0*4, 0, (uint32_t)(value / 10));
     BitmapExtDrawDigit(bitmap, 1*4, 0, (uint32_t)(value % 10));
+}
+static inline void BitmapExtDrawBound(Bitmap* bitmap, vector<Vector3>& vs, Vector3 pos)
+{
+    float maxx;
+    float maxy;
+    float maxz;
+    float minx;
+    float miny;
+    float minz;
+
+    for (auto& x : vs)
+    {
+        maxx = MathMax(maxx, x.x);
+        maxy = MathMax(maxy, x.y);
+        maxz = MathMax(maxz, x.z);
+        minx = MathMin(minx, x.x);
+        miny = MathMin(miny, x.y);
+        minz = MathMin(minz, x.z);
+    }
+
+    Vector3 p0 = { minx, miny, minz };
+    Vector3 p1 = { minx, miny, maxz };
+    Vector3 p2 = { minx, maxy, minz };
+    Vector3 p3 = { minx, maxy, maxz };
+    Vector3 p4 = { maxx, miny, minz };
+    Vector3 p5 = { maxx, miny, maxz };
+    Vector3 p6 = { maxx, maxy, minz };
+    Vector3 p7 = { maxx, maxy, maxz };
+
+    p0 += pos;
+    p1 += pos;
+    p2 += pos;
+    p3 += pos;
+    p4 += pos;
+    p5 += pos;
+    p6 += pos;
+    p7 += pos;
+
+    BitmapDrawLine(bitmap, p0, p1);
+    BitmapDrawLine(bitmap, p1, p5);
+    BitmapDrawLine(bitmap, p5, p4);
+    BitmapDrawLine(bitmap, p4, p0);
+    BitmapDrawLine(bitmap, p2, p3);
+    BitmapDrawLine(bitmap, p3, p7);
+    BitmapDrawLine(bitmap, p7, p6);
+    BitmapDrawLine(bitmap, p6, p2);
+    BitmapDrawLine(bitmap, p0, p2);
+    BitmapDrawLine(bitmap, p1, p3);
+    BitmapDrawLine(bitmap, p5, p7);
+    BitmapDrawLine(bitmap, p4, p6);
 }
