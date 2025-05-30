@@ -146,8 +146,8 @@ void _SysWindowFullscreenEnable(SysWindow* instance)
     instance->widthRem = rect.right - rect.left;
     instance->heightRem = rect.bottom - rect.top;
 
-    SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP);
-    SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST);
+    SetWindowLongPtrA(hwnd, GWL_STYLE, WS_POPUP);
+    SetWindowLongPtrA(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST);
     SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
     if (instance->visible)
