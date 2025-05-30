@@ -302,7 +302,7 @@ static inline void BitmapApplyDepth(Bitmap* bitmap)
     {
         float t = zbuffer[i];
         t = (t + 1) / 2;
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorCreateBwFloat(t);
     }
 }
 static inline void BitmapApplyDepthInvert(Bitmap* bitmap)
@@ -317,7 +317,7 @@ static inline void BitmapApplyDepthInvert(Bitmap* bitmap)
         float t = zbuffer[i];
         t = (t + 1) / 2;
         t = 1 - t;
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorCreateBwFloat(t);
     }
 }
 
@@ -336,7 +336,7 @@ static inline void BitmapApplyDepthAdjusted(Bitmap* bitmap)
         t *= bitmap->neari;
         t = 1 - t;
         t = MathClamp(t, 0, 1);
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorCreateBwFloat(t);
     }
 }
 static inline void BitmapApplyDepthAdjustedInvert(Bitmap* bitmap)
@@ -353,7 +353,7 @@ static inline void BitmapApplyDepthAdjustedInvert(Bitmap* bitmap)
         t = 1 - t;
         t *= bitmap->neari;
         t = MathClamp(t, 0, 1);
-        pixels[i] = ColorSetLightValueF(0x00FFFFFF, t);
+        pixels[i] = ColorCreateBwFloat(t);
     }
 }
 
