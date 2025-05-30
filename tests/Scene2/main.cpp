@@ -14,7 +14,7 @@
 #include "Helper.h"
 #include "Fire.h"
 #include "ModelForest2.h"
-#include "Snow2.h"
+#include "Snow.h"
 #include "Body.h"
 
 Camera _cam = { 0, 1.70f, 0 };
