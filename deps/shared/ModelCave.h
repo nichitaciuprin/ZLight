@@ -40,18 +40,18 @@ namespace ModelCave
     void Subdivide(vector<Vector3>& path, float segmentLengthMax)
     {
         vector<Vector3> copy = path;
-    
+
         path.clear();
-    
+
         for (size_t i = 1; i < copy.size(); i++)
         {
             Vector3& v0 = copy[i-1];
             Vector3& v1 = copy[i];
-    
+
             float distance = Vector3Distance(v0, v1);
-    
+
             int divs = distance / segmentLengthMax;
-    
+
             for (int i = 0; i < divs; i++)
             {
                 float t = (float)i / divs;
@@ -59,7 +59,7 @@ namespace ModelCave
                 path.push_back(v);
             }
         }
-    
+
         path.push_back(copy[copy.size()-1]);
     }
 
