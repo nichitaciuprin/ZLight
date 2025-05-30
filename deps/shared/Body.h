@@ -78,7 +78,7 @@ void DrawBody2(Bitmap* bitmap, Vector3 footPos, float rotBody, float rotHead)
         mat = MatrixMultiply(mat, rot1);
         mat = MatrixMultiply(mat, trans1);
         mat = MatrixMultiply(mat, trans4);
-        BitmapDrawCube2(bitmap, mat);
+        BitmapExtDrawCube2(bitmap, mat);
     }
 
     // head
@@ -90,7 +90,7 @@ void DrawBody2(Bitmap* bitmap, Vector3 footPos, float rotBody, float rotHead)
         mat = MatrixMultiply(mat, rot1);
         mat = MatrixMultiply(mat, trans2);
         mat = MatrixMultiply(mat, trans4);
-        BitmapDrawCube2(bitmap, mat);
+        BitmapExtDrawCube2(bitmap, mat);
     }
 }
 

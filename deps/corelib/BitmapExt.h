@@ -3,7 +3,7 @@
 #include "Bitmap.h"
 #include "Models.h"
 
-static inline void BitmapFillBorder(Bitmap* bitmap, float color)
+static inline void BitmapExtFillBorder(Bitmap* bitmap, float color)
 {
     int x = bitmap->width - 1;
     int y = bitmap->height - 1;
@@ -12,28 +12,28 @@ static inline void BitmapFillBorder(Bitmap* bitmap, float color)
     for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, 0, i, color);
     for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, x, i, color);
 }
-static inline void BitmapFillCross(Bitmap* bitmap, float color)
+static inline void BitmapExtFillCross(Bitmap* bitmap, float color)
 {
     for (int i = 0; i < bitmap->width;  i++) BitmapSetPixel(bitmap, i, bitmap->height-1 / 2, color);
     for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, bitmap->width-1 / 2, i, color);
 }
-static inline void BitmapDrawTriangleWire(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2)
+static inline void BitmapExtDrawTriangleWire(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2)
 {
     BitmapDrawLine(bitmap, v0, v1);
     BitmapDrawLine(bitmap, v1, v2);
     BitmapDrawLine(bitmap, v2, v0);
 }
-static inline void BitmapDrawQuad(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3)
+static inline void BitmapExtDrawQuad(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3)
 {
     BitmapDrawTriangle(bitmap, v0, v1, v2);
     BitmapDrawTriangle(bitmap, v2, v3, v0);
 }
-static inline void BitmapDrawPoligonWire(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3)
+static inline void BitmapExtDrawPoligonWire(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3)
 {
-    BitmapDrawTriangleWire(bitmap, v0, v1, v2);
-    BitmapDrawTriangleWire(bitmap, v2, v3, v0);
+    BitmapExtDrawTriangleWire(bitmap, v0, v1, v2);
+    BitmapExtDrawTriangleWire(bitmap, v2, v3, v0);
 }
-static inline void BitmapDrawCube(Bitmap* bitmap, Vector3 position, Vector3 rotation, Vector3 scale)
+static inline void BitmapExtDrawCube(Bitmap* bitmap, Vector3 position, Vector3 rotation, Vector3 scale)
 {
     Matrix model = MatrixWorld(position, rotation, scale);
 
@@ -51,7 +51,7 @@ static inline void BitmapDrawCube(Bitmap* bitmap, Vector3 position, Vector3 rota
         p1 = MatrixMultiply3L(p1, model);          \
         p2 = MatrixMultiply3L(p2, model);          \
         p3 = MatrixMultiply3L(p3, model);          \
-        BitmapDrawQuad(bitmap, p0, p1, p2, p3); \
+        BitmapExtDrawQuad(bitmap, p0, p1, p2, p3); \
     }                                              \
 
     DRAW(0)
@@ -63,7 +63,7 @@ static inline void BitmapDrawCube(Bitmap* bitmap, Vector3 position, Vector3 rota
 
     #undef DRAW
 }
-static inline void BitmapDrawCube2(Bitmap* bitmap, Matrix model)
+static inline void BitmapExtDrawCube2(Bitmap* bitmap, Matrix model)
 {
     #define DRAW(INDEX)                            \
     {                                              \
@@ -79,7 +79,7 @@ static inline void BitmapDrawCube2(Bitmap* bitmap, Matrix model)
         p1 = MatrixMultiply3L(p1, model);          \
         p2 = MatrixMultiply3L(p2, model);          \
         p3 = MatrixMultiply3L(p3, model);          \
-        BitmapDrawQuad(bitmap, p0, p1, p2, p3); \
+        BitmapExtDrawQuad(bitmap, p0, p1, p2, p3); \
     }                                              \
 
     DRAW(0)
@@ -91,7 +91,7 @@ static inline void BitmapDrawCube2(Bitmap* bitmap, Matrix model)
 
     #undef DRAW
 }
-static inline void BitmapDrawCubeWire(Bitmap* bitmap, Vector3 position, Vector3 rotation, Vector3 scale)
+static inline void BitmapExtDrawCubeWire(Bitmap* bitmap, Vector3 position, Vector3 rotation, Vector3 scale)
 {
     Matrix model = MatrixWorld(position, rotation, scale);
 
@@ -106,7 +106,7 @@ static inline void BitmapDrawCubeWire(Bitmap* bitmap, Vector3 position, Vector3 
         BitmapDrawLine(bitmap, v0, v1);
     }
 }
-static inline void BitmapDrawSphere(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawSphere(Bitmap* bitmap, Vector3 position)
 {
     if (Hiden(position, 1.0f, bitmap->view, bitmap->far)) return;
 
@@ -124,7 +124,7 @@ static inline void BitmapDrawSphere(Bitmap* bitmap, Vector3 position)
         BitmapDrawTriangle(bitmap, v0, v1, v2);
     }
 }
-static inline void BitmapDrawSphereWire(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawSphereWire(Bitmap* bitmap, Vector3 position)
 {
     for (size_t i = 0; i < 60; i++)
     {
@@ -137,10 +137,10 @@ static inline void BitmapDrawSphereWire(Bitmap* bitmap, Vector3 position)
         v0 = Vector3Add(v0, position);
         v1 = Vector3Add(v1, position);
         v2 = Vector3Add(v2, position);
-        BitmapDrawTriangleWire(bitmap, v0, v1, v2);
+        BitmapExtDrawTriangleWire(bitmap, v0, v1, v2);
     }
 }
-static inline void BitmapDrawBoundWire(Bitmap* bitmap, Bound bound)
+static inline void BitmapExtDrawBoundWire(Bitmap* bitmap, Bound bound)
 {
     float maxx = MathMax(bound.p0.x, bound.p1.x);
     float maxy = MathMax(bound.p0.y, bound.p1.y);
@@ -171,7 +171,7 @@ static inline void BitmapDrawBoundWire(Bitmap* bitmap, Bound bound)
     BitmapDrawLine(bitmap, v5, v7);
     BitmapDrawLine(bitmap, v4, v6);
 }
-static inline void DrawGrid(Bitmap* bitmap)
+static inline void BitmapExtDrawGrid(Bitmap* bitmap)
 {
     int count = 100;
 
@@ -191,7 +191,7 @@ static inline void DrawGrid(Bitmap* bitmap)
         BitmapDrawLine(bitmap, v0, v1);
     }
 }
-static inline void DrawPlane(Bitmap* bitmap)
+static inline void BitmapExtDrawPlane(Bitmap* bitmap)
 {
     float size = 100;
 
@@ -200,9 +200,9 @@ static inline void DrawPlane(Bitmap* bitmap)
     Vector3 p2 = { -size, 0, -size };
     Vector3 p3 = { -size, 0, +size };
 
-    BitmapDrawQuad(bitmap, p0, p1, p2, p3);
+    BitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
 }
-static inline void DrawPlane(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawPlane(Bitmap* bitmap, Vector3 position)
 {
     float size = 100;
 
@@ -211,32 +211,32 @@ static inline void DrawPlane(Bitmap* bitmap, Vector3 position)
     Vector3 p2 = { -size, 0, -size }; p2 += position;
     Vector3 p3 = { -size, 0, +size }; p3 += position;
 
-    BitmapDrawQuad(bitmap, p0, p1, p2, p3);
+    BitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
 }
-static inline void DrawPlane(Bitmap* bitmap, Vector3 position, float size)
+static inline void BitmapExtDrawPlane(Bitmap* bitmap, Vector3 position, float size)
 {
     Vector3 p0 = { +size, 0, +size }; p0 += position;
     Vector3 p1 = { +size, 0, -size }; p1 += position;
     Vector3 p2 = { -size, 0, -size }; p2 += position;
     Vector3 p3 = { -size, 0, +size }; p3 += position;
 
-    BitmapDrawQuad(bitmap, p0, p1, p2, p3);
+    BitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
 }
-static inline void DrawCube(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawCube(Bitmap* bitmap, Vector3 position)
 {
     Vector3 rotation = { 0, 0, 0 };
     Vector3 scale = { 1, 1, 1 };
-    BitmapDrawCube(bitmap, position, rotation, scale);
+    BitmapExtDrawCube(bitmap, position, rotation, scale);
 }
-static inline void DrawCubeLight(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawCubeLight(Bitmap* bitmap, Vector3 position)
 {
-    BitmapDrawCube(bitmap, position, {}, Vector3One()/2);
+    BitmapExtDrawCube(bitmap, position, {}, Vector3One()/2);
 }
-static inline void DrawSpot(Bitmap* bitmap, Vector3 position)
+static inline void BitmapExtDrawSpot(Bitmap* bitmap, Vector3 position)
 {
-    BitmapDrawCube(bitmap, position, {}, Vector3One()/5);
+    BitmapExtDrawCube(bitmap, position, {}, Vector3One()/5);
 }
-static inline void DrawBound(Bitmap* bitmap, vector<Vector3>& vs, Vector3 position)
+static inline void BitmapExtDrawBound(Bitmap* bitmap, vector<Vector3>& vs, Vector3 position)
 {
     float maxx;
     float maxy;
@@ -286,18 +286,18 @@ static inline void DrawBound(Bitmap* bitmap, vector<Vector3>& vs, Vector3 positi
     BitmapDrawLine(bitmap, p5, p7);
     BitmapDrawLine(bitmap, p4, p6);
 }
-static inline void DrawCamera(Bitmap* bitmap, Camera* camera)
+static inline void BitmapExtDrawCamera(Bitmap* bitmap, Camera* camera)
 {
     Vector3 position = camera->position;
     Vector3 rotation = { camera->pitch, -camera->yaw, 0 };
     Vector3 scale = Vector3One() / 3;
-    BitmapDrawCube(bitmap, position, rotation, scale);
+    BitmapExtDrawCube(bitmap, position, rotation, scale);
 }
-static inline void DrawCamera(Bitmap* bitmap, Vector3 pos)
+static inline void BitmapExtDrawCamera(Bitmap* bitmap, Vector3 pos)
 {
-    BitmapDrawCube(bitmap, pos, {}, Vector3One() / 3);
+    BitmapExtDrawCube(bitmap, pos, {}, Vector3One() / 3);
 }
-static inline void DrawChar(Bitmap* bitmap, int x, int y, char c)
+static inline void BitmapExtDrawChar(Bitmap* bitmap, int x, int y, char c)
 {
     #define P(x2, y2) BitmapSetPixel(bitmap, x+x2, y+y2, COLOR_WHITE);
 
@@ -398,26 +398,26 @@ static inline void DrawChar(Bitmap* bitmap, int x, int y, char c)
 
     #undef P
 }
-static inline void DrawDigit(Bitmap* bitmap, int x, int y, uint32_t value)
+static inline void BitmapExtDrawDigit(Bitmap* bitmap, int x, int y, uint32_t value)
 {
     switch (value)
     {
-        case 0: { DrawChar(bitmap, x, y, '0'); break; };
-        case 1: { DrawChar(bitmap, x, y, '1'); break; };
-        case 2: { DrawChar(bitmap, x, y, '2'); break; };
-        case 3: { DrawChar(bitmap, x, y, '3'); break; };
-        case 4: { DrawChar(bitmap, x, y, '4'); break; };
-        case 5: { DrawChar(bitmap, x, y, '5'); break; };
-        case 6: { DrawChar(bitmap, x, y, '6'); break; };
-        case 7: { DrawChar(bitmap, x, y, '7'); break; };
-        case 8: { DrawChar(bitmap, x, y, '8'); break; };
-        case 9: { DrawChar(bitmap, x, y, '9'); break; };
+        case 0: { BitmapExtDrawChar(bitmap, x, y, '0'); break; };
+        case 1: { BitmapExtDrawChar(bitmap, x, y, '1'); break; };
+        case 2: { BitmapExtDrawChar(bitmap, x, y, '2'); break; };
+        case 3: { BitmapExtDrawChar(bitmap, x, y, '3'); break; };
+        case 4: { BitmapExtDrawChar(bitmap, x, y, '4'); break; };
+        case 5: { BitmapExtDrawChar(bitmap, x, y, '5'); break; };
+        case 6: { BitmapExtDrawChar(bitmap, x, y, '6'); break; };
+        case 7: { BitmapExtDrawChar(bitmap, x, y, '7'); break; };
+        case 8: { BitmapExtDrawChar(bitmap, x, y, '8'); break; };
+        case 9: { BitmapExtDrawChar(bitmap, x, y, '9'); break; };
     }
 }
-static inline void DrawInt(Bitmap* bitmap, int x, int y, int value)
+static inline void BitmapExtDrawInt(Bitmap* bitmap, int x, int y, int value)
 {
     value = MathClampInt(value, 0, 99);
 
-    DrawDigit(bitmap, 0*4, 0, (uint32_t)(value / 10));
-    DrawDigit(bitmap, 1*4, 0, (uint32_t)(value % 10));
+    BitmapExtDrawDigit(bitmap, 0*4, 0, (uint32_t)(value / 10));
+    BitmapExtDrawDigit(bitmap, 1*4, 0, (uint32_t)(value % 10));
 }

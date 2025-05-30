@@ -23,8 +23,8 @@ Vector3 light = { 0, 0.25f, 0 };
 
 void DrawFunc(Bitmap* bitmap)
 {
-    DrawPlane(bitmap, { 0, 0, 0 });
-    DrawCubeLight(bitmap, light);
+    BitmapExtDrawPlane(bitmap, { 0, 0, 0 });
+    BitmapExtDrawCubeLight(bitmap, light);
     ModelForest::Draw(bitmap);
     Particle::Draw(bitmap);
     Snow::Draw(bitmap);

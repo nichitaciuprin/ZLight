@@ -21,8 +21,8 @@ Vector3 light = { 0, 0.25f, 0 };
 
 void DrawFunc(Bitmap* bitmap)
 {
-    DrawPlane(bitmap, { 0, 0, 0 });
-    DrawSpot(bitmap, light);
+    BitmapExtDrawPlane(bitmap, { 0, 0, 0 });
+    BitmapExtDrawSpot(bitmap, light);
     ModelForest::Draw(bitmap, cam->position);
     Particle::Draw(bitmap);
 }

@@ -98,8 +98,8 @@ namespace ModelCave
             Vector3& v3 = caveSpline1[i];
             Vector3& v4 = caveSpline2[i];
             Vector3& v5 = caveSpline3[i];
-            BitmapDrawQuad(bitmap, v0, v1, v4, v3);
-            BitmapDrawQuad(bitmap, v1, v2, v5, v4);
+            BitmapExtDrawQuad(bitmap, v0, v1, v4, v3);
+            BitmapExtDrawQuad(bitmap, v1, v2, v5, v4);
         }
 
         {
@@ -107,25 +107,25 @@ namespace ModelCave
             Vector3 v1 = { -3, 4, 20 };
             Vector3 v2 = {  3, 4, 20 };
             Vector3 v3 = {  3, 4,  0 };
-            BitmapDrawQuad(bitmap, v3, v2, v1, v0);
+            BitmapExtDrawQuad(bitmap, v3, v2, v1, v0);
         }
 
         // Bound bound;
         // bound.p0 = {  -15,  0, -1 };
         // bound.p1 = {  -1.25f, 10, +1 };
-        // BitmapDrawBoundWire(bitmap, bound);
+        // BitmapExtDrawBoundWire(bitmap, bound);
         // bound.p0.x = -bound.p0.x;
         // bound.p1.x = -bound.p1.x;
-        // BitmapDrawBoundWire(bitmap, bound);
+        // BitmapExtDrawBoundWire(bitmap, bound);
         // bound.p0 = {  -2.00f,  0, +20 };
         // bound.p1 = {  -1.25f, 10, -1 };
-        // BitmapDrawBoundWire(bitmap, bound);
+        // BitmapExtDrawBoundWire(bitmap, bound);
         // bound.p0.x = -bound.p0.x;
         // bound.p1.x = -bound.p1.x;
-        // BitmapDrawBoundWire(bitmap, bound);
+        // BitmapExtDrawBoundWire(bitmap, bound);
         // bound.p0 = {  -2.00f,  0, +19 };
         // bound.p1 = {  +2.00f, 10, +20 };
-        // BitmapDrawBoundWire(bitmap, bound);
+        // BitmapExtDrawBoundWire(bitmap, bound);
     }
     void Push(Vector3& point)
     {
