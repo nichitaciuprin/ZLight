@@ -14,8 +14,8 @@ static inline void BitmapExtDrawBorder(Bitmap* bitmap, float color)
 }
 static inline void BitmapExtDrawCross(Bitmap* bitmap, float color)
 {
-    for (int i = 0; i < bitmap->width;  i++) BitmapSetPixel(bitmap, i, bitmap->height-1 / 2, color);
-    for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, bitmap->width-1 / 2, i, color);
+    for (int i = 0; i < bitmap->width;  i++) BitmapSetPixel(bitmap, i, (bitmap->height-1) / 2, color);
+    for (int i = 0; i < bitmap->height; i++) BitmapSetPixel(bitmap, (bitmap->width-1) / 2, i, color);
 }
 static inline void BitmapExtDrawTriangleWire(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2)
 {
