@@ -32,6 +32,7 @@ int main()
     SysHelperCreateEscThread();
 
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
+    SysWindowSetFormatBw(window);
     SysWindowShow(window);
     Bitmap* bitmap = BitmapCreate(128, 128);
 
@@ -91,7 +92,7 @@ int main()
                         break;
                     }
                 }
-                SysWindowSetPixelsAutoScale1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
+                SysWindowSetPixelsAutoBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
             }
         }
         REC_2

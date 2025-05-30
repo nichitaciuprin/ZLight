@@ -19,6 +19,7 @@ typedef struct SysWindow
     DWORD      style;
     HDC        hdc;
     HBITMAP    hbitmap;
+    int        pixelFormat;
     bool       fullScreen;
     bool       visible;
     uint32_t*  pixels;
@@ -40,9 +41,6 @@ typedef struct SysWindow
     bool keystates_old[256];
 }
 SysWindow;
-
-// TODO
-// add function to switch to _SysWindowBitmapResetRgb or _SysWindowBitmapResetBw
 
 bool _SysWindowRegistered = false;
 void _SysWindowBitmapInit(SysWindow* instance)
@@ -115,8 +113,10 @@ void _SysWindowBitmapResetBw(SysWindow* instance, int clientWidth, int clientHei
 }
 void _SysWindowBitmapReset(SysWindow* instance, int clientWidth, int clientHeight)
 {
-    // _SysWindowBitmapResetRgb(instance, clientWidth, clientHeight);
-    _SysWindowBitmapResetBw(instance, clientWidth, clientHeight);
+    if (instance->pixelFormat == 0)
+        _SysWindowBitmapResetRgb(instance, clientWidth, clientHeight);
+    else
+        _SysWindowBitmapResetBw(instance, clientWidth, clientHeight);
 }
 void _SysWindowBitmapPaint(SysWindow* instance)
 {
@@ -375,7 +375,7 @@ SysWindow* SysWindowCreate(int x, int y, int clientWidth, int clientHeight)
     int windowHeight = rect.bottom - rect.top;
 
     _SysWindowBitmapInit(instance);
-    _SysWindowBitmapReset(instance, clientWidth, clientHeight);
+    _SysWindowBitmapResetRgb(instance, clientWidth, clientHeight);
 
     HWND hwnd = CreateWindowExA
     (
@@ -425,6 +425,21 @@ void SysWindowUpdate(SysWindow* instance)
     UpdateWindow(instance->hwnd);
 }
 
+void SysWindowSetFormatRgb(SysWindow* instance)
+{
+    if (instance->pixelFormat == 0) return;
+        instance->pixelFormat = 0;
+
+    _SysWindowBitmapResetRgb(instance, instance->width, instance->height);
+}
+void SysWindowSetFormatBw(SysWindow* instance)
+{
+    if (instance->pixelFormat == 1) return;
+        instance->pixelFormat = 1;
+
+    _SysWindowBitmapResetBw(instance, instance->width, instance->height);
+}
+
 void SysWindowShow(SysWindow* instance)
 {
     instance->visible = true;
@@ -461,19 +476,13 @@ void SysWindowSetName(SysWindow* instance, const char* name)
     SetWindowTextA(instance->hwnd, name);
 }
 
-void SysWindowSetPixel(SysWindow* instance, int x, int y, uint32_t pixel)
+void SysWindowSetPixelRgb(SysWindow* instance, int x, int y, uint32_t pixel)
 {
     if (!SysWindowExists(instance)) return;
-
-    const int width  = instance->width;
-    const int height = instance->height;
     uint32_t* pixels = instance->pixels;
-
-    y = height - 1 - y;
-
-    pixels[x + y * width] = pixel;
+    pixels[x + y * instance->width] = pixel;
 }
-void SysWindowSetPixelsAutoScale1(SysWindow* instance, uint32_t* pixels, int width, int height)
+void SysWindowSetPixelsAutoScaleRgb1(SysWindow* instance, uint32_t* pixels, int width, int height)
 {
     if (!SysWindowExists(instance)) return;
 
@@ -501,19 +510,11 @@ void SysWindowSetPixelsAutoScale1(SysWindow* instance, uint32_t* pixels, int wid
         {
             int _x = x2+i+offsetx;
             int _y = y2+j+offsety;
-
-            // rgb
-            // instance->pixels[_x + _y * _width] = pixel;
-
-            // bw
-            int r = (uint8_t)(pixel >> 8 * 2);
-            int g = (uint8_t)(pixel >> 8 * 1);
-            int b = (uint8_t)(pixel >> 8 * 0);
-            ((uint8_t*)instance->pixels)[_x + _y * _width] = (r + g + b) / 3;
+            instance->pixels[_x + _y * _width] = pixel;
         }
     }
 }
-void SysWindowSetPixelsAutoScale2(SysWindow* instance, uint8_t* pixels, int width, int height)
+void SysWindowSetPixelsAutoScaleRgb2(SysWindow* instance, uint8_t* pixels, int width, int height)
 {
     if (!SysWindowExists(instance)) return;
 
@@ -541,11 +542,80 @@ void SysWindowSetPixelsAutoScale2(SysWindow* instance, uint8_t* pixels, int widt
         {
             int _x = x2+i+offsetx;
             int _y = y2+j+offsety;
+            instance->pixels[_x + _y * _width] = 0x00FFFFFF * ((float)pixel / 255);
+        }
+    }
+}
 
-            // rgb
-            // instance->pixels[_x + _y * _width] = 0x00FFFFFF * ((float)pixel / 255);
+void SysWindowSetPixelBw(SysWindow* instance, int x, int y, uint8_t pixel)
+{
+    if (!SysWindowExists(instance)) return;
+    uint8_t* pixels = (uint8_t*)instance->pixels;
+    pixels[x + y * instance->width] = pixel;
+}
+void SysWindowSetPixelsAutoScaleBw1(SysWindow* instance, uint32_t* pixels, int width, int height)
+{
+    if (!SysWindowExists(instance)) return;
 
-            // bw
+    int _width = instance->width;
+    int _height = instance->height;
+
+    int widthScale = _width / width;
+    int heightScale = _height / height;
+
+    int scale =
+        widthScale < heightScale ?
+        widthScale : heightScale;
+
+    int offsetx = (_width  - scale * width)  / 2;
+    int offsety = (_height - scale * height) / 2;
+
+    for (int y = 0; y < height; y++)
+    for (int x = 0; x < width;  x++)
+    {
+        uint32_t pixel = pixels[x + y * width];
+        int x2 = x * scale;
+        int y2 = y * scale;
+        for (int i = 0; i < scale; i++)
+        for (int j = 0; j < scale; j++)
+        {
+            int _x = x2+i+offsetx;
+            int _y = y2+j+offsety;
+            int r = (uint8_t)(pixel >> 8 * 2);
+            int g = (uint8_t)(pixel >> 8 * 1);
+            int b = (uint8_t)(pixel >> 8 * 0);
+            ((uint8_t*)instance->pixels)[_x + _y * _width] = (r + g + b) / 3;
+        }
+    }
+}
+void SysWindowSetPixelsAutoScaleBw2(SysWindow* instance, uint8_t* pixels, int width, int height)
+{
+    if (!SysWindowExists(instance)) return;
+
+    int _width = instance->width;
+    int _height = instance->height;
+
+    int widthScale = _width / width;
+    int heightScale = _height / height;
+
+    int scale =
+        widthScale < heightScale ?
+        widthScale : heightScale;
+
+    int offsetx = (_width  - scale * width)  / 2;
+    int offsety = (_height - scale * height) / 2;
+
+    for (int y = 0; y < height; y++)
+    for (int x = 0; x < width;  x++)
+    {
+        uint8_t pixel = pixels[x + y * width];
+        int x2 = x * scale;
+        int y2 = y * scale;
+        for (int i = 0; i < scale; i++)
+        for (int j = 0; j < scale; j++)
+        {
+            int _x = x2+i+offsetx;
+            int _y = y2+j+offsety;
             ((uint8_t*)instance->pixels)[_x + _y * _width] = pixel;
         }
     }

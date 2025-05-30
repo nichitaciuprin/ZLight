@@ -14,12 +14,23 @@ bool SysWindowExists(SysWindow* instance);
 void SysWindowDestroy(SysWindow* instance);
 void SysWindowUpdate(SysWindow* instance);
 
+void SysWindowSetFormatRgb(SysWindow* instance);
+void SysWindowSetFormatBw(SysWindow* instance);
+
 void SysWindowShow(SysWindow* instance);
 void SysWindowHide(SysWindow* instance);
 void SysWindowSetFullscreen(SysWindow* instance, bool enable);
 int SysWindowGetWidth(SysWindow* instance);
 int SysWindowGetHeight(SysWindow* instance);
 void SysWindowSetName(SysWindow* instance, const char* name);
+
+void SysWindowSetPixelRgb(SysWindow* instance, int x, int y, uint32_t pixel);
+void SysWindowSetPixelsAutoScaleRgb1(SysWindow* instance, uint32_t* pixels, int width, int height);
+void SysWindowSetPixelsAutoScaleRgb2(SysWindow* instance, uint8_t* pixels, int width, int height);
+
+void SysWindowSetPixelBw(SysWindow* instance, int x, int y, uint8_t pixel);
+void SysWindowSetPixelsAutoScaleBw1(SysWindow* instance, uint32_t* pixels, int width, int height);
+void SysWindowSetPixelsAutoScaleBw2(SysWindow* instance, uint8_t* pixels, int width, int height);
 
 void SysWindowSetPixel(SysWindow* instance, int x, int y, uint32_t pixel);
 void SysWindowSetPixelsAutoScale1(SysWindow* instance, uint32_t* pixels, int width, int height);
