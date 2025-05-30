@@ -24,7 +24,6 @@ void SysWindowSetName(SysWindow* instance, const char* name);
 void SysWindowSetPixel(SysWindow* instance, int x, int y, uint32_t pixel);
 void SysWindowSetPixelsAutoScale1(SysWindow* instance, uint32_t* pixels, int width, int height);
 void SysWindowSetPixelsAutoScale2(SysWindow* instance, uint8_t* pixels, int width, int height);
-void SysWindowDrawDebugBorder(SysWindow* instance);
 
 void SysWindowGetMouseDelta(SysWindow* instance, int* dx, int* dy);
 

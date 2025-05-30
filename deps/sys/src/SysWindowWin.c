@@ -550,49 +550,6 @@ void SysWindowSetPixelsAutoScale2(SysWindow* instance, uint8_t* pixels, int widt
         }
     }
 }
-void SysWindowDrawDebugBorder(SysWindow* instance)
-{
-    if (!SysWindowExists(instance)) return;
-
-    const uint16_t width  = (uint16_t)instance->width;
-    const uint16_t height = (uint16_t)instance->height;
-
-    const uint32_t color = 0x00FF0000;
-
-    const int size = 8;
-
-    // int x = width  - 1;
-    // int y = height - 1;
-    // for (int i = 0; i < width;  i++) SysWindowSetPixel(instance, i, 0, color); // top
-    // for (int i = 0; i < width;  i++) SysWindowSetPixel(instance, i, y, color); // bottom
-    // for (int i = 0; i < height; i++) SysWindowSetPixel(instance, 0, i, color); // left
-    // for (int i = 0; i < height; i++) SysWindowSetPixel(instance, x, i, color); // right
-
-    // int x = width  - 1;
-    // int y = height - 1;
-    // for (int i = 0; i < width;  i++) for (int j = 0; j < size; j++) SysWindowSetPixel(instance, i,   j, color); // top
-    // for (int i = 0; i < width;  i++) for (int j = 0; j < size; j++) SysWindowSetPixel(instance, i, y-j, color); // bottom
-    // for (int i = 0; i < height; i++) for (int j = 0; j < size; j++) SysWindowSetPixel(instance, j,   i, color); // left
-    // for (int i = 0; i < height; i++) for (int j = 0; j < size; j++) SysWindowSetPixel(instance, x-j, i, color); // right
-
-    const int c1 = width * size;
-    const int c2 = width * height;
-    const int c3 = width - size;
-
-    int i1 = 0;
-    int i2 = c2 - c1;
-    int i3 = 0;
-    int i4 = width - size;
-
-    while (i1 < c1) { instance->pixels[i1] = color; i1++; } // bottom
-    while (i2 < c2) { instance->pixels[i2] = color; i2++; } // top
-
-    for (int y = 0; y < height; y++)
-    {
-        for (int x = 0; x < size; x++) { instance->pixels[i3] = color; i3++; } i3 += c3; // left
-        for (int x = 0; x < size; x++) { instance->pixels[i4] = color; i4++; } i4 += c3; // right
-    }
-}
 
 void SysWindowGetMouseDelta(SysWindow* instance, int* dx, int* dy)
 {
