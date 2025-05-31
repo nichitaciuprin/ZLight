@@ -48,7 +48,7 @@ namespace ModelForest
         for (auto& model : treeModels)
         {
             Vector2 v1 = { model.pos.x, model.pos.z };
-            float dist = Vector2DistanceSquared(v0, v1);
+            float dist = Vector2DistanceSqrt(v0, v1);
             if (dist > 200) continue;
             ModelTreeDraw(bitmap, model.pos, model.rot, model.h1, model.h2, model.w1, model.w2);
         }

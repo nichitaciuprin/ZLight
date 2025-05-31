@@ -408,20 +408,20 @@ static inline float Vector4Length(Vector4 v)
     return MathSqrt(x + y + z + w);
 }
 
-static inline float Vector2LengthSquared(Vector2 v)
+static inline float Vector2LengthSqrt(Vector2 v)
 {
     float x = v.x * v.x;
     float y = v.y * v.y;
     return x + y;
 }
-static inline float Vector3LengthSquared(Vector3 v)
+static inline float Vector3LengthSqrt(Vector3 v)
 {
     float x = v.x * v.x;
     float y = v.y * v.y;
     float z = v.z * v.z;
     return x + y + z;
 }
-static inline float Vector4LengthSquared(Vector4 v)
+static inline float Vector4LengthSqrt(Vector4 v)
 {
     float x = v.x * v.x;
     float y = v.y * v.y;
@@ -455,14 +455,14 @@ static inline float Vector4Distance(Vector4 a, Vector4 b)
     return MathSqrt(x + y + z + w);
 }
 
-static inline float Vector2DistanceSquared(Vector2 a, Vector2 b)
+static inline float Vector2DistanceSqrt(Vector2 a, Vector2 b)
 {
     Vector2 v = Vector2Sub(a, b);
     float x = v.x * v.x;
     float y = v.y * v.y;
     return x + y;
 }
-static inline float Vector3DistanceSquared(Vector3 a, Vector3 b)
+static inline float Vector3DistanceSqrt(Vector3 a, Vector3 b)
 {
     Vector3 v = Vector3Sub(a, b);
     float x = v.x * v.x;
@@ -470,7 +470,7 @@ static inline float Vector3DistanceSquared(Vector3 a, Vector3 b)
     float z = v.z * v.z;
     return x + y + z;
 }
-static inline float Vector4DistanceSquared(Vector4 a, Vector4 b)
+static inline float Vector4DistanceSqrt(Vector4 a, Vector4 b)
 {
     Vector4 v = Vector4Sub(a, b);
     float x = v.x * v.x;
@@ -1716,7 +1716,7 @@ static inline bool SpherePointInside(Sphere sphere, Vector3 point)
 {
     Vector3 diff = Vector3Sub(point, sphere.position);
     float radiusSquared = sphere.radius * sphere.radius;
-    float diffLengthSquared = Vector3LengthSquared(diff);
+    float diffLengthSquared = Vector3LengthSqrt(diff);
     return diffLengthSquared <= radiusSquared;
 }
 static inline bool CylinderPointInside(Vector3 point, Vector3 pos, float height, float radius)
@@ -1805,7 +1805,7 @@ static inline bool RaycastSphere(Vector3 origin, Vector3 dirNorm, Sphere sphere)
     Vector3 v2 = Vector3Mul(dirNorm, v2Length);
     Vector3 v3 = Vector3Sub(v2, v1);
 
-    float v3LengthSquared = Vector3LengthSquared(v3);
+    float v3LengthSquared = Vector3LengthSqrt(v3);
     float radiusSquared = sphere.radius * sphere.radius;
 
     if (v3LengthSquared > radiusSquared)

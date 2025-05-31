@@ -37,7 +37,7 @@ namespace ModelForest
             position.z += 1.14;
 
             // removing 2 tree near player spawn
-            float dist = Vector3DistanceSquared(position, { 6.0f, 0, 7.0f });
+            float dist = Vector3DistanceSqrt(position, { 6.0f, 0, 7.0f });
             if (dist < 1.0f*1.0f)
                 continue;
 
