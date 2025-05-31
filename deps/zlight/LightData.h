@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseLang.hpp"
+#include "BaseLang.h"
 #include "BitmapExt.h"
 
 #define LIGHT_MAX_DIST 15
