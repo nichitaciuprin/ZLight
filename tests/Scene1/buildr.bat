@@ -5,22 +5,18 @@ set deps=%~dp0..\..\deps
 set build=%~dp0build
 set main=%~dp0main.cpp
 
-@REM set flags=%flags% -Werror -Wall
 set flags=%flags% -std=c++17 -m64
-@REM set flags=%flags% -g3 -Og
 set flags=%flags% -g0 -O3 -D NDEBUG
 
-@REM set lib=%lib% -L%deps%\Sys\lib -lsyswin
-set lib=%lib% -L%deps%\Sys\lib -lsyshelperwin
-set lib=%lib% -L%deps%\Sys\lib -lsyswindowwin
-set lib=%lib% -L%deps%\Sys\lib -lsysnetwin
+set lib=%lib% -L%deps%\sys\lib -lsyshelperwin
+set lib=%lib% -L%deps%\sys\lib -lsyswindowwin
+set lib=%lib% -L%deps%\sys\lib -lsysnetwin
 
-@REM set include=%include% -I%~dp0src
+set include=%include% -I%deps%\sys\include
 set include=%include% -I%deps%\corelib
 set include=%include% -I%deps%\shared
-set include=%include% -I%deps%\sys\include
 
 if exist %build% rmdir /S /Q %build%
    mkdir %build%
 
-g++ %main% %src% -o %build%/corelib.exe %include% %lib% %flags%
+g++ %main% %src% -o %build%/main.exe %lib% %include% %flags%

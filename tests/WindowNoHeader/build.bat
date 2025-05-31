@@ -18,4 +18,4 @@ set lib=%lib% -lgdi32
 if exist build rmdir /S /Q build
    mkdir build
 
-gcc %main% %src% -o %build%/main.exe %include% %lib% %flags%
+gcc %main% %src% -o %build%/main.exe %lib% %include% %flags%

@@ -1,5 +1,5 @@
 @echo off
 setlocal
 
-echo y | gdb -q -ex=run -ex=backtrace -ex=quit --args build\corelib.exe
-@REM build\corelib.exe
+echo y | gdb -q -ex=run -ex=backtrace -ex=quit --args build\main.exe
+@REM build\main.exe
