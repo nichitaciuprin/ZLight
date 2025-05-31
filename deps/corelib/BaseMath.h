@@ -926,22 +926,22 @@ static inline Vector4 MatrixMultiply4R(Matrix m, Vector4 v)
 static inline Matrix MatrixIdentity()
 {
     return (Matrix)
-    {
-        1,0,0,0,
-        0,1,0,0,
-        0,0,1,0,
-        0,0,0,1,
-    };
+    {{
+        {1,0,0,0},
+        {0,1,0,0},
+        {0,0,1,0},
+        {0,0,0,1},
+    }};
 }
 static inline Matrix MatrixTranspose(Matrix m)
 {
     return (Matrix)
-    {
-        m.m[0][0],m.m[1][0],m.m[2][0],m.m[3][0],
-        m.m[0][1],m.m[1][1],m.m[2][1],m.m[3][1],
-        m.m[0][2],m.m[1][2],m.m[2][2],m.m[3][2],
-        m.m[0][3],m.m[1][3],m.m[2][3],m.m[3][3]
-    };
+    {{
+        {m.m[0][0],m.m[1][0],m.m[2][0],m.m[3][0]},
+        {m.m[0][1],m.m[1][1],m.m[2][1],m.m[3][1]},
+        {m.m[0][2],m.m[1][2],m.m[2][2],m.m[3][2]},
+        {m.m[0][3],m.m[1][3],m.m[2][3],m.m[3][3]}
+    }};
 }
 static inline Matrix MatrixInvert(Matrix m)
 {
@@ -1019,59 +1019,61 @@ static inline Matrix MatrixMultiply(Matrix l, Matrix r)
     float m33 = Vector4Dot(row3, col3);
 
     return (Matrix)
-    {
-        m00,m01,m02,m03,
-        m10,m11,m12,m13,
-        m20,m21,m22,m23,
-        m30,m31,m32,m33
-    };
+    {{
+        {m00,m01,m02,m03},
+        {m10,m11,m12,m13},
+        {m20,m21,m22,m23},
+        {m30,m31,m32,m33}
+    }};
 }
 static inline Matrix MatrixRotateX(float rad)
 {
     float sin = sinf(rad);
     float cos = cosf(rad);
     return (Matrix)
-    {
-        1,   0,    0,    0,
-        0,   cos, -sin,  0,
-        0,   sin,  cos,  0,
-        0,   0,    0,    1
-    };
+    {{
+        { 1,   0,    0,    0 },
+        { 0,   cos, -sin,  0 },
+        { 0,   sin,  cos,  0 },
+        { 0,   0,    0,    1 }
+    }};
 }
 static inline Matrix MatrixRotateY(float rad)
 {
     float sin = sinf(rad);
     float cos = cosf(rad);
     return (Matrix)
-    {
-         cos,   0,  sin,   0,
-           0,   1,    0,   0,
-        -sin,   0,  cos,   0,
-           0,   0,    0,   1
-    };
+    {{
+       {  cos,   0,  sin,   0 },
+       {    0,   1,    0,   0 },
+       { -sin,   0,  cos,   0 },
+       {    0,   0,    0,   1 }
+    }};
 }
 static inline Matrix MatrixRotateZ(float rad)
 {
     float sin = sinf(rad);
     float cos = cosf(rad);
     return (Matrix)
-    {
-        cos, -sin,  0,   0,
-        sin,  cos,  0,   0,
-        0,    0,    1,   0,
-        0,    0,    0,   1
-    };
+    {{
+        { cos, -sin,  0,   0 },
+        { sin,  cos,  0,   0 },
+        { 0,    0,    1,   0 },
+        { 0,    0,    0,   1 }
+    }};
 }
 static inline Matrix MatrixTranslate(Vector3 position)
 {
-    Vector3 v = position;
+    float x = position.x;
+    float y = position.y;
+    float z = position.z;
     return (Matrix)
-    {
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        v.x, v.y, v.z, 1
-    };
+    {{
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 1, 0},
+        {x, y, z, 1}
+    }};
 }
 static inline Matrix MatrixRotate(Vector3 rotation)
 {
@@ -1090,12 +1092,12 @@ static inline Matrix MatrixScale(Vector3 scale)
     float y = scale.y;
     float z = scale.z;
     return (Matrix)
-    {
-        x, 0, 0, 0,
-        0, y, 0, 0,
-        0, 0, z, 0,
-        0, 0, 0, 1
-    };
+    {{
+        {x, 0, 0, 0},
+        {0, y, 0, 0},
+        {0, 0, z, 0},
+        {0, 0, 0, 1}
+    }};
 }
 static inline Matrix MatrixWorld(Vector3 position, Vector3 rotation, Vector3 scale)
 {
@@ -1123,12 +1125,12 @@ static inline Matrix MatrixWorldDir(Vector3 position, Vector3 direction)
     float z = position.z;
 
     return (Matrix)
-    {
-        xAxis.x, xAxis.y, xAxis.z, 0.0f,
-        yAxis.x, yAxis.y, yAxis.z, 0.0f,
-        zAxis.x, zAxis.y, zAxis.z, 0.0f,
-              x,       y,       z, 1.0f
-    };
+    {{
+        {xAxis.x, xAxis.y, xAxis.z, 0.0f},
+        {yAxis.x, yAxis.y, yAxis.z, 0.0f},
+        {zAxis.x, zAxis.y, zAxis.z, 0.0f},
+        {      x,       y,       z, 1.0f}
+    }};
 }
 static inline Matrix MatrixView1(Vector3 eye, float yaw, float pitch)
 {
@@ -1176,12 +1178,12 @@ static inline Matrix MatrixView2(Vector3 eye, Vector3 target, Vector3 up)
     Vector3 yAxis = Vector3Cross(zAxis, xAxis);
 
     Matrix result =
-    {
-        xAxis.x, xAxis.y, xAxis.z, 0,
-        yAxis.x, yAxis.y, yAxis.z, 0,
-        zAxis.x, zAxis.y, zAxis.z, 0,
-          eye.x,   eye.y,   eye.z, 1
-    };
+    {{
+        {xAxis.x, xAxis.y, xAxis.z, 0},
+        {yAxis.x, yAxis.y, yAxis.z, 0},
+        {zAxis.x, zAxis.y, zAxis.z, 0},
+        {  eye.x,   eye.y,   eye.z, 1}
+    }};
 
     result = MatrixInvert(result);
 
@@ -1198,12 +1200,12 @@ static inline Matrix MatrixProjOrthographic(float width, float height, float nea
     float a = 1.0f / (far - near);
     float b = a * -near;
     return (Matrix)
-    {
-        w, 0, 0, 0,
-        0, h, 0, 0,
-        0, 0, a, 0,
-        0, 0, b, 1
-    };
+    {{
+        {w, 0, 0, 0},
+        {0, h, 0, 0},
+        {0, 0, a, 0},
+        {0, 0, b, 1}
+    }};
 }
 static inline Matrix MatrixProjPerspective1(float width, float height, float near, float far)
 {
@@ -1240,12 +1242,12 @@ static inline Matrix MatrixProjPerspective1(float width, float height, float nea
     float o = (2*f*n) / (f-n);
 
     return (Matrix)
-    {
-        x,  0,  0,  0,
-        0,  y,  0,  0,
-        0,  0,  z,  1,
-        0,  0, -o,  0
-    };
+    {{
+        {x,  0,  0,  0},
+        {0,  y,  0,  0},
+        {0,  0,  z,  1},
+        {0,  0, -o,  0}
+    }};
 }
 static inline Matrix MatrixProjPerspective2(float width, float height, float near, float far)
 {
@@ -1260,12 +1262,12 @@ static inline Matrix MatrixProjPerspective2(float width, float height, float nea
     float o = a * n;
 
     return (Matrix)
-    {
-        w,  0,  0,  0,
-        0,  h,  0,  0,
-        0,  0,  a,  1,
-        0,  0, -o,  0
-    };
+    {{
+        {w,  0,  0,  0},
+        {0,  h,  0,  0},
+        {0,  0,  a,  1},
+        {0,  0, -o,  0}
+    }};
 }
 static inline Matrix MatrixProjPerspective3(float width, float height, float near, float far, float fov)
 {
@@ -1277,12 +1279,12 @@ static inline Matrix MatrixProjPerspective3(float width, float height, float nea
     float o = a * near;
 
     return (Matrix)
-    {
-        w,  0,  0,  0,
-        0,  h,  0,  0,
-        0,  0,  a,  1,
-        0,  0, -o,  0
-    };
+    {{
+        {w,  0,  0,  0},
+        {0,  h,  0,  0},
+        {0,  0,  a,  1},
+        {0,  0, -o,  0}
+    }};
 }
 
 static inline Vector3 ToEuler(Vector4 q)
