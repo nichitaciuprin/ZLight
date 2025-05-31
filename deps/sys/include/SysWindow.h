@@ -54,18 +54,6 @@ bool SysWindowKeyPressedRIGHT(SysWindow* instance);
 bool SysWindowKeyPressedLBUTTON(SysWindow* instance);
 bool SysWindowKeyPressedRBUTTON(SysWindow* instance);
 
-// TODO remove?
-void SysWindowSetPixels(SysWindow* instance, uint32_t* pixels, int width, int height);
-void SysWindowSetPixelsScaled(SysWindow* instance, uint32_t* pixels, int width, int height, int scale);
-void SysWindowSetPixelsScaled2(SysWindow* instance, uint8_t* pixels, int width, int height, int scale);
-void SysWindowSetPixels1(SysWindow* instance, void* pixels);
-void SysWindowSetPixels2(SysWindow* instance, void* pixels);
-void SysWindowSetPixels3(SysWindow* instance, void* pixels);
-void SysWindowSetPixels64x64ScalePerfect(SysWindow* instance, void* pixels);
-void SysWindowSetPixelsTest(SysWindow* instance, uint32_t* pixels);
-
-// bool* GetKeyStates(SysWindow* instance);
-
 #ifdef __cplusplus
 }
 #endif
