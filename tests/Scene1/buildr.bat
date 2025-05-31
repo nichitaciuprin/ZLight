@@ -14,6 +14,7 @@ set lib=%lib% -L%deps%\sys\lib -lsysnetwin
 
 set include=%include% -I%deps%\sys\include
 set include=%include% -I%deps%\corelib
+set include=%include% -I%deps%\zlight
 set include=%include% -I%deps%\shared
 
 if exist %build% rmdir /S /Q %build%
