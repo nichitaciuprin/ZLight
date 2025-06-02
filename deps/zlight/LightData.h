@@ -1,15 +1,21 @@
 #pragma once
 
 #include "BaseLang.h"
-#include "BitmapExt.h"
+#include "Bitmap.h"
 
 #define LIGHT_MAX_DIST 15
 #define SHADOW_MAP_SIZE 128
 #define SHADOW_MAP_BIAS 0.001f
 // #define SHADOW_MAP_BIAS 0.002f
 // #define SHADOW_MAP_BIAS 0.005f
-// #define SHADOW_MAP_BIAS 0.01f
-const Matrix SHADOW_MAP_PROJ = MatrixProjPerspective1(1, 1, 0.1f, LIGHT_MAX_DIST);
+#define SHADOW_MAP_PROJ_MACRO(near, far) ((Matrix)\
+{{\
+    {1, 0, 0, 0},\
+    {0, 1, 0, 0},\
+    {0, 0,  ((far+near)   / (far-near)), 1},\
+    {0, 0, -((near*2*far) / (far-near)), 0}\
+}})
+#define SHADOW_MAP_PROJ SHADOW_MAP_PROJ_MACRO(0.1f, LIGHT_MAX_DIST)
 
 typedef struct SpotLight
 {
@@ -30,7 +36,7 @@ typedef struct LightData
 }
 LightData;
 
-static inline void UpdateShadows(void (*draw)(Bitmap* bitmap), SpotLight* light)
+static inline void UpdateShadows1(void (*draw)(Bitmap* bitmap), SpotLight* light)
 {
     Camera cf = {}; cf.position = light->pos; cf.yaw = MATH_PI_DIV_2*0;
     Camera cr = {}; cr.position = light->pos; cr.yaw = MATH_PI_DIV_2*1;
@@ -60,10 +66,10 @@ static inline void UpdateShadows(void (*draw)(Bitmap* bitmap), SpotLight* light)
     BitmapReset(&bu); draw(&bu);
     BitmapReset(&bd); draw(&bd);
 }
-static inline void UpdateShadows(void (*draw)(Bitmap* bitmap), LightData* lightData)
+static inline void UpdateShadows2(void (*draw)(Bitmap* bitmap), LightData* lightData)
 {
     for (int i = 0; i < lightData->lightsc; i++)
-        UpdateShadows(draw, &lightData->lights[i]);
+        UpdateShadows1(draw, &lightData->lights[i]);
 }
 
 static inline float CalcLight1(Vector3 surPos, float lum, Vector3 lightPos)
@@ -245,7 +251,8 @@ static inline void ApplyLight(Bitmap* bitmap, LightData* lightData)
         int i = x + y * bitmap->width;
         float z = bitmap->buffer[i];
         if (z == 1) { pixels[i] = ColorCreateBwFloat(0); continue; }
-        Vector3 ndc = ScreenSpaceToNdc({ (float)x, (float)y, z }, bitmap->width-1, bitmap->height-1);
+        Vector3 sp = (Vector3){ (float)x, (float)y, z };
+        Vector3 ndc = ScreenSpaceToNdc(sp, bitmap->width-1, bitmap->height-1);
         Vector3 surPos = NdcToWorld(ndc, viewi, proji);
         float t = CalcLight(surPos, lightData);
         pixels[i] = ColorCreateBwFloat(t);
@@ -264,7 +271,8 @@ static inline void ApplyLightNoShadow(Bitmap* bitmap, LightData* lightData)
         int i = x + y * bitmap->width;
         float z = bitmap->buffer[i];
         if (z == 1) { pixels[i] = ColorCreateBwFloat(0); continue; }
-        Vector3 ndc = ScreenSpaceToNdc({ (float)x, (float)y, z }, bitmap->width-1, bitmap->height-1);
+        Vector3 sp = (Vector3){ (float)x, (float)y, z };
+        Vector3 ndc = ScreenSpaceToNdc(sp, bitmap->width-1, bitmap->height-1);
         Vector3 surPos = NdcToWorld(ndc, viewi, proji);
         float t = CalcLightNoShadow(surPos, lightData);
         pixels[i] = ColorCreateBwFloat(t);
@@ -287,7 +295,7 @@ static inline void LightData1AddLight(Vector3 pos, float lum)
         _LightData1_data.lights = (SpotLight*)realloc(_LightData1_data.lights, _LightData1_max*sizeof(SpotLight));
     }
 
-    auto light = &_LightData1_data.lights[_LightData1_data.lightsc];
+    SpotLight* light = &_LightData1_data.lights[_LightData1_data.lightsc];
 
     light->pos = pos;
     light->lum = lum;
@@ -296,7 +304,7 @@ static inline void LightData1AddLight(Vector3 pos, float lum)
 }
 static inline void LightData1UpdateShadows(void (*draw)(Bitmap* bitmap))
 {
-    UpdateShadows(draw, &_LightData1_data);
+    UpdateShadows2(draw, &_LightData1_data);
 }
 static inline void LightData1ApplyLight(Bitmap* bitmap)
 {
