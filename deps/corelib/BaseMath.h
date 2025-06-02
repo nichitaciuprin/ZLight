@@ -1209,37 +1209,10 @@ static inline Matrix MatrixProjOrthographic(float width, float height, float nea
 }
 static inline Matrix MatrixProjPerspective1(float width, float height, float near, float far)
 {
-    width /= height;
-    height = 1;
-
-    width *= near;
-    height *= near;
-
-    float n = near;
-    float f = far;
-
-    float r =  width;
-    float t =  height;
-    float l = -width;
-    float b = -height;
-
-    float x =  (2*n) / (r-l);
-    float y =  (2*n) / (t-b);
-    float z =  (f+n) / (f-n);
-
-    // maybe remove
-    // float u = (r+l) / (r-l);
-    // float i = (t+b) / (t-b);
-    // float o = (2*f*n) / (f-n);
-    // return (Matrix)
-    // {
-    //     x,  0,  0,  0,
-    //     0,  y,  0,  0,
-    //    -u, -i,  z,  1,
-    //     0,  0, -o,  0
-    // };
-
-    float o = (2*f*n) / (f-n);
+    float x = (near*2) / (near*2/width*height);
+    float y = (near*2) / (near*2);
+    float z = (far+near) / (far-near);
+    float o = (near*2*far) / (far-near);
 
     return (Matrix)
     {{
