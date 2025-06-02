@@ -60,3 +60,11 @@ Vector3 GetLightOffset(Vector3 light)
     randDir = Vector3Normalize(randDir) / 10;
     return light + randDir;
 }
+static inline void BitmapExtDrawPlane2(Bitmap* bitmap, Vector3 pos, float size)
+{
+    Vector3 p0 = { +size, 0, +size }; p0 += pos;
+    Vector3 p1 = { +size, 0, -size }; p1 += pos;
+    Vector3 p2 = { -size, 0, -size }; p2 += pos;
+    Vector3 p3 = { -size, 0, +size }; p3 += pos;
+    BitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
+}

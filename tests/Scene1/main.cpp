@@ -21,11 +21,11 @@ Vector3 light = { 2.00, 2.00f, 0 };
 
 void DrawFunc(Bitmap* bitmap)
 {
-    BitmapExtDrawPlane(bitmap, { 0, 0, 0 });
+    BitmapExtDrawPlane2(bitmap, {}, 100);
     ModelCave::Draw(bitmap);
     ModelForest::Draw(bitmap);
     Particle::Draw(bitmap);
-    BitmapExtDrawSpot(bitmap, light);
+    BitmapExtDrawCube(bitmap, light, {}, Vector3One()/5);
 }
 
 int main()
