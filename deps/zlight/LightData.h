@@ -21,12 +21,12 @@ typedef struct SpotLight
 {
     Vector3 pos;
     float lum;
-    float bafl[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matl;
-    float bafr[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matr;
-    float bafd[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matd;
-    float bafu[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matu;
-    float bafb[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matb;
-    float baff[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matf;
+    float bufl[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matl;
+    float bufr[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matr;
+    float bufd[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matd;
+    float bufu[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matu;
+    float bufb[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matb;
+    float buff[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matf;
 }
 SpotLight;
 typedef struct LightData
@@ -52,12 +52,12 @@ static inline void UpdateShadows1(void (*draw)(Bitmap* bitmap), SpotLight* light
     light->matu = MatrixView3(&cu);
     light->matd = MatrixView3(&cd);
 
-    Bitmap bf; bf.buffer = light->baff; bf.view = light->matf; bf.proj = SHADOW_MAP_PROJ; bf.width = SHADOW_MAP_SIZE; bf.height = SHADOW_MAP_SIZE; bf.far = LIGHT_MAX_DIST;
-    Bitmap br; br.buffer = light->bafr; br.view = light->matr; br.proj = SHADOW_MAP_PROJ; br.width = SHADOW_MAP_SIZE; br.height = SHADOW_MAP_SIZE; br.far = LIGHT_MAX_DIST;
-    Bitmap bb; bb.buffer = light->bafb; bb.view = light->matb; bb.proj = SHADOW_MAP_PROJ; bb.width = SHADOW_MAP_SIZE; bb.height = SHADOW_MAP_SIZE; bb.far = LIGHT_MAX_DIST;
-    Bitmap bl; bl.buffer = light->bafl; bl.view = light->matl; bl.proj = SHADOW_MAP_PROJ; bl.width = SHADOW_MAP_SIZE; bl.height = SHADOW_MAP_SIZE; bl.far = LIGHT_MAX_DIST;
-    Bitmap bu; bu.buffer = light->bafu; bu.view = light->matu; bu.proj = SHADOW_MAP_PROJ; bu.width = SHADOW_MAP_SIZE; bu.height = SHADOW_MAP_SIZE; bu.far = LIGHT_MAX_DIST;
-    Bitmap bd; bd.buffer = light->bafd; bd.view = light->matd; bd.proj = SHADOW_MAP_PROJ; bd.width = SHADOW_MAP_SIZE; bd.height = SHADOW_MAP_SIZE; bd.far = LIGHT_MAX_DIST;
+    Bitmap bf; bf.buffer = light->buff; bf.view = light->matf; bf.proj = SHADOW_MAP_PROJ; bf.width = SHADOW_MAP_SIZE; bf.height = SHADOW_MAP_SIZE; bf.far = LIGHT_MAX_DIST;
+    Bitmap br; br.buffer = light->bufr; br.view = light->matr; br.proj = SHADOW_MAP_PROJ; br.width = SHADOW_MAP_SIZE; br.height = SHADOW_MAP_SIZE; br.far = LIGHT_MAX_DIST;
+    Bitmap bb; bb.buffer = light->bufb; bb.view = light->matb; bb.proj = SHADOW_MAP_PROJ; bb.width = SHADOW_MAP_SIZE; bb.height = SHADOW_MAP_SIZE; bb.far = LIGHT_MAX_DIST;
+    Bitmap bl; bl.buffer = light->bufl; bl.view = light->matl; bl.proj = SHADOW_MAP_PROJ; bl.width = SHADOW_MAP_SIZE; bl.height = SHADOW_MAP_SIZE; bl.far = LIGHT_MAX_DIST;
+    Bitmap bu; bu.buffer = light->bufu; bu.view = light->matu; bu.proj = SHADOW_MAP_PROJ; bu.width = SHADOW_MAP_SIZE; bu.height = SHADOW_MAP_SIZE; bu.far = LIGHT_MAX_DIST;
+    Bitmap bd; bd.buffer = light->bufd; bd.view = light->matd; bd.proj = SHADOW_MAP_PROJ; bd.width = SHADOW_MAP_SIZE; bd.height = SHADOW_MAP_SIZE; bd.far = LIGHT_MAX_DIST;
 
     BitmapReset(&bf); draw(&bf);
     BitmapReset(&br); draw(&br);
@@ -187,12 +187,12 @@ static inline float CalcLightSpot(Vector3 surPos, SpotLight* light)
     {
         switch (sectorId)
         {
-            case 0: { t = CalcLight4(surPos, light->lum, light->pos, light->bafl, light->matl); break; }
-            case 1: { t = CalcLight4(surPos, light->lum, light->pos, light->bafr, light->matr); break; }
-            case 2: { t = CalcLight4(surPos, light->lum, light->pos, light->bafd, light->matd); break; }
-            case 3: { t = CalcLight4(surPos, light->lum, light->pos, light->bafu, light->matu); break; }
-            case 4: { t = CalcLight4(surPos, light->lum, light->pos, light->bafb, light->matb); break; }
-            case 5: { t = CalcLight4(surPos, light->lum, light->pos, light->baff, light->matf); break; }
+            case 0: { t = CalcLight4(surPos, light->lum, light->pos, light->bufl, light->matl); break; }
+            case 1: { t = CalcLight4(surPos, light->lum, light->pos, light->bufr, light->matr); break; }
+            case 2: { t = CalcLight4(surPos, light->lum, light->pos, light->bufd, light->matd); break; }
+            case 3: { t = CalcLight4(surPos, light->lum, light->pos, light->bufu, light->matu); break; }
+            case 4: { t = CalcLight4(surPos, light->lum, light->pos, light->bufb, light->matb); break; }
+            case 5: { t = CalcLight4(surPos, light->lum, light->pos, light->buff, light->matf); break; }
         }
     }
 
