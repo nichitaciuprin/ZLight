@@ -1694,14 +1694,14 @@ static inline float TriangleBarycentric2(Vector3 v0, Vector3 v1, Vector3 v2, flo
     return result;
 }
 
-static inline bool SpherePointInside(Sphere sphere, Vector3 point)
+static inline bool PointInsideSphere(Vector3 point, Sphere sphere)
 {
     Vector3 diff = Vector3Sub(point, sphere.position);
     float radiusSquared = sphere.radius * sphere.radius;
     float diffLengthSquared = Vector3LengthSqrt(diff);
     return diffLengthSquared <= radiusSquared;
 }
-static inline bool CylinderPointInside(Vector3 point, Vector3 pos, float height, float radius)
+static inline bool PointInsideCylinder(Vector3 point, Vector3 pos, float height, float radius)
 {
     point = Vector3Sub(point, pos);
     if (point.y < 0) return false;
@@ -1711,7 +1711,17 @@ static inline bool CylinderPointInside(Vector3 point, Vector3 pos, float height,
     if (Vector2Length(v) > radius) return false;
     return true;
 }
+static inline bool PointInsideBound(Vector3 point, Bound bound)
+{
+    // TODO
+    return false;
+}
 
+static inline bool PushOutSphere(Vector3* point, Sphere sphere)
+{
+    // TODO
+    return false;
+}
 static inline void PushOutCylinder(Vector3* point, Vector3 pos, float height, float radius)
 {
     Vector3 v = Vector3Sub(*point, pos);
