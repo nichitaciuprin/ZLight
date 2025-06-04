@@ -43,13 +43,6 @@ typedef struct Bound
     Vector3 p1;
 }
 Bound;
-typedef struct Box
-{
-    Vector3 position;
-    Vector3 rotation;
-    Vector3 halfExtent;
-}
-Box;
 typedef struct Sphere
 {
     Vector3 position;
