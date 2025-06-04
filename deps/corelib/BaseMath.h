@@ -851,14 +851,6 @@ static inline Vector3 MatrixMultiply3L(Vector3 v, Matrix m)
 }
 static inline Vector4 MatrixMultiply4L(Vector4 v, Matrix m)
 {
-    // int a[4] __attribute__((aligned(16))) = { 1, 3, 5, 7 };
-    // int b[4] __attribute__((aligned(16))) = { 2, 4, 6, 8 };
-    // int c[4] __attribute__((aligned(16)));
-    // __vector signed int *va = (__vector signed int *) a;
-    // __vector signed int *vb = (__vector signed int *) b;
-    // __vector signed int *vc = (__vector signed int *) c;
-    // *vc = vec_add(*va, *vb);    // 1 + 2, 3 + 4, 5 + 6, 7 + 8
-
     Vector4 col0 = { m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0] };
     Vector4 col1 = { m.m[0][1], m.m[1][1], m.m[2][1], m.m[3][1] };
     Vector4 col2 = { m.m[0][2], m.m[1][2], m.m[2][2], m.m[3][2] };
