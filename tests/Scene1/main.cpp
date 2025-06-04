@@ -53,12 +53,12 @@ int main()
                 }
 
                 if (SysWindowKeyDownRBUTTON(window))
-                    light = Vector3MoveTowards1(light, cam.position, DELTA_TIME*2.0f);
+                    light = Vector3MoveTowards1(light, cam.pos, DELTA_TIME*2.0f);
 
                 Particle::Update(DELTA_TIME);
 
-                ModelForest::Push(cam.position);
-                ModelCave::Push(cam.position);
+                ModelForest::Push(cam.pos);
+                ModelCave::Push(cam.pos);
             }
             {
                 static int drawMode = 0;

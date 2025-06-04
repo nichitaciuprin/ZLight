@@ -23,7 +23,7 @@ void DrawFunc(Bitmap* bitmap)
 {
     BitmapExtDrawPlane2(bitmap, {}, 100);
     BitmapExtDrawCube(bitmap, light, {}, Vector3One()/5);
-    ModelForest::Draw(bitmap, cam->position);
+    ModelForest::Draw(bitmap, cam->pos);
     Particle::Draw(bitmap);
 }
 
@@ -53,7 +53,7 @@ int main()
 
                 Particle::Update(DELTA_TIME);
 
-                Vector3 pos = cam->position;
+                Vector3 pos = cam->pos;
                 auto camx = CameraGetAxisX(cam);
                 auto camy = CameraGetAxisY(cam);
                 auto camz = CameraGetAxisZ(cam);
@@ -62,7 +62,7 @@ int main()
                 pos += camz;
                 light = pos;
 
-                ModelForest::Push(cam->position);
+                ModelForest::Push(cam->pos);
             }
             {
                 static int drawMode = 0;

@@ -42,7 +42,7 @@ void UpdatePlayerCameraFree(Camera* camera, SysWindow* window)
 }
 Vector3 GetPlayerLightPos(Camera* cam)
 {
-    Vector3 pos = cam->position;
+    Vector3 pos = cam->pos;
     auto camx = CameraGetAxisX(cam);
     auto camy = CameraGetAxisY(cam);
     auto camz = CameraGetAxisZ(cam);

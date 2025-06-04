@@ -32,7 +32,7 @@ typedef struct Matrix
 Matrix;
 typedef struct Camera
 {
-    Vector3 position;
+    Vector3 pos;
     float yaw;
     float pitch;
 }
@@ -45,14 +45,14 @@ typedef struct Bound
 Bound;
 typedef struct Sphere
 {
-    Vector3 position;
+    Vector3 pos;
     float radius;
 }
 Sphere;
 typedef struct Pose
 {
-    Vector3 position;
-    Vector3 rotation;
+    Vector3 pos;
+    Vector3 rot;
 }
 Pose;
 
@@ -1184,7 +1184,7 @@ static inline Matrix MatrixView2(Vector3 eye, Vector3 target, Vector3 up)
 }
 static inline Matrix MatrixView3(Camera* camera)
 {
-    return MatrixView1(camera->position, camera->yaw, camera->pitch);
+    return MatrixView1(camera->pos, camera->yaw, camera->pitch);
 }
 static inline Matrix MatrixProjOrthographic(float width, float height, float near, float far)
 {
@@ -1453,9 +1453,9 @@ static inline void CameraMoveFree(Camera* camera, Vector3 move)
     // y.x *= move.y; y.y *= move.y; y.z *= move.y;
     // z.x *= move.z; z.y *= move.z; z.z *= move.z;
 
-    camera->position = Vector3Add(camera->position, z);
-    camera->position = Vector3Add(camera->position, y);
-    camera->position = Vector3Add(camera->position, x);
+    camera->pos = Vector3Add(camera->pos, z);
+    camera->pos = Vector3Add(camera->pos, y);
+    camera->pos = Vector3Add(camera->pos, x);
 }
 static inline void CameraMovePlane(Camera* camera, Vector2 move)
 {
@@ -1471,8 +1471,8 @@ static inline void CameraMovePlane(Camera* camera, Vector2 move)
     right.x *= move.x;
     right.z *= move.x;
 
-    camera->position = Vector3Add(camera->position, forward);
-    camera->position = Vector3Add(camera->position, right);
+    camera->pos = Vector3Add(camera->pos, forward);
+    camera->pos = Vector3Add(camera->pos, right);
 }
 
 static inline void CameraInputRotateClamped(Camera* camera, float distance, bool left, bool up, bool down, bool right)
@@ -1696,7 +1696,7 @@ static inline float TriangleBarycentric2(Vector3 v0, Vector3 v1, Vector3 v2, flo
 
 static inline bool PointInsideSphere(Vector3 point, Sphere sphere)
 {
-    Vector3 diff = Vector3Sub(point, sphere.position);
+    Vector3 diff = Vector3Sub(point, sphere.pos);
     float radiusSquared = sphere.radius * sphere.radius;
     float diffLengthSquared = Vector3LengthSqrt(diff);
     return diffLengthSquared <= radiusSquared;
@@ -1790,7 +1790,7 @@ static inline bool RaycastPlane(Vector3 origin, Vector3 dirNorm, Vector3 planePo
 }
 static inline bool RaycastSphere(Vector3 origin, Vector3 dirNorm, Sphere sphere)
 {
-    Vector3 v1 = Vector3Sub(sphere.position, origin);
+    Vector3 v1 = Vector3Sub(sphere.pos, origin);
 
     float v2Length = Vector3Dot(dirNorm, v1);
 
@@ -1811,8 +1811,8 @@ static inline bool RaycastSphere(Vector3 origin, Vector3 dirNorm, Sphere sphere)
     // Vector3 point1 = Vector3Add(origin, Vector3Mul(dirNorm, dist1));
     // Vector3 point2 = Vector3Add(origin, Vector3Mul(dirNorm, dist2));
 
-    // Vector3 normal1 = Vector3Sub(point1, sphere.position);
-    // Vector3 normal2 = Vector3Sub(point2, sphere.position);
+    // Vector3 normal1 = Vector3Sub(point1, sphere.pos);
+    // Vector3 normal2 = Vector3Sub(point2, sphere.pos);
 
     // normal1 = Vector3Normalize(normal1);
     // normal2 = Vector3Normalize(normal2);
@@ -2012,20 +2012,20 @@ static inline bool LinecastTriangle(Vector3 start, Vector3 end, Vector3 v0, Vect
 
 static inline Pose PoseGetLocal(Pose parentWorld, Pose childWorld)
 {
-    childWorld.rotation = Vector3Sub(childWorld.rotation, parentWorld.rotation);
-    childWorld.position = Vector3Sub(childWorld.position, parentWorld.position);
-    childWorld.position = Vector3RotateZ(childWorld.position, -parentWorld.rotation.z);
-    childWorld.position = Vector3RotateY(childWorld.position, -parentWorld.rotation.y);
-    childWorld.position = Vector3RotateX(childWorld.position, -parentWorld.rotation.x);
+    childWorld.rot = Vector3Sub(childWorld.rot, parentWorld.rot);
+    childWorld.pos = Vector3Sub(childWorld.pos, parentWorld.pos);
+    childWorld.pos = Vector3RotateZ(childWorld.pos, -parentWorld.rot.z);
+    childWorld.pos = Vector3RotateY(childWorld.pos, -parentWorld.rot.y);
+    childWorld.pos = Vector3RotateX(childWorld.pos, -parentWorld.rot.x);
     return childWorld;
 }
 static inline Pose PoseGetWorld(Pose parentWorld, Pose childLocal)
 {
-    childLocal.position = Vector3RotateX(childLocal.position, parentWorld.rotation.x);
-    childLocal.position = Vector3RotateY(childLocal.position, parentWorld.rotation.y);
-    childLocal.position = Vector3RotateZ(childLocal.position, parentWorld.rotation.z);
-    childLocal.position = Vector3Add(childLocal.position, parentWorld.position);
-    childLocal.rotation = Vector3Add(childLocal.rotation, parentWorld.rotation);
+    childLocal.pos = Vector3RotateX(childLocal.pos, parentWorld.rot.x);
+    childLocal.pos = Vector3RotateY(childLocal.pos, parentWorld.rot.y);
+    childLocal.pos = Vector3RotateZ(childLocal.pos, parentWorld.rot.z);
+    childLocal.pos = Vector3Add(childLocal.pos, parentWorld.pos);
+    childLocal.rot = Vector3Add(childLocal.rot, parentWorld.rot);
     return childLocal;
 }
 

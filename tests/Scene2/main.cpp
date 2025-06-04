@@ -28,7 +28,7 @@ void DrawFunc(Bitmap* bitmap)
     ModelForest::Draw(bitmap);
     Particle::Draw(bitmap);
     Snow::Draw(bitmap);
-    Vector3 foot = { cam->position.x, 0, cam->position.z };
+    Vector3 foot = { cam->pos.x, 0, cam->pos.z };
     DrawBody2(bitmap, foot, -cam->yaw, cam->pitch);
 }
 
@@ -41,7 +41,7 @@ int main()
     SysWindowShow(window);
     Bitmap* bitmap = BitmapCreate(128, 128);
 
-    cam->position = { +5.88, 1.70, +7.26 };
+    cam->pos = { +5.88, 1.70, +7.26 };
     cam->yaw = -2.48;
     cam->pitch = 0.20;
 
@@ -51,7 +51,7 @@ int main()
         {
             {
                 UpdatePlayerCamera(cam, window);
-                ModelForest::Push(cam->position);
+                ModelForest::Push(cam->pos);
                 Snow::Update();
             }
             {

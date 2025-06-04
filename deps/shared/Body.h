@@ -99,7 +99,7 @@ void DrawBody2(Bitmap* bitmap, Vector3 footPos, float rotBody, float rotHead)
 // int footi = 0;
 // void FootUpdate(Camera* cam)
 // {
-//     Vector3 pos = cam->position; pos.y = 0;
+//     Vector3 pos = cam->pos; pos.y = 0;
 //     CALLONI(10,
 //     {
 //         foots[footi] = pos;
@@ -112,9 +112,9 @@ void DrawBody2(Bitmap* bitmap, Vector3 footPos, float rotBody, float rotHead)
 // void FootDraw(Bitmap* bitmap, Camera* cam)
 // {
 //     // for (int i = 0; i < footmax; i++)
-//     //     BitmapDrawLine(bitmap, cam->position+offset, foots[i]+offset);
-//     Vector3 p0 = cam->position; p0.y = 0.80f;
-//     Vector3 p1 = cam->position; p1.y = 1.70f;
+//     //     BitmapDrawLine(bitmap, cam->pos+offset, foots[i]+offset);
+//     Vector3 p0 = cam->pos; p0.y = 0.80f;
+//     Vector3 p1 = cam->pos; p1.y = 1.70f;
 //     for (int i = 0; i < footmax; i++)
 //         BitmapDrawLine(bitmap, p0, foots[i]);
 //     BitmapDrawLine(bitmap, p0, p1);

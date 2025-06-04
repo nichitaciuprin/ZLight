@@ -18,7 +18,7 @@ public:
 
         Particle item;
 
-        item.pos = camera->position;
+        item.pos = camera->pos;
 
         item.speed1 = Subgen1Range(5.0f, 5.5f);
         item.speed2 = 0;

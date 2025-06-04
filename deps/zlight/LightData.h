@@ -38,12 +38,12 @@ LightData;
 
 static inline void UpdateShadows1(void (*draw)(Bitmap* bitmap), SpotLight* light)
 {
-    Camera cf = {}; cf.position = light->pos; cf.yaw = MATH_PI_DIV_2*0;
-    Camera cr = {}; cr.position = light->pos; cr.yaw = MATH_PI_DIV_2*1;
-    Camera cb = {}; cb.position = light->pos; cb.yaw = MATH_PI_DIV_2*2;
-    Camera cl = {}; cl.position = light->pos; cl.yaw = MATH_PI_DIV_2*3;
-    Camera cu = {}; cu.position = light->pos; cu.pitch = +MATH_PI_DIV_2;
-    Camera cd = {}; cd.position = light->pos; cd.pitch = -MATH_PI_DIV_2;
+    Camera cf = {}; cf.pos = light->pos; cf.yaw = MATH_PI_DIV_2*0;
+    Camera cr = {}; cr.pos = light->pos; cr.yaw = MATH_PI_DIV_2*1;
+    Camera cb = {}; cb.pos = light->pos; cb.yaw = MATH_PI_DIV_2*2;
+    Camera cl = {}; cl.pos = light->pos; cl.yaw = MATH_PI_DIV_2*3;
+    Camera cu = {}; cu.pos = light->pos; cu.pitch = +MATH_PI_DIV_2;
+    Camera cd = {}; cd.pos = light->pos; cd.pitch = -MATH_PI_DIV_2;
 
     light->matf = MatrixView3(&cf);
     light->matr = MatrixView3(&cr);
