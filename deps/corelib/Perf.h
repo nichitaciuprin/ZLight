@@ -25,7 +25,7 @@
             printf("-");                         \
         }                                        \
         long avg = sum / count2;                 \
-        printf(" %i\n", avg);                    \
+        printf(" %li\n", avg);                    \
     }                                            \
 }
 
