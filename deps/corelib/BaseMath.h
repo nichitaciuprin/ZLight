@@ -1131,29 +1131,20 @@ static inline Matrix MatrixView1(Vector3 eye, float yaw, float pitch)
 }
 static inline Matrix MatrixView2(Vector3 eye, Vector3 target, Vector3 up)
 {
-    // it almost works, try fixing it
-    /*
-    Vector3 zAxis = Vector3Sub(target, eye);
-            zAxis = Vector3Normalize(zAxis);
+    // v1
+    // Vector3 zAxis = Vector3Sub(target, eye);
+    //         zAxis = Vector3Normalize(zAxis);
 
-    Vector3 xAxis = Vector3Cross(up, zAxis);
-            xAxis = Vector3Normalize(xAxis);
+    // float roty = atan2(zAxis.x, zAxis.z);
+    // float rotx = -zAxis.y*MATH_PI_DIV_4;
 
-    Vector3 yAxis = Vector3Cross(zAxis, xAxis);
+    // Matrix result = MatrixTranslate(Vector3Neg(eye));
+    // result = MatrixMultiply(result, MatrixRotateY(roty));
+    // result = MatrixMultiply(result, MatrixRotateX(rotx));
+    // return result;
 
-    float x = -Vector3Dot(xAxis, eye);
-    float y = -Vector3Dot(yAxis, eye);
-    float z = -Vector3Dot(zAxis, eye);
 
-    return (Matrix)
-    {
-        xAxis.x, xAxis.y, xAxis.z, 0.0f,
-        yAxis.x, yAxis.y, yAxis.z, 0.0f,
-        zAxis.x, zAxis.y, zAxis.z, 0.0f,
-              x,       y,       z, 1.0f
-    };
-    */
-
+    // v2
     Vector3 zAxis = Vector3Sub(target, eye);
             zAxis = Vector3Normalize(zAxis);
 
@@ -1164,10 +1155,10 @@ static inline Matrix MatrixView2(Vector3 eye, Vector3 target, Vector3 up)
 
     Matrix result =
     {{
-        {xAxis.x, xAxis.y, xAxis.z, 0},
-        {yAxis.x, yAxis.y, yAxis.z, 0},
-        {zAxis.x, zAxis.y, zAxis.z, 0},
-        {  eye.x,   eye.y,   eye.z, 1}
+        { xAxis.x, xAxis.y, xAxis.z, 0 },
+        { yAxis.x, yAxis.y, yAxis.z, 0 },
+        { zAxis.x, zAxis.y, zAxis.z, 0 },
+        {   eye.x,   eye.y,   eye.z, 1 }
     }};
 
     result = MatrixInvert(result);
