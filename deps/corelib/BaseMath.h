@@ -142,7 +142,7 @@ static inline float MathLerp(float a, float b, float t)
 {
     return a + (b - a) * t;
 }
-static inline float MathInverseLerp(float a, float b, float x)
+static inline float MathLerpInverse(float a, float b, float x)
 {
     return (x - a) / (b - a);
 }

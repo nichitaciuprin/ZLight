@@ -17,7 +17,7 @@ static inline bool ClipLineBack(Vector3* v0, Vector3* v1, float offset)
         }
         case 1:
         {
-            float t = MathInverseLerp(v0->z, v1->z, offset);
+            float t = MathLerpInverse(v0->z, v1->z, offset);
 
             v0->x = MathLerp(v0->x, v1->x, t);
             v0->y = MathLerp(v0->y, v1->y, t);
@@ -27,7 +27,7 @@ static inline bool ClipLineBack(Vector3* v0, Vector3* v1, float offset)
         }
         case 2:
         {
-            float t = MathInverseLerp(v0->z, v1->z, offset);
+            float t = MathLerpInverse(v0->z, v1->z, offset);
 
             v1->x = MathLerp(v0->x, v1->x, t);
             v1->y = MathLerp(v0->y, v1->y, t);
@@ -56,7 +56,7 @@ static inline bool ClipLineFront(Vector3* v0, Vector3* v1, float offset)
         }
         case 1:
         {
-            float t = MathInverseLerp(v0->z, v1->z, offset);
+            float t = MathLerpInverse(v0->z, v1->z, offset);
 
             v0->x = MathLerp(v0->x, v1->x, t);
             v0->y = MathLerp(v0->y, v1->y, t);
@@ -66,7 +66,7 @@ static inline bool ClipLineFront(Vector3* v0, Vector3* v1, float offset)
         }
         case 2:
         {
-            float t = MathInverseLerp(v0->z, v1->z, offset);
+            float t = MathLerpInverse(v0->z, v1->z, offset);
 
             v1->x = MathLerp(v0->x, v1->x, t);
             v1->y = MathLerp(v0->y, v1->y, t);
@@ -95,7 +95,7 @@ static inline bool ClipLineLeft(Vector3* v0, Vector3* v1, float offset)
         }
         case 1:
         {
-            float t = MathInverseLerp(v0->x, v1->x, offset);
+            float t = MathLerpInverse(v0->x, v1->x, offset);
 
             v0->x = offset;
             v0->y = MathLerp(v0->y, v1->y, t);
@@ -105,7 +105,7 @@ static inline bool ClipLineLeft(Vector3* v0, Vector3* v1, float offset)
         }
         case 2:
         {
-            float t = MathInverseLerp(v0->x, v1->x, offset);
+            float t = MathLerpInverse(v0->x, v1->x, offset);
 
             v1->x = offset;
             v1->y = MathLerp(v0->y, v1->y, t);
@@ -134,7 +134,7 @@ static inline bool ClipLineRight(Vector3* v0, Vector3* v1, float offset)
         }
         case 1:
         {
-            float t = MathInverseLerp(v0->x, v1->x, offset);
+            float t = MathLerpInverse(v0->x, v1->x, offset);
 
             v0->x = offset;
             v0->y = MathLerp(v0->y, v1->y, t);
@@ -144,7 +144,7 @@ static inline bool ClipLineRight(Vector3* v0, Vector3* v1, float offset)
         }
         case 2:
         {
-            float t = MathInverseLerp(v0->x, v1->x, offset);
+            float t = MathLerpInverse(v0->x, v1->x, offset);
 
             v1->x = offset;
             v1->y = MathLerp(v0->y, v1->y, t);
@@ -173,7 +173,7 @@ static inline bool ClipLineDown(Vector3* v0, Vector3* v1, float offset)
         }
         case 1:
         {
-            float t = MathInverseLerp(v0->y, v1->y, offset);
+            float t = MathLerpInverse(v0->y, v1->y, offset);
 
             v0->x = MathLerp(v0->x, v1->x, t);
             v0->y = offset;
@@ -183,7 +183,7 @@ static inline bool ClipLineDown(Vector3* v0, Vector3* v1, float offset)
         }
         case 2:
         {
-            float t = MathInverseLerp(v0->y, v1->y, offset);
+            float t = MathLerpInverse(v0->y, v1->y, offset);
 
             v1->x = MathLerp(v0->x, v1->x, t);
             v1->y = offset;
@@ -212,7 +212,7 @@ static inline bool ClipLineUp(Vector3* v0, Vector3* v1, float offset)
         }
         case 1:
         {
-            float t = MathInverseLerp(v0->y, v1->y, offset);
+            float t = MathLerpInverse(v0->y, v1->y, offset);
 
             v0->x = MathLerp(v0->x, v1->x, t);
             v0->y = offset;
@@ -222,7 +222,7 @@ static inline bool ClipLineUp(Vector3* v0, Vector3* v1, float offset)
         }
         case 2:
         {
-            float t = MathInverseLerp(v0->y, v1->y, offset);
+            float t = MathLerpInverse(v0->y, v1->y, offset);
 
             v1->x = MathLerp(v0->x, v1->x, t);
             v1->y = offset;
@@ -268,7 +268,7 @@ static inline void ClipPoligonBack(Vector3* input, Vector3* output, int* vertexC
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->z, p1->z, offset);
+                float t = MathLerpInverse(p0->z, p1->z, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -284,7 +284,7 @@ static inline void ClipPoligonBack(Vector3* input, Vector3* output, int* vertexC
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->z, p1->z, offset);
+                float t = MathLerpInverse(p0->z, p1->z, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -339,7 +339,7 @@ static inline void ClipPoligonFront(Vector3* input, Vector3* output, int* vertex
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->z, p1->z, offset);
+                float t = MathLerpInverse(p0->z, p1->z, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -355,7 +355,7 @@ static inline void ClipPoligonFront(Vector3* input, Vector3* output, int* vertex
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->z, p1->z, offset);
+                float t = MathLerpInverse(p0->z, p1->z, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -410,7 +410,7 @@ static inline void ClipPoligonLeft(Vector3* input, Vector3* output, int* vertexC
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->x, p1->x, offset);
+                float t = MathLerpInverse(p0->x, p1->x, offset);
 
                 newPoint.x = offset;
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -426,7 +426,7 @@ static inline void ClipPoligonLeft(Vector3* input, Vector3* output, int* vertexC
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->x, p1->x, offset);
+                float t = MathLerpInverse(p0->x, p1->x, offset);
 
                 newPoint.x = offset;
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -481,7 +481,7 @@ static inline void ClipPoligonRight(Vector3* input, Vector3* output, int* vertex
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->x, p1->x, offset);
+                float t = MathLerpInverse(p0->x, p1->x, offset);
 
                 newPoint.x = offset;
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -497,7 +497,7 @@ static inline void ClipPoligonRight(Vector3* input, Vector3* output, int* vertex
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->x, p1->x, offset);
+                float t = MathLerpInverse(p0->x, p1->x, offset);
 
                 newPoint.x = offset;
                 newPoint.y = MathLerp(p0->y, p1->y, t);
@@ -552,7 +552,7 @@ static inline void ClipPoligonDown(Vector3* input, Vector3* output, int* vertexC
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->y, p1->y, offset);
+                float t = MathLerpInverse(p0->y, p1->y, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = offset;
@@ -568,7 +568,7 @@ static inline void ClipPoligonDown(Vector3* input, Vector3* output, int* vertexC
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->y, p1->y, offset);
+                float t = MathLerpInverse(p0->y, p1->y, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = offset;
@@ -623,7 +623,7 @@ static inline void ClipPoligonUp(Vector3* input, Vector3* output, int* vertexCou
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->y, p1->y, offset);
+                float t = MathLerpInverse(p0->y, p1->y, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = offset;
@@ -639,7 +639,7 @@ static inline void ClipPoligonUp(Vector3* input, Vector3* output, int* vertexCou
             {
                 Vector3 newPoint;
 
-                float t = MathInverseLerp(p0->y, p1->y, offset);
+                float t = MathLerpInverse(p0->y, p1->y, offset);
 
                 newPoint.x = MathLerp(p0->x, p1->x, t);
                 newPoint.y = offset;
