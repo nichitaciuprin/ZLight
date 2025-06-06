@@ -12,6 +12,20 @@
 #define MATH_PI_DIV_2  (float)1.57079632679489661923
 #define MATH_PI_DIV_4  (float)0.78539816339744830961
 
+#define LIGHT_MAX_DIST 15
+#define SHADOW_MAP_SIZE 128
+#define SHADOW_MAP_BIAS 0.001f
+// #define SHADOW_MAP_BIAS 0.002f
+// #define SHADOW_MAP_BIAS 0.005f
+#define SHADOW_MAP_PROJ_MACRO(near, far) ((Matrix)\
+{{\
+    {1, 0, 0, 0},\
+    {0, 1, 0, 0},\
+    {0, 0,  ((far+near)   / (far-near)), 1},\
+    {0, 0, -((near*2*far) / (far-near)), 0}\
+}})
+#define SHADOW_MAP_PROJ SHADOW_MAP_PROJ_MACRO(0.1f, LIGHT_MAX_DIST)
+
 typedef struct Vector2
 {
     float x, y;
@@ -50,47 +64,25 @@ typedef struct Bitmap
     float* buffer;
 }
 Bitmap;
+typedef struct SpotLight
+{
+    Vector3 pos;
+    float lum;
+    float bufl[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matl;
+    float bufr[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matr;
+    float bufd[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matd;
+    float bufu[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matu;
+    float bufb[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matb;
+    float buff[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matf;
+}
+SpotLight;
+typedef struct LightData
+{
+    SpotLight* lights;
+    int lightsc;
+}
+LightData;
 
-static inline void SwapInt(int* l, int* r)
-{
-    int temp = *l;
-    *l = *r;
-    *r = temp;
-}
-static inline void SwapVector3(Vector3* l, Vector3* r)
-{
-    Vector3 temp = *l;
-    *l = *r;
-    *r = temp;
-}
-
-static inline int MathSignInt(int x)
-{
-    return (0 < x) - (x < 0);
-}
-static inline int MathAbsInt(int x)
-{
-    return abs(x);
-}
-static inline int MathMinInt(int x, int y)
-{
-    return fmin(x, y);
-}
-static inline int MathMaxInt(int x, int y)
-{
-    return fmax(x, y);
-}
-static inline int MathClampInt(int x, int min, int max)
-{
-    if (x < min) { return min; };
-    if (x > max) { return max; };
-                   return x;
-}
-
-static inline float MathSign(float x)
-{
-    return (0 < x) - (x < 0);
-}
 static inline float MathAbs(float x)
 {
     return fabsf(x);
@@ -147,13 +139,7 @@ static inline float MathInverseLerp(float a, float b, float x)
 {
     return (x - a) / (b - a);
 }
-static inline float MathPingPong(float x, float div)
-{
-    x = MathAbs(x);
-    int whole = (int)(x / div);
-    float rem = fmodf(x, div);
-    return whole % 2 == 0 ? rem : div - rem;
-}
+
 static inline float MathEaseIn(float x, int pow)
 {
     return MathPow(x, pow);
@@ -179,11 +165,6 @@ static inline float MathMoveTowards(float source, float target, float delta)
         source > target ?
         source : target;
     }
-}
-
-static inline bool MathEqual(float a, float b, float bias)
-{
-    return MathAbs(a - b) < bias;
 }
 
 static inline bool Vector2Equal(Vector2 l, Vector2 r)
@@ -3889,38 +3870,7 @@ static inline void BitmapDestroy(Bitmap* bitmap)
 
 
 
-#define LIGHT_MAX_DIST 15
-#define SHADOW_MAP_SIZE 128
-#define SHADOW_MAP_BIAS 0.001f
-// #define SHADOW_MAP_BIAS 0.002f
-// #define SHADOW_MAP_BIAS 0.005f
-#define SHADOW_MAP_PROJ_MACRO(near, far) ((Matrix)\
-{{\
-    {1, 0, 0, 0},\
-    {0, 1, 0, 0},\
-    {0, 0,  ((far+near)   / (far-near)), 1},\
-    {0, 0, -((near*2*far) / (far-near)), 0}\
-}})
-#define SHADOW_MAP_PROJ SHADOW_MAP_PROJ_MACRO(0.1f, LIGHT_MAX_DIST)
 
-typedef struct SpotLight
-{
-    Vector3 pos;
-    float lum;
-    float bufl[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matl;
-    float bufr[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matr;
-    float bufd[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matd;
-    float bufu[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matu;
-    float bufb[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matb;
-    float buff[SHADOW_MAP_SIZE*SHADOW_MAP_SIZE]; Matrix matf;
-}
-SpotLight;
-typedef struct LightData
-{
-    SpotLight* lights; int lightsc;
-    // TODO dir lights
-}
-LightData;
 
 static inline void UpdateShadows1(void (*draw)(Bitmap* bitmap), SpotLight* light)
 {
