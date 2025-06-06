@@ -1305,6 +1305,19 @@ static inline Vector3 MatrixToEuler(Matrix m)
     return { x, y, z };
 }
 
+static inline Vector3 RotateGlobalXTODO(Vector3 euler, Vector3 rot)
+{
+    // TODO test
+    Matrix mat = MatrixIdentity();
+    mat = MatrixMultiply(mat, MatrixRotateX(euler.x));
+    mat = MatrixMultiply(mat, MatrixRotateY(euler.y));
+    mat = MatrixMultiply(mat, MatrixRotateZ(euler.z));
+    mat = MatrixMultiply(mat, MatrixRotateX(rot.x));
+    mat = MatrixMultiply(mat, MatrixRotateY(rot.y));
+    mat = MatrixMultiply(mat, MatrixRotateZ(rot.z));
+    return MatrixToEuler(mat);
+}
+
 static inline Vector3 WorldToNdc(Vector3 p, Matrix view, Matrix proj)
 {
     Vector4 _p = { p.x, p.y, p.z, 1 };
