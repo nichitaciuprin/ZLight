@@ -1250,7 +1250,7 @@ static inline Matrix MatrixProjPerspective3(float width, float height, float nea
 }})
 #define MATRIX_PROJ_PERSPECTIVE(width, height, near, far) PROJ(width, height, near, far)
 
-static inline Vector3 ToEuler(Vector4 q)
+static inline Vector3 QuaternionToEuler(Vector4 q)
 {
     Vector3 result;
 
@@ -1274,7 +1274,7 @@ static inline Vector3 ToEuler(Vector4 q)
 
     return result;
 }
-static inline Vector4 ToQuaternion(Vector3 e)
+static inline Vector4 EulerToQuaternion(Vector3 e)
 {
     Vector4 result;
 
