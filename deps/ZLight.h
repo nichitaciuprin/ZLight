@@ -1,11 +1,10 @@
 #pragma once
 
-#pragma once
-
-#include <stdbool.h>
-#include <math.h>
-#include <float.h>
 #include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <float.h>
+#include <math.h>
 
 #define MATH_PI        (float)3.14159265358979323846
 #define MATH_PI_MUL_2  (float)6.28318530717958647692
@@ -95,10 +94,6 @@ static inline float MathMax(float x, float y)
 {
     return fmaxf(x, y);
 }
-static inline float MathPow(float x, float pow)
-{
-    return powf(x, pow);
-}
 static inline float MathSqrt(float x)
 {
     return sqrtf(x);
@@ -140,61 +135,25 @@ static inline float MathLerpInverse(float a, float b, float x)
     return (x - a) / (b - a);
 }
 
-static inline float MathEaseIn(float x, int pow)
+static inline Vector2 Vector2Sub(Vector2 l, Vector2 r)
 {
-    return MathPow(x, pow);
+    l.x -= r.x;
+    l.y -= r.y;
+    return l;
 }
-static inline float MathEaseOut(float x, int pow)
+static inline Vector2 Vector2Mul(Vector2 l, float r)
 {
-    float x2 = 1 - x;
-    return 1 - MathPow(x2, pow);
+    l.x *= r;
+    l.y *= r;
+    return l;
 }
-static inline float MathMoveTowards(float source, float target, float delta)
+static inline Vector2 Vector2Div(Vector2 l, float r)
 {
-    if (source < target)
-    {
-        source += delta;
-        return
-        source < target ?
-        source : target;
-    }
-    else
-    {
-        source -= delta;
-        return
-        source > target ?
-        source : target;
-    }
+    l.x /= r;
+    l.y /= r;
+    return l;
 }
 
-static inline bool Vector2Equal(Vector2 l, Vector2 r)
-{
-    return
-    l.x == r.x &&
-    l.y == r.y;
-}
-static inline bool Vector3Equal(Vector3 l, Vector3 r)
-{
-    return
-    l.x == r.x &&
-    l.y == r.y &&
-    l.z == r.z;
-}
-static inline bool Vector4Equal(Vector4 l, Vector4 r)
-{
-    return
-    l.x == r.x &&
-    l.y == r.y &&
-    l.z == r.z &&
-    l.w == r.w;
-}
-
-static inline Vector2 Vector2Neg(Vector2 r)
-{
-    r.x = -r.x;
-    r.y = -r.y;
-    return r;
-}
 static inline Vector3 Vector3Neg(Vector3 r)
 {
     r.x = -r.x;
@@ -202,41 +161,11 @@ static inline Vector3 Vector3Neg(Vector3 r)
     r.z = -r.z;
     return r;
 }
-static inline Vector4 Vector4Neg(Vector4 r)
-{
-    r.x = -r.x;
-    r.y = -r.y;
-    r.z = -r.z;
-    r.w = -r.w;
-    return r;
-}
-
-static inline Vector2 Vector2Add(Vector2 l, Vector2 r)
-{
-    l.x += r.x;
-    l.y += r.y;
-    return l;
-}
 static inline Vector3 Vector3Add(Vector3 l, Vector3 r)
 {
     l.x += r.x;
     l.y += r.y;
     l.z += r.z;
-    return l;
-}
-static inline Vector4 Vector4Add(Vector4 l, Vector4 r)
-{
-    l.x += r.x;
-    l.y += r.y;
-    l.z += r.z;
-    l.w += r.w;
-    return l;
-}
-
-static inline Vector2 Vector2Sub(Vector2 l, Vector2 r)
-{
-    l.x -= r.x;
-    l.y -= r.y;
     return l;
 }
 static inline Vector3 Vector3Sub(Vector3 l, Vector3 r)
@@ -246,41 +175,11 @@ static inline Vector3 Vector3Sub(Vector3 l, Vector3 r)
     l.z -= r.z;
     return l;
 }
-static inline Vector4 Vector4Sub(Vector4 l, Vector4 r)
-{
-    l.x -= r.x;
-    l.y -= r.y;
-    l.z -= r.z;
-    l.w -= r.w;
-    return l;
-}
-
-static inline Vector2 Vector2Mul(Vector2 l, float r)
-{
-    l.x *= r;
-    l.y *= r;
-    return l;
-}
 static inline Vector3 Vector3Mul(Vector3 l, float r)
 {
     l.x *= r;
     l.y *= r;
     l.z *= r;
-    return l;
-}
-static inline Vector4 Vector4Mul(Vector4 l, float r)
-{
-    l.x *= r;
-    l.y *= r;
-    l.z *= r;
-    l.w *= r;
-    return l;
-}
-
-static inline Vector2 Vector2Div(Vector2 l, float r)
-{
-    l.x /= r;
-    l.y /= r;
     return l;
 }
 static inline Vector3 Vector3Div(Vector3 l, float r)
@@ -290,21 +189,7 @@ static inline Vector3 Vector3Div(Vector3 l, float r)
     l.z /= r;
     return l;
 }
-static inline Vector4 Vector4Div(Vector4 l, float r)
-{
-    l.x /= r;
-    l.y /= r;
-    l.z /= r;
-    l.w /= r;
-    return l;
-}
 
-static inline float Vector2Dot(Vector2 l, Vector2 r)
-{
-    float x = l.x * r.x;
-    float y = l.y * r.y;
-    return x + y;
-}
 static inline float Vector3Dot(Vector3 l, Vector3 r)
 {
     float x = l.x * r.x;
@@ -333,28 +218,6 @@ static inline Vector3 Vector3Cross(Vector3 a, Vector3 b)
     return (Vector3){ x, y, z };
 }
 
-static inline Vector2 Vector2Abs(Vector2 v)
-{
-    v.x = MathAbs(v.x);
-    v.y = MathAbs(v.y);
-    return v;
-}
-static inline Vector3 Vector3Abs(Vector3 v)
-{
-    v.x = MathAbs(v.x);
-    v.y = MathAbs(v.y);
-    v.z = MathAbs(v.z);
-    return v;
-}
-static inline Vector4 Vector4Abs(Vector4 v)
-{
-    v.x = MathAbs(v.x);
-    v.y = MathAbs(v.y);
-    v.z = MathAbs(v.z);
-    v.w = MathAbs(v.w);
-    return v;
-}
-
 static inline float Vector2Length(Vector2 v)
 {
     float x = v.x * v.x;
@@ -368,44 +231,7 @@ static inline float Vector3Length(Vector3 v)
     float z = v.z * v.z;
     return MathSqrt(x + y + z);
 }
-static inline float Vector4Length(Vector4 v)
-{
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    float z = v.z * v.z;
-    float w = v.w * v.w;
-    return MathSqrt(x + y + z + w);
-}
 
-static inline float Vector2LengthSqrt(Vector2 v)
-{
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    return x + y;
-}
-static inline float Vector3LengthSqrt(Vector3 v)
-{
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    float z = v.z * v.z;
-    return x + y + z;
-}
-static inline float Vector4LengthSqrt(Vector4 v)
-{
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    float z = v.z * v.z;
-    float w = v.w * v.w;
-    return x + y + z + w;
-}
-
-static inline float Vector2Distance(Vector2 a, Vector2 b)
-{
-    Vector2 v = Vector2Sub(a, b);
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    return MathSqrt(x + y);
-}
 static inline float Vector3Distance(Vector3 a, Vector3 b)
 {
     Vector3 v = Vector3Sub(a, b);
@@ -414,54 +240,7 @@ static inline float Vector3Distance(Vector3 a, Vector3 b)
     float z = v.z * v.z;
     return MathSqrt(x + y + z);
 }
-static inline float Vector4Distance(Vector4 a, Vector4 b)
-{
-    Vector4 v = Vector4Sub(a, b);
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    float z = v.z * v.z;
-    float w = v.w * v.w;
-    return MathSqrt(x + y + z + w);
-}
 
-static inline float Vector2DistanceSqrt(Vector2 a, Vector2 b)
-{
-    Vector2 v = Vector2Sub(a, b);
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    return x + y;
-}
-static inline float Vector3DistanceSqrt(Vector3 a, Vector3 b)
-{
-    Vector3 v = Vector3Sub(a, b);
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    float z = v.z * v.z;
-    return x + y + z;
-}
-static inline float Vector4DistanceSqrt(Vector4 a, Vector4 b)
-{
-    Vector4 v = Vector4Sub(a, b);
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    float z = v.z * v.z;
-    float w = v.w * v.w;
-    return x + y + z + w;
-}
-
-static inline Vector3 Vector2Lerp(Vector3 a, Vector3 b, float t)
-{
-    a.x = MathLerp(a.x, b.x, t);
-    a.y = MathLerp(a.y, b.y, t);
-    return a;
-}
-static inline Vector3 Vector3Lerp(Vector3 a, Vector3 b, float t)
-{
-    a.x = MathLerp(a.x, b.x, t);
-    a.y = MathLerp(a.y, b.y, t);
-    a.z = MathLerp(a.z, b.z, t);
-    return a;
-}
 static inline Vector4 Vector4Lerp(Vector4 a, Vector4 b, float t)
 {
     a.x = MathLerp(a.x, b.x, t);
@@ -469,74 +248,6 @@ static inline Vector4 Vector4Lerp(Vector4 a, Vector4 b, float t)
     a.z = MathLerp(a.z, b.z, t);
     a.w = MathLerp(a.w, b.w, t);
     return a;
-}
-
-static inline Vector2 Vector2Zero()
-{
-    return (Vector2){};
-}
-static inline Vector3 Vector3Zero()
-{
-    return (Vector3){};
-}
-static inline Vector4 Vector4Zero()
-{
-    return (Vector4){};
-}
-
-static inline Vector2 Vector2One()
-{
-    return (Vector2){ 1, 1 };
-}
-static inline Vector3 Vector3One()
-{
-    return (Vector3){ 1, 1, 1 };
-}
-static inline Vector4 Vector4One()
-{
-    return (Vector4){ 1, 1, 1, 1 };
-}
-
-static inline Vector2 Vector2Left()
-{
-    return (Vector2){ -1, 0 };
-}
-static inline Vector2 Vector2Right()
-{
-    return (Vector2){ +1, 0 };
-}
-static inline Vector2 Vector2Down()
-{
-    return (Vector2){ 0, -1 };
-}
-static inline Vector2 Vector2Up()
-{
-    return (Vector2){ 0, +1 };
-}
-
-static inline Vector3 Vector3Left()
-{
-    return (Vector3){ -1, 0, 0 };
-}
-static inline Vector3 Vector3Right()
-{
-    return (Vector3){ 1, 0, 0 };
-}
-static inline Vector3 Vector3Up()
-{
-    return (Vector3){ 0, 1, 0 };
-}
-static inline Vector3 Vector3Down()
-{
-    return (Vector3){ 0, 1, 0 };
-}
-static inline Vector3 Vector3Backward()
-{
-    return (Vector3){ 0, 0, -1 };
-}
-static inline Vector3 Vector3Forward()
-{
-    return (Vector3){ 0, 0, 1 };
 }
 
 static inline Vector2 Vector2Normalize(Vector2 v)
@@ -552,91 +263,6 @@ static inline Vector3 Vector3Normalize(Vector3 v)
     float length = Vector3Length(v);
     if (length == 0) return v;
     return Vector3Div(v, length);
-}
-static inline Vector4 Vector4Normalize(Vector4 v)
-{
-    // TODO remove "if (length == 0)" ?
-    float length = Vector4Length(v);
-    if (length == 0) return v;
-    return Vector4Div(v, length);
-}
-
-static inline Vector2 Vector2Dir(Vector2 start, Vector2 end)
-{
-    Vector2 diff = Vector2Sub(end, start);
-    Vector2 dir = Vector2Normalize(diff);
-    return dir;
-}
-static inline Vector3 Vector3Dir(Vector3 start, Vector3 end)
-{
-    Vector3 diff = Vector3Sub(end, start);
-    Vector3 dir = Vector3Normalize(diff);
-    return dir;
-}
-static inline Vector4 Vector4Dir(Vector4 start, Vector4 end)
-{
-    Vector4 diff = Vector4Sub(end, start);
-    Vector4 dir = Vector4Normalize(diff);
-    return dir;
-}
-
-static inline Vector2 Vector2ClampLength(Vector2 v, float min, float max)
-{
-    float length = Vector2Length(v);
-    if (length <= 0)  return Vector2Zero();
-    if (length > max) return Vector2Mul(v, max / length);
-    if (length < min) return Vector2Mul(v, min / length);
-    return v;
-}
-static inline Vector3 Vector3ClampLength(Vector3 v, float min, float max)
-{
-    float length = Vector3Length(v);
-    if (length <= 0)  return Vector3Zero();
-    if (length > max) return Vector3Mul(v, max / length);
-    if (length < min) return Vector3Mul(v, min / length);
-    return v;
-}
-static inline Vector4 Vector4ClampLength(Vector4 v, float min, float max)
-{
-    float length = Vector4Length(v);
-    if (length <= 0)  return Vector4Zero();
-    if (length > max) return Vector4Mul(v, max / length);
-    if (length < min) return Vector4Mul(v, min / length);
-    return v;
-}
-
-static inline float Vector2Rotation(Vector2 v)
-{
-    // atan2( 0.0f,  1.0f ) = 0.0000
-    // atan2( 1.0f,  1.0f ) = 0.7853
-    // atan2( 1.0f,  0.0f ) = 1.5708
-    // atan2( 1.0f, -1.0f ) = 2.3561
-    // atan2( 0.0f, -1.0f ) = 3.1415
-    return atan2(v.x, v.y);
-}
-
-static inline Vector2 Vector2FromRad(float rad)
-{
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
-    return (Vector2){ sin, cos };
-}
-static inline Vector3 Vector3FromRad(float rad0, float rad1)
-{
-    float sin0 = MathSin(rad0);
-    float sin1 = MathSin(rad1);
-    float cos0 = MathCos(rad0);
-    float cos1 = MathCos(rad1);
-    return (Vector3){ sin0*cos1, sin0*sin1, cos0 };
-}
-
-static inline Vector2 Vector2Rotate(Vector2 v, float rad)
-{
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
-    float x = v.x * ( cos) + v.y * ( sin);
-    float y = v.x * (-sin) + v.y * ( cos);
-    return (Vector2){ x, y };
 }
 
 static inline Vector3 Vector3RotateX(Vector3 v, float rad)
@@ -666,151 +292,7 @@ static inline Vector3 Vector3RotateZ(Vector3 v, float rad)
     float z = v.z;
     return (Vector3){ x, y, z };
 }
-static inline Vector3 Vector3Rotate(Vector3 v, Vector3 rot)
-{
-    v = Vector3RotateX(v, rot.x);
-    v = Vector3RotateY(v, rot.y);
-    v = Vector3RotateZ(v, rot.z);
-    return v;
-}
 
-static inline Vector2 Vector2MoveTowards1(Vector2 source, Vector2 target, float delta)
-{
-    if (Vector2Equal(source, target)) return source;
-    Vector2 diff = Vector2Sub(target, source);
-    float dist = Vector2Length(diff);
-    if (dist <= delta) return target;
-    diff = Vector2Normalize(diff);
-    Vector2 moveVec = Vector2Mul(diff, delta);
-    return Vector2Add(source, moveVec);
-}
-static inline Vector2 Vector2MoveTowards2(Vector2 source, Vector2 target, float delta, float limit)
-{
-    if (Vector2Equal(source, target)) return source;
-    Vector2 diff = Vector2Sub(target, source);
-    float dist = Vector2Length(diff);
-    if (dist <= limit) return source;
-    if (dist <= delta) return target;
-    diff = Vector2Normalize(diff);
-    Vector2 moveVec = Vector2Mul(diff, delta);
-    return Vector2Add(source, moveVec);
-}
-static inline Vector3 Vector3MoveTowards1(Vector3 source, Vector3 target, float delta)
-{
-    if (Vector3Equal(source, target)) return source;
-    Vector3 diff = Vector3Sub(target, source);
-    float dist = Vector3Length(diff);
-    if (dist <= delta) return target;
-    diff = Vector3Normalize(diff);
-    Vector3 moveVec = Vector3Mul(diff, delta);
-    return Vector3Add(source, moveVec);
-}
-static inline Vector3 Vector3MoveTowards2(Vector3 source, Vector3 target, float acc, float deltaTime)
-{
-    // like easeOut function
-
-    float dist = Vector3Distance(source, target);
-    float speed = MathSqrt(2 * dist * acc);
-    return Vector3MoveTowards1(source, target, speed * deltaTime);
-}
-static inline Vector3 Vector3MoveTowards3(Vector3 source, Vector3 target, Vector3* velocity, float acc, float maxSpeed, float deltaTime)
-{
-    // like easeInOut function
-    // but source will decelerate only on rotations
-
-    Vector3 diff = Vector3Sub(target, source);
-    Vector3 dir = Vector3Normalize(diff);
-
-    Vector3 targetVelocity = Vector3Mul(dir, maxSpeed);
-
-    Vector3 oldVelocity = *velocity;
-    Vector3 newVelocity = Vector3MoveTowards1(oldVelocity, targetVelocity, acc * deltaTime);
-
-    Vector3 offset;
-
-    offset = Vector3Add(oldVelocity, newVelocity);
-    offset = Vector3Div(offset, 2);
-    offset = Vector3Mul(offset, deltaTime);
-
-    Vector3 result = Vector3Add(source, offset);
-
-    *velocity = newVelocity;
-
-    return result;
-}
-static inline Vector3 Vector3MoveTowards4(Vector3 source, Vector3 target, Vector3* velocity, float acc, float deltaTime)
-{
-    // like easeInOut function
-
-    Vector3 diff = Vector3Sub(target, source);
-    Vector3 dir = Vector3Normalize(diff);
-
-    float dist = Vector3Length(diff);
-    float maxSpeed = MathSqrt(2 * dist * acc);
-
-    Vector3 targetVelocity = Vector3Mul(dir, maxSpeed);
-
-    Vector3 oldVelocity = *velocity;
-    Vector3 newVelocity = Vector3MoveTowards1(oldVelocity, targetVelocity, acc * deltaTime);
-
-    Vector3 offset;
-
-    offset = Vector3Add(oldVelocity, newVelocity);
-    offset = Vector3Div(offset, 2);
-    offset = Vector3Mul(offset, deltaTime);
-
-    Vector3 result = Vector3Add(source, offset);
-
-    *velocity = newVelocity;
-
-    return result;
-}
-static inline Vector3 Vector3MoveTowards5(Vector3 source, Vector3 target, Vector3* velocity, float acc, float deltaTime)
-{
-    // like easeInOut function
-    // but removes jittering near target
-
-    Vector3 diff = Vector3Sub(target, source);
-    Vector3 dir = Vector3Normalize(diff);
-
-    float dist = Vector3Length(diff);
-
-    float maxSpeed = MathSqrt(2 * dist * acc);
-    Vector3 targetVelocity = Vector3Mul(dir, maxSpeed);
-
-    Vector3 oldVelocity = *velocity;
-    Vector3 newVelocity;
-
-    if (dist < 0.1f)
-        newVelocity = targetVelocity;
-    else
-        newVelocity = Vector3MoveTowards1(oldVelocity, targetVelocity, acc * deltaTime);
-
-    Vector3 offset;
-
-    offset = Vector3Add(oldVelocity, newVelocity);
-    offset = Vector3Div(offset, 2);
-    offset = Vector3Mul(offset, deltaTime);
-
-    Vector3 result = Vector3Add(source, offset);
-
-    *velocity = newVelocity;
-
-    return result;
-}
-
-static inline Vector2 MatrixMultiply2L(Vector2 v, Matrix m)
-{
-    Vector4 col0 = { m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0] };
-    Vector4 col1 = { m.m[0][1], m.m[1][1], m.m[2][1], m.m[3][1] };
-
-    Vector4 row = { v.x, v.y, 1, 1 };
-
-    v.x = Vector4Dot(row, col0);
-    v.y = Vector4Dot(row, col1);
-
-    return v;
-}
 static inline Vector3 MatrixMultiply3L(Vector3 v, Matrix m)
 {
     Vector4 col0 = { m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0] };
@@ -841,48 +323,6 @@ static inline Vector4 MatrixMultiply4L(Vector4 v, Matrix m)
 
     return v;
 }
-static inline Vector2 MatrixMultiply2R(Matrix m, Vector2 v)
-{
-    Vector4 col0 = { m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3] };
-    Vector4 col1 = { m.m[1][0], m.m[1][1], m.m[1][2], m.m[1][3] };
-
-    Vector4 row = { v.x, v.y, 1, 1 };
-
-    v.x = Vector4Dot(row, col0);
-    v.y = Vector4Dot(row, col1);
-
-    return v;
-}
-static inline Vector3 MatrixMultiply3R(Matrix m, Vector3 v)
-{
-    Vector4 col0 = { m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3] };
-    Vector4 col1 = { m.m[1][0], m.m[1][1], m.m[1][2], m.m[1][3] };
-    Vector4 col2 = { m.m[2][0], m.m[2][1], m.m[2][2], m.m[2][3] };
-
-    Vector4 row = { v.x, v.y, v.z, 1 };
-
-    v.x = Vector4Dot(row, col0);
-    v.y = Vector4Dot(row, col1);
-    v.z = Vector4Dot(row, col2);
-
-    return v;
-}
-static inline Vector4 MatrixMultiply4R(Matrix m, Vector4 v)
-{
-    Vector4 col0 = { m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3] };
-    Vector4 col1 = { m.m[1][0], m.m[1][1], m.m[1][2], m.m[1][3] };
-    Vector4 col2 = { m.m[2][0], m.m[2][1], m.m[2][2], m.m[2][3] };
-    Vector4 col3 = { m.m[3][0], m.m[3][1], m.m[3][2], m.m[3][3] };
-
-    Vector4 row = v;
-
-    v.x = Vector4Dot(row, col0);
-    v.y = Vector4Dot(row, col1);
-    v.z = Vector4Dot(row, col2);
-    v.w = Vector4Dot(row, col3);
-
-    return v;
-}
 
 static inline Matrix MatrixIdentity()
 {
@@ -892,16 +332,6 @@ static inline Matrix MatrixIdentity()
         {0,1,0,0},
         {0,0,1,0},
         {0,0,0,1},
-    }};
-}
-static inline Matrix MatrixTranspose(Matrix m)
-{
-    return (Matrix)
-    {{
-        {m.m[0][0],m.m[1][0],m.m[2][0],m.m[3][0]},
-        {m.m[0][1],m.m[1][1],m.m[2][1],m.m[3][1]},
-        {m.m[0][2],m.m[1][2],m.m[2][2],m.m[3][2]},
-        {m.m[0][3],m.m[1][3],m.m[2][3],m.m[3][3]}
     }};
 }
 static inline Matrix MatrixInvert(Matrix m)
@@ -1073,10 +503,12 @@ static inline Matrix MatrixWorld(Vector3 position, Vector3 rotation, Vector3 sca
 }
 static inline Matrix MatrixWorldDir(Vector3 position, Vector3 direction)
 {
+    Vector3 up = { 0, 1, 0 };
+
     Vector3 zAxis = direction;
             zAxis = Vector3Normalize(zAxis); // maybe remove
 
-    Vector3 xAxis = Vector3Cross(Vector3Up(), zAxis);
+    Vector3 xAxis = Vector3Cross(up, zAxis);
             xAxis = Vector3Normalize(xAxis);
 
     Vector3 yAxis = Vector3Cross(zAxis, xAxis);
@@ -1636,242 +1068,6 @@ static inline float TriangleBarycentric2(Vector3 v0, Vector3 v1, Vector3 v2, flo
     return result;
 }
 
-static inline bool RaycastPlane(Vector3 origin, Vector3 dirNorm, Vector3 planePosition, Vector3 planeNormal)
-{
-    // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection.html
-
-    float epsilon = 1e-6;
-    float dot1 = Vector3Dot(dirNorm, planeNormal);
-    if (MathAbs(dot1) < epsilon) return false;
-    Vector3 diff1 = Vector3Sub(planePosition, origin);
-    float dot2 = Vector3Dot(diff1, planeNormal);
-    float rayLenght = dot2 / dot1;
-    return rayLenght >= 0;
-    // *rayLength = dot2 / dot1;
-    // return *rayLength >= 0;
-}
-static inline bool RaycastSphere(Vector3 origin, Vector3 dirNorm, Vector3 pos, float radius)
-{
-    Vector3 v1 = Vector3Sub(pos, origin);
-
-    float v2Length = Vector3Dot(dirNorm, v1);
-
-    Vector3 v2 = Vector3Mul(dirNorm, v2Length);
-    Vector3 v3 = Vector3Sub(v2, v1);
-
-    float v3LengthSquared = Vector3LengthSqrt(v3);
-    float radiusSquared = radius * radius;
-
-    if (v3LengthSquared > radiusSquared)
-        return false;
-
-    // float offset = MathSqrt(radiusSquared - v3LengthSquared);
-
-    // float dist1 = v2Length - offset;
-    // float dist2 = v2Length + offset;
-
-    // Vector3 point1 = Vector3Add(origin, Vector3Mul(dirNorm, dist1));
-    // Vector3 point2 = Vector3Add(origin, Vector3Mul(dirNorm, dist2));
-
-    // Vector3 normal1 = Vector3Sub(point1, sphere.pos);
-    // Vector3 normal2 = Vector3Sub(point2, sphere.pos);
-
-    // normal1 = Vector3Normalize(normal1);
-    // normal2 = Vector3Normalize(normal2);
-
-    return true;
-}
-static inline bool RaycastTriangleV1(Vector3 origin, Vector3 dirNorm, Vector3 v0, Vector3 v1, Vector3 v2)
-{
-    Vector3 ab = Vector3Sub(v1, v0);
-    Vector3 ac = Vector3Sub(v2, v0);
-
-    Vector3 dirNormNeg = Vector3Neg(dirNorm);
-
-    Vector3 n = Vector3Cross(ab, ac);
-
-    float d = Vector3Dot(dirNormNeg, n);
-    if (d <= 0.0f) return false;
-
-    Vector3 ap = Vector3Sub(origin, v0);
-    float t = Vector3Dot(ap, n);
-    if (t < 0.0f) return false;
-
-    Vector3 e = Vector3Cross(dirNormNeg, ap);
-    float v = Vector3Dot(ac, e);
-    if (v < 0.0f || v > d) return false;
-
-    float w = -Vector3Dot(ab, e);
-    if (w < 0.0f || v + w > d) return false;
-
-    // // Segment/ray intersects triangle. Perform delayed division and
-    // // compute the last barycentric coordinate component
-    // float ood = 1.0f / d;
-    // t *= ood;
-    // v *= ood;
-    // w *= ood;
-    // float u = 1.0f - v - w;
-
-    // RaycastHit hit = new RaycastHit();
-
-    // hit.point = ray.origin + t * ray.direction;
-    // hit.distance = t;
-    // hit.barycentricCoordinate = new Vector3(u, v, w);
-    // hit.normal = Vector3.Normalize(n);
-
-    return true;
-}
-static inline bool RaycastTriangleV2(Vector3 origin, Vector3 dirNorm, Vector3 v0, Vector3 v1, Vector3 v2)
-{
-    // ignores face direction
-    // refactor
-
-    v0 = Vector3Sub(v0, origin);
-    v1 = Vector3Sub(v1, origin);
-    v2 = Vector3Sub(v2, origin);
-
-    Vector2 vec1 = { dirNorm.x, dirNorm.z };
-    // vec1 = Vector2Normalize(vec1);
-    float yaw = Vector2Rotation(vec1);
-    v0 = Vector3RotateY(v0, yaw);
-    v1 = Vector3RotateY(v1, yaw);
-    v2 = Vector3RotateY(v2, yaw);
-
-    dirNorm = Vector3RotateY(dirNorm, yaw);
-
-    Vector2 vec2 = { dirNorm.y, dirNorm.z };
-    // vec2 = Vector2Normalize(vec2);
-    float pitch = Vector2Rotation(vec2);
-    v0 = Vector3RotateX(v0, -pitch);
-    v1 = Vector3RotateX(v1, -pitch);
-    v2 = Vector3RotateX(v2, -pitch);
-
-    bool isInside = TriangleIsInside2(v0, v1, v2, 0, 0);
-    if (!isInside)
-        return false;
-
-    float z = TriangleBarycentric2(v0, v1, v2, 0, 0);
-    if (z < 0)
-        return false;
-
-    return true;
-}
-static inline bool RaycastTriangleV3(Vector3 origin, Vector3 dirNorm, Vector3 v0, Vector3 v1, Vector3 v2)
-{
-    // https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution.html
-    // https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-stage.html
-
-    float epsilon = 1e-6;
-
-    Vector3 d0 = Vector3Sub(v1, v0);
-    Vector3 d1 = Vector3Sub(v2, v1);
-	Vector3 d2 = Vector3Sub(v0, v2);
-
-    // No need to normalize
-    Vector3 normal = Vector3Cross(d0, d1);
-
-    float dot1 = Vector3Dot(normal, dirNorm);
-
-    // planes are almost parallel
-    if (MathAbs(dot1) < epsilon)
-        return false;
-
-    float dot2 = Vector3Dot(normal, origin);
-    float dot3 = Vector3Dot(normal, v0);
-
-    float rayLenght = (dot3 - dot2) / dot1;
-
-    // triangle is behind ray
-    if (rayLenght < 0)
-        return false;
-
-    // p = origin + dirNorm * rayLenght;
-    Vector3 p = Vector3Add(origin, Vector3Mul(dirNorm, rayLenght));
-
-    Vector3 p0 = Vector3Sub(p, v0);
-    Vector3 n0 = Vector3Cross(d0, p0);
-    if (Vector3Dot(normal, n0) < 0) return false;
-
-    Vector3 p1 = Vector3Sub(p, v1);
-    Vector3 n1 = Vector3Cross(d1, p1);
-    if (Vector3Dot(normal, n1) < 0) return false;
-
-    Vector3 p2 = Vector3Sub(p, v2);
-    Vector3 n2 = Vector3Cross(d2, p2);
-    if (Vector3Dot(normal, n2) < 0) return false;
-
-    return true;
-}
-static inline bool RaycastTriangle(Vector3 origin, Vector3 dirNorm, Vector3 v0, Vector3 v1, Vector3 v2)
-{
-    // return RaycastTriangleV1(origin, dirNorm, v0, v1, v2);
-    // return RaycastTriangleV2(origin, dirNorm, v0, v1, v2);
-    return RaycastTriangleV3(origin, dirNorm, v0, v1, v2);
-}
-static inline bool LinecastTriangle(Vector3 start, Vector3 end, Vector3 v0, Vector3 v1, Vector3 v2)
-{
-    Vector3 origin = start;
-
-    Vector3 dir = Vector3Sub(end, start);
-    Vector3 dirNorm = Vector3Normalize(dir);
-
-    float epsilon = 1e-6;
-
-    Vector3 d0 = Vector3Sub(v1, v0);
-    Vector3 d1 = Vector3Sub(v2, v1);
-	Vector3 d2 = Vector3Sub(v0, v2);
-
-    // No need to normalize
-    Vector3 normal = Vector3Cross(d0, d1);
-
-    float dot1 = Vector3Dot(normal, dirNorm);
-
-    // planes are almost parallel
-    if (MathAbs(dot1) < epsilon)
-        return false;
-
-    float dot2 = Vector3Dot(normal, origin);
-    float dot3 = Vector3Dot(normal, v0);
-
-    float rayLenght = (dot3 - dot2) / dot1;
-
-    // triangle is behind ray
-    if (rayLenght < 0)
-        return false;
-
-    // p = origin + dirNorm * rayLenght;
-    Vector3 p = Vector3Add(origin, Vector3Mul(dirNorm, rayLenght));
-
-    Vector3 p0 = Vector3Sub(p, v0);
-    Vector3 n0 = Vector3Cross(d0, p0);
-    if (Vector3Dot(normal, n0) < 0) return false;
-
-    Vector3 p1 = Vector3Sub(p, v1);
-    Vector3 n1 = Vector3Cross(d1, p1);
-    if (Vector3Dot(normal, n1) < 0) return false;
-
-    Vector3 p2 = Vector3Sub(p, v2);
-    Vector3 n2 = Vector3Cross(d2, p2);
-    if (Vector3Dot(normal, n2) < 0) return false;
-
-    // handles rounding error
-    // rayLenght += 1e-3f;
-    rayLenght += epsilon;
-
-    // line is not hit
-    // float lineLength = MathSqrt(dir.x*dir.x + dir.y*dir.y + dir.z*dir.z);
-    // if (rayLenght - lineLength > 0.1f)
-    //     return false;
-
-    // line is not hit
-    float rayLengthSqr = rayLenght * rayLenght;
-    float lineLengthSqr = dir.x*dir.x + dir.y*dir.y + dir.z*dir.z;
-    if (rayLengthSqr - lineLengthSqr > 0)
-        return false;
-
-    return true;
-}
-
 static inline bool Hiden(Vector3 pos, float radius, Matrix view, float far)
 {
     Vector3 pos2 = MatrixMultiply3L(pos, view);
@@ -1883,7 +1079,6 @@ static inline bool Hiden(Vector3 pos, float radius, Matrix view, float far)
     if (Vector3RotateX(pos2, -MATH_PI_DIV_4).y > +radius) return true;
     return false;
 }
-
 
 static inline bool ClipLineBack(Vector3* v0, Vector3* v1, float offset)
 {
@@ -3491,7 +2686,38 @@ static inline uint32_t ColorSetLightValueFloat(uint32_t color, float t)
 }
 
 
+#define BitmapSizeOf(width, height) (sizeof(Bitmap) + sizeof(float)*width*height)
+static inline Bitmap* BitmapInit(int width, int height, void* mem)
+{
+    assert(width > 0);
+    assert(height > 0);
 
+    Bitmap* bitmap = (Bitmap*)((char*)mem);
+    float* buffer  = (float*)((char*)mem + sizeof(Bitmap));
+
+    float near = 0.1f;
+    float far = 100.f;
+
+    bitmap->width = width;
+    bitmap->height = height;
+    bitmap->view = MatrixIdentity();
+    bitmap->proj = MatrixProjPerspective1(width, height, near, far);
+    bitmap->neari = 1.0f / near;
+    bitmap->far = far;
+    bitmap->buffer = buffer;
+
+    return bitmap;
+}
+static inline Bitmap* BitmapCreate(int width, int height)
+{
+    int size = BitmapSizeOf(width, height);
+    void* mem = malloc(size);
+    return BitmapInit(width, height, mem);
+}
+static inline void BitmapDestroy(Bitmap* bitmap)
+{
+    free((void*)bitmap);
+}
 
 static inline void BitmapReset(Bitmap* bitmap)
 {
@@ -3834,42 +3060,6 @@ static inline void BitmapApplyDepthAdjustedInvert(Bitmap* bitmap)
     }
 }
 
-// INIT
-#define BitmapSizeOf(width, height) (sizeof(Bitmap) + sizeof(float)*width*height)
-static inline Bitmap* BitmapInit(int width, int height, void* mem)
-{
-    assert(width > 0);
-    assert(height > 0);
-
-    Bitmap* bitmap = (Bitmap*)((char*)mem);
-    float* buffer  = (float*)((char*)mem + sizeof(Bitmap));
-
-    float near = 0.1f;
-    float far = 100.f;
-
-    bitmap->width = width;
-    bitmap->height = height;
-    bitmap->view = MatrixIdentity();
-    bitmap->proj = MatrixProjPerspective1(width, height, near, far);
-    bitmap->neari = 1.0f / near;
-    bitmap->far = far;
-    bitmap->buffer = buffer;
-
-    return bitmap;
-}
-static inline Bitmap* BitmapCreate(int width, int height)
-{
-    int size = BitmapSizeOf(width, height);
-    void* mem = malloc(size);
-    return BitmapInit(width, height, mem);
-}
-static inline void BitmapDestroy(Bitmap* bitmap)
-{
-    free((void*)bitmap);
-}
-
-
-
 
 
 static inline void UpdateShadows1(void (*draw)(Bitmap* bitmap), SpotLight* light)
@@ -4153,8 +3343,6 @@ static inline void LightData1ApplyLightNoShadow(Bitmap* bitmap)
 
 
 
-
-
 const Vector3 ModelCubeVerteces[8] =
 {
     { -0.5f, -0.5f, -0.5f },
@@ -4359,6 +3547,8 @@ const int ModelWall1IndecesTriangles[60][3] =
     {30, 5, 31},
     {31, 5, 6},
 };
+
+
 
 static inline void BitmapExtDrawQuad(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3)
 {
