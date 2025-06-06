@@ -1296,6 +1296,14 @@ static inline Vector4 ToQuaternion(Vector3 e)
 
     return result;
 }
+static inline Vector3 MatrixToEuler(Matrix m)
+{
+    // TODO test
+    float x = asinf(m.m[2][1]);
+    float y = atan2f(m.m[0][2], m.m[0][0]);
+    float z = 0; // TODO
+    return { x, y, z };
+}
 
 static inline Vector3 WorldToNdc(Vector3 p, Matrix view, Matrix proj)
 {
