@@ -43,12 +43,6 @@ typedef struct Bound
     Vector3 p1;
 }
 Bound;
-typedef struct Sphere
-{
-    Vector3 pos;
-    float radius;
-}
-Sphere;
 typedef struct Pose
 {
     Vector3 pos;
@@ -1698,10 +1692,10 @@ static inline float TriangleBarycentric2(Vector3 v0, Vector3 v1, Vector3 v2, flo
     return result;
 }
 
-static inline bool PointInsideSphere(Vector3 point, Sphere sphere)
+static inline bool PointInsideSphere(Vector3 point, Vector3 pos, float radius)
 {
-    Vector3 diff = Vector3Sub(point, sphere.pos);
-    float radiusSquared = sphere.radius * sphere.radius;
+    Vector3 diff = Vector3Sub(point, pos);
+    float radiusSquared = radius * radius;
     float diffLengthSquared = Vector3LengthSqrt(diff);
     return diffLengthSquared <= radiusSquared;
 }
@@ -1721,7 +1715,7 @@ static inline bool PointInsideBound(Vector3 point, Bound bound)
     return false;
 }
 
-static inline bool PushOutSphere(Vector3* point, Sphere sphere)
+static inline bool PushOutSphere(Vector3* point, Vector3 pos, float radius)
 {
     // TODO
     return false;
@@ -1792,9 +1786,9 @@ static inline bool RaycastPlane(Vector3 origin, Vector3 dirNorm, Vector3 planePo
     // *rayLength = dot2 / dot1;
     // return *rayLength >= 0;
 }
-static inline bool RaycastSphere(Vector3 origin, Vector3 dirNorm, Sphere sphere)
+static inline bool RaycastSphere(Vector3 origin, Vector3 dirNorm, Vector3 pos, float radius)
 {
-    Vector3 v1 = Vector3Sub(sphere.pos, origin);
+    Vector3 v1 = Vector3Sub(pos, origin);
 
     float v2Length = Vector3Dot(dirNorm, v1);
 
@@ -1802,7 +1796,7 @@ static inline bool RaycastSphere(Vector3 origin, Vector3 dirNorm, Sphere sphere)
     Vector3 v3 = Vector3Sub(v2, v1);
 
     float v3LengthSquared = Vector3LengthSqrt(v3);
-    float radiusSquared = sphere.radius * sphere.radius;
+    float radiusSquared = radius * radius;
 
     if (v3LengthSquared > radiusSquared)
         return false;
