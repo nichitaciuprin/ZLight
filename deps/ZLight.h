@@ -817,13 +817,6 @@ static inline Vector3 ScreenSpaceToNdc(Vector3 v, int maxx, int maxy)
     return v;
 }
 
-static inline float TriangleArea(Vector3 v0, Vector3 v1, Vector3 v2)
-{
-    float r1 = v0.x * (v1.y - v2.y);
-    float r2 = v1.x * (v2.y - v0.y);
-    float r3 = v2.x * (v0.y - v1.y);
-    return MathAbs((r1 + r2 + r3) / 2.0f);
-}
 static inline bool TriangleIsClockwise(Vector3 v0, Vector3 v1, Vector3 v2)
 {
     Vector3 d0 = Vector3Sub(v1, v0);
@@ -831,7 +824,6 @@ static inline bool TriangleIsClockwise(Vector3 v0, Vector3 v1, Vector3 v2)
     float crossZ = d0.x*d1.y - d0.y*d1.x;
     return crossZ < 0;
 }
-
 static inline bool TriangleIsInside(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
 {
     // by half-plane
@@ -859,29 +851,7 @@ static inline bool TriangleIsInside(Vector3 v0, Vector3 v1, Vector3 v2, float x,
 
     return !(neg && pos);
 }
-
-static inline float TriangleBarycentric1(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
-{
-    Vector3 p = { x, y, 0 };
-
-    float area  = TriangleArea(v0, v1, v2);
-    float area1 = TriangleArea( p, v1, v2);
-    float area2 = TriangleArea(v0,  p, v2);
-    float area3 = TriangleArea(v0, v1,  p);
-
-    float t1 = area1 / area;
-    float t2 = area2 / area;
-    float t3 = area3 / area;
-
-    float result =
-        t1 * v0.z +
-        t2 * v1.z +
-        t3 * v2.z;
-
-    // TODO fix nan
-    return __isnanf(result) ? 1 : result;
-}
-static inline float TriangleBarycentric2(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
+static inline float TriangleBarycentric(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
 {
     // TODO check
 
@@ -2687,7 +2657,7 @@ static inline void BitmapDrawTriangleSp(Bitmap* bitmap, Vector3 v0, Vector3 v1, 
     for (int x = minx; x <= maxx; x++)
     {
         if (!TriangleIsInside(v0, v1, v2, x, y)) continue;
-        float z = TriangleBarycentric2(v0, v1, v2, x, y);
+        float z = TriangleBarycentric(v0, v1, v2, x, y);
         BitmapSetPixelZ(bitmap, x, y, z);
     }
 }
