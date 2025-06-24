@@ -55,6 +55,12 @@ int main()
     {
         REC_1
         {
+            // animation
+            // float time = SysHelperGetTime();
+            // time /= 1000;
+            // time = MathSin(time);
+            // light.y = 1 + time / 4;
+
             UpdatePlayerCamera(&cam, window, 4*DELTA_TIME);
 
             BitmapReset(bitmap);
