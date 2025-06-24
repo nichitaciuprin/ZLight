@@ -143,7 +143,7 @@ const Vector3 ModelSphereVerteces[32] =
     {  0.216500, -0.250000, -0.375000  },
     {  0.125000, -0.433000, -0.216500  }
 };
-const int ModelWall1IndecesTriangles[60][3] =
+const int ModelSphereIndecesTriangles[60][3] =
 {
     {0, 7, 1},
     {1, 7, 8},

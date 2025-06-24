@@ -89,9 +89,9 @@ static inline void BitmapExtDrawSphere(Bitmap* bitmap, Vector3 pos)
 
     for (size_t i = 0; i < 60; i++)
     {
-        int i0 = ModelWall1IndecesTriangles[i][0];
-        int i1 = ModelWall1IndecesTriangles[i][1];
-        int i2 = ModelWall1IndecesTriangles[i][2];
+        int i0 = ModelSphereIndecesTriangles[i][0];
+        int i1 = ModelSphereIndecesTriangles[i][1];
+        int i2 = ModelSphereIndecesTriangles[i][2];
         Vector3 v0 = ModelSphereVerteces[i0];
         Vector3 v1 = ModelSphereVerteces[i1];
         Vector3 v2 = ModelSphereVerteces[i2];
@@ -280,9 +280,9 @@ static inline void BitmapExtDrawSphereWire(Bitmap* bitmap, Vector3 pos)
 {
     for (size_t i = 0; i < 60; i++)
     {
-        int i0 = ModelWall1IndecesTriangles[i][0];
-        int i1 = ModelWall1IndecesTriangles[i][1];
-        int i2 = ModelWall1IndecesTriangles[i][2];
+        int i0 = ModelSphereIndecesTriangles[i][0];
+        int i1 = ModelSphereIndecesTriangles[i][1];
+        int i2 = ModelSphereIndecesTriangles[i][2];
         Vector3 v0 = ModelSphereVerteces[i0];
         Vector3 v1 = ModelSphereVerteces[i1];
         Vector3 v2 = ModelSphereVerteces[i2];

@@ -3484,7 +3484,7 @@ const Vector3 ModelSphereVerteces[32] =
     {  0.216500, -0.250000, -0.375000  },
     {  0.125000, -0.433000, -0.216500  }
 };
-const int ModelWall1IndecesTriangles[60][3] =
+const int ModelSphereIndecesTriangles[60][3] =
 {
     {0, 7, 1},
     {1, 7, 8},
@@ -3636,9 +3636,9 @@ static inline void BitmapExtDrawSphere(Bitmap* bitmap, Vector3 pos)
 
     for (size_t i = 0; i < 60; i++)
     {
-        int i0 = ModelWall1IndecesTriangles[i][0];
-        int i1 = ModelWall1IndecesTriangles[i][1];
-        int i2 = ModelWall1IndecesTriangles[i][2];
+        int i0 = ModelSphereIndecesTriangles[i][0];
+        int i1 = ModelSphereIndecesTriangles[i][1];
+        int i2 = ModelSphereIndecesTriangles[i][2];
         Vector3 v0 = ModelSphereVerteces[i0];
         Vector3 v1 = ModelSphereVerteces[i1];
         Vector3 v2 = ModelSphereVerteces[i2];
