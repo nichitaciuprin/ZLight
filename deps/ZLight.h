@@ -832,50 +832,7 @@ static inline bool TriangleIsClockwise(Vector3 v0, Vector3 v1, Vector3 v2)
     return crossZ < 0;
 }
 
-static inline bool TriangleIsInside1(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
-{
-    // by area approximation
-
-    Vector3 v = { x, y, 0 };
-
-    float A0 = TriangleArea(v0, v1, v2);
-    float A1 = TriangleArea(v,  v1, v2);
-    float A2 = TriangleArea(v0, v,  v2);
-    float A3 = TriangleArea(v0, v1, v );
-
-    // handles rounding error
-    A0 += 1e-3f;
-
-    return A0 > (A1 + A2 + A3);
-}
-static inline bool TriangleIsInside2(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
-{
-    // by cross
-
-    Vector2 p0 = { x, y };
-
-    Vector2 p1 = { v0.x, v0.y };
-    Vector2 p2 = { v1.x, v1.y };
-    Vector2 p3 = { v2.x, v2.y };
-
-    Vector2 vec0 = Vector2Sub(p2, p1);
-    Vector2 vec1 = Vector2Sub(p0, p1);
-    if (Vector2Cross(vec0, vec1) < 0)
-        return false;
-
-    Vector2 vec2 = Vector2Sub(p3, p2);
-    Vector2 vec3 = Vector2Sub(p0, p2);
-    if (Vector2Cross(vec2, vec3) < 0)
-        return false;
-
-    Vector2 vec4 = Vector2Sub(p1, p3);
-    Vector2 vec5 = Vector2Sub(p0, p3);
-    if (Vector2Cross(vec4, vec5) < 0)
-        return false;
-
-    return true;
-}
-static inline bool TriangleIsInside3(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
+static inline bool TriangleIsInside(Vector3 v0, Vector3 v1, Vector3 v2, float x, float y)
 {
     // by half-plane
 
@@ -2729,7 +2686,7 @@ static inline void BitmapDrawTriangleSp(Bitmap* bitmap, Vector3 v0, Vector3 v1, 
     for (int y = miny; y <= maxy; y++)
     for (int x = minx; x <= maxx; x++)
     {
-        if (!TriangleIsInside3(v0, v1, v2, x, y)) continue;
+        if (!TriangleIsInside(v0, v1, v2, x, y)) continue;
         float z = TriangleBarycentric2(v0, v1, v2, x, y);
         BitmapSetPixelZ(bitmap, x, y, z);
     }
