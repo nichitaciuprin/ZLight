@@ -458,20 +458,6 @@ static inline Matrix MatrixProjPerspective3(float width, float height, float nea
     }};
 }
 
-// TODO maybe remove
-#define PROJ_X(w, h, n, f) ((n*2) / (n*2/w*h))
-#define PROJ_Y(w, h, n, f) ((n*2) / (n*2))
-#define PROJ_Z(w, h, n, f) ((f+n) / (f-n))
-#define PROJ_O(w, h, n, f) ((n*2*f) / (f-n))
-#define PROJ(w, h, n, f) ((Matrix)\
-{{\
-    {PROJ_X(w,h,n,f),  0,  0,  0},\
-    {0,  PROJ_Y(w,h,n,f),  0,  0},\
-    {0,  0,  PROJ_Z(w,h,n,f),  1},\
-    {0,  0, -PROJ_O(w,h,n,f),  0}\
-}})
-#define MATRIX_PROJ_PERSPECTIVE(width, height, near, far) PROJ(width, height, near, far)
-
 static inline Vector3 WorldToNdc(Vector3 p, Matrix view, Matrix proj)
 {
     Vector4 _p = { p.x, p.y, p.z, 1 };
