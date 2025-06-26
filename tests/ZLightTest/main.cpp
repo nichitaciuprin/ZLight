@@ -48,7 +48,7 @@ static inline float Vector2Length(Vector2 v)
 {
     float x = v.x * v.x;
     float y = v.y * v.y;
-    return MathSqrt(x + y);
+    return sqrtf(x + y);
 }
 static inline Vector2 Vector2Normalize(Vector2 v)
 {

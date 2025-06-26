@@ -75,30 +75,6 @@ typedef struct LightData
 }
 LightData;
 
-static inline float MathAbs(float x)
-{
-    return fabsf(x);
-}
-static inline float MathMin(float x, float y)
-{
-    return fminf(x, y);
-}
-static inline float MathMax(float x, float y)
-{
-    return fmaxf(x, y);
-}
-static inline float MathSqrt(float x)
-{
-    return sqrtf(x);
-}
-static inline float MathSin(float x)
-{
-    return sinf(x);
-}
-static inline float MathCos(float x)
-{
-    return cosf(x);
-}
 static inline float MathClamp(float x, float min, float max)
 {
     if (x < min) { return min; };
@@ -179,7 +155,7 @@ static inline float Vector3Length(Vector3 v)
     float x = v.x * v.x;
     float y = v.y * v.y;
     float z = v.z * v.z;
-    return MathSqrt(x + y + z);
+    return sqrtf(x + y + z);
 }
 
 static inline float Vector3Distance(Vector3 a, Vector3 b)
@@ -188,7 +164,7 @@ static inline float Vector3Distance(Vector3 a, Vector3 b)
     float x = v.x * v.x;
     float y = v.y * v.y;
     float z = v.z * v.z;
-    return MathSqrt(x + y + z);
+    return sqrtf(x + y + z);
 }
 
 static inline Vector4 Vector4Lerp(Vector4 a, Vector4 b, float t)
@@ -210,8 +186,8 @@ static inline Vector3 Vector3Normalize(Vector3 v)
 
 static inline Vector3 Vector3RotateX(Vector3 v, float rad)
 {
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
+    float sin = sinf(rad);
+    float cos = cosf(rad);
     float x = v.x;
     float y = v.y * ( cos) + v.z * ( sin);
     float z = v.y * (-sin) + v.z * ( cos);
@@ -219,8 +195,8 @@ static inline Vector3 Vector3RotateX(Vector3 v, float rad)
 }
 static inline Vector3 Vector3RotateY(Vector3 v, float rad)
 {
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
+    float sin = sinf(rad);
+    float cos = cosf(rad);
     float x = v.x * ( cos) + v.z * (-sin);
     float y = v.y;
     float z = v.x * ( sin) + v.z * ( cos);
@@ -228,8 +204,8 @@ static inline Vector3 Vector3RotateY(Vector3 v, float rad)
 }
 static inline Vector3 Vector3RotateZ(Vector3 v, float rad)
 {
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
+    float sin = sinf(rad);
+    float cos = cosf(rad);
     float x = v.x * ( cos) + v.y * ( sin);
     float y = v.x * (-sin) + v.y * ( cos);
     float z = v.z;
@@ -2459,10 +2435,10 @@ static inline void BitmapDrawTriangleSp(Bitmap* bitmap, Vector3 v0, Vector3 v1, 
     // v2.x = (float)(int)v2.x;
     // v2.y = (float)(int)v2.y;
 
-    int maxx = MathMax(v0.x, MathMax(v1.x, v2.x));
-    int minx = MathMin(v0.x, MathMin(v1.x, v2.x));
-    int maxy = MathMax(v0.y, MathMax(v1.y, v2.y));
-    int miny = MathMin(v0.y, MathMin(v1.y, v2.y));
+    int maxx = fmaxf(v0.x, fmaxf(v1.x, v2.x));
+    int minx = fminf(v0.x, fminf(v1.x, v2.x));
+    int maxy = fmaxf(v0.y, fmaxf(v1.y, v2.y));
+    int miny = fminf(v0.y, fminf(v1.y, v2.y));
 
     for (int y = miny; y <= maxy; y++)
     for (int x = minx; x <= maxx; x++)
@@ -2773,9 +2749,9 @@ static inline float CalcLightSpot(Vector3 surPos, SpotLight* light)
     {
         Vector3 v = Vector3Sub(surPos, light->pos);
 
-        float absx = MathAbs(v.x);
-        float absy = MathAbs(v.y);
-        float absz = MathAbs(v.z);
+        float absx = fabsf(v.x);
+        float absy = fabsf(v.y);
+        float absz = fabsf(v.z);
 
         float max; char axis;
 
@@ -3094,12 +3070,12 @@ static inline void BitmapExtDrawBound(Bitmap* bitmap, Vector3* vs, int vsc)
     for (int i = 0; i < vsc; i++)
     {
         Vector3 v = vs[i];
-        maxx = MathMax(maxx, v.x);
-        maxy = MathMax(maxy, v.y);
-        maxz = MathMax(maxz, v.z);
-        minx = MathMin(minx, v.x);
-        miny = MathMin(miny, v.y);
-        minz = MathMin(minz, v.z);
+        maxx = fmaxf(maxx, v.x);
+        maxy = fmaxf(maxy, v.y);
+        maxz = fmaxf(maxz, v.z);
+        minx = fminf(minx, v.x);
+        miny = fminf(miny, v.y);
+        minz = fminf(minz, v.z);
     }
 
     Vector3 p0 = { minx, miny, minz };
