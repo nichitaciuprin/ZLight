@@ -1244,6 +1244,21 @@ static inline Matrix MatrixProjPerspective3(float width, float height, float nea
 }})
 #define MATRIX_PROJ_PERSPECTIVE(width, height, near, far) PROJ(width, height, near, far)
 
+static inline void MatrixToPyr(Matrix m, float* pitch, float* yaw, float* roll)
+{
+    // TODO check
+    *yaw = asinf(m.m[0][2]);
+    *pitch = atan2f(m.m[0][1], m.m[0][0]);
+    *roll = atan2f(m.m[2][0], m.m[2][1]);
+}
+static inline void MatrixToEuler(Matrix m, float* x, float* y, float* z)
+{
+    // TODO check
+    *x = asinf(m.m[2][1]);
+    *y = atan2f(m.m[0][2], m.m[0][0]);
+    *z = 0; // TODO
+}
+
 static inline Vector3 QuaternionToEuler(Vector4 q)
 {
     Vector3 result;
@@ -1289,27 +1304,6 @@ static inline Vector4 EulerToQuaternion(Vector3 e)
     result.w = x0*y0*z0 + x1*y1*z1;
 
     return result;
-}
-static inline Vector3 MatrixToEuler(Matrix m)
-{
-    // TODO test
-    float x = asinf(m.m[2][1]);
-    float y = atan2f(m.m[0][2], m.m[0][0]);
-    float z = 0; // TODO
-    return { x, y, z };
-}
-
-static inline Vector3 RotateGlobalXTODO(Vector3 euler, Vector3 rot)
-{
-    // TODO test
-    Matrix mat = MatrixIdentity();
-    mat = MatrixMultiply(mat, MatrixRotateX(euler.x));
-    mat = MatrixMultiply(mat, MatrixRotateY(euler.y));
-    mat = MatrixMultiply(mat, MatrixRotateZ(euler.z));
-    mat = MatrixMultiply(mat, MatrixRotateX(rot.x));
-    mat = MatrixMultiply(mat, MatrixRotateY(rot.y));
-    mat = MatrixMultiply(mat, MatrixRotateZ(rot.z));
-    return MatrixToEuler(mat);
 }
 
 static inline Vector3 WorldToNdc(Vector3 p, Matrix view, Matrix proj)

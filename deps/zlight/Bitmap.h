@@ -33,6 +33,60 @@ static inline void BitmapSetProj(Bitmap* bitmap, float near, float far)
     bitmap->proj = MatrixProjPerspective1(bitmap->width, bitmap->height, near, far);
 }
 
+static inline void BitmapSetViewByEuler(Bitmap* bitmap, Vector3 eye, float x, float y, float z)
+{
+    eye = Vector3Neg(eye);
+    Matrix result = MatrixTranslate(eye);
+    result = MatrixMultiply(result, MatrixRotateY(-y));
+    result = MatrixMultiply(result, MatrixRotateX(-x));
+    result = MatrixMultiply(result, MatrixRotateZ(-z));
+    bitmap->view = result;
+}
+static inline void BitmapSetViewByPyr(Bitmap* bitmap, Vector3 eye, float pitch, float yaw, float roll)
+{
+    eye = Vector3Neg(eye);
+    Matrix result = MatrixTranslate(eye);
+    result = MatrixMultiply(result, MatrixRotateY(yaw));
+    result = MatrixMultiply(result, MatrixRotateX(-pitch));
+    result = MatrixMultiply(result, MatrixRotateZ(-roll));
+    bitmap->view = result;
+}
+static inline void BitmapSetViewByTarget(Bitmap* bitmap, Vector3 eye, Vector3 target, Vector3 up)
+{
+    // v1
+    Vector3 zAxis = Vector3Sub(target, eye);
+            zAxis = Vector3Normalize(zAxis);
+
+    Vector3 xAxis = Vector3Cross(up, zAxis);
+            xAxis = Vector3Normalize(xAxis);
+
+    Vector3 yAxis = Vector3Cross(zAxis, xAxis);
+
+    Matrix result =
+    {{
+        { xAxis.x, xAxis.y, xAxis.z, 0 },
+        { yAxis.x, yAxis.y, yAxis.z, 0 },
+        { zAxis.x, zAxis.y, zAxis.z, 0 },
+        {   eye.x,   eye.y,   eye.z, 1 }
+    }};
+
+    result = MatrixInvert(result);
+
+    bitmap->view = result;
+
+    // v2
+    // Vector3 zAxis = Vector3Sub(target, eye);
+    //         zAxis = Vector3Normalize(zAxis);
+
+    // float roty = atan2(zAxis.x, zAxis.z);
+    // float rotx = -zAxis.y*MATH_PI_DIV_4;
+
+    // Matrix result = MatrixTranslate(Vector3Neg(eye));
+    // result = MatrixMultiply(result, MatrixRotateY(roty));
+    // result = MatrixMultiply(result, MatrixRotateX(rotx));
+    // return result;
+}
+
 static inline void BitmapSetPixel(Bitmap* bitmap, int x, int y, Color color)
 {
     assert(0 <= x && x < bitmap->width);

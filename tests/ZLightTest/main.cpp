@@ -169,14 +169,20 @@ int main()
             // light.y = 1 + time / 4;
 
             UpdatePlayerCamera(&cam, window, 4*DELTA_TIME);
-
             BitmapReset(bitmap);
-            BitmapSetView(bitmap, &cam);
+
+            BitmapSetViewByPyr(bitmap, cam.pos, cam.pitch, cam.yaw, 0);
+            // BitmapSetViewByEuler(bitmap, cam.pos, cam.pitch, -cam.yaw, 0);
+            // BitmapSetViewByTarget(bitmap, cam.pos, {}, { 0, 1, 0 });
+
             DrawFunc(bitmap);
             LightData1RemoveLight();
             LightData1AddLight(light, 1);
             LightData1UpdateShadows(DrawFunc);
             LightData1ApplyLight(bitmap);
+
+            // DrawFunc(bitmap);
+            // BitmapApplyDepthAdjusted(bitmap);
 
             SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
         }

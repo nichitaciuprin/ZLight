@@ -525,58 +525,6 @@ static inline Matrix MatrixWorldDir(Vector3 position, Vector3 direction)
         {      x,       y,       z, 1.0f}
     }};
 }
-static inline Matrix MatrixView1(Vector3 eye, float yaw, float pitch)
-{
-    eye = Vector3Neg(eye);
-    Matrix mat1 = MatrixTranslate(eye);
-    Matrix mat2 = MatrixRotateY(yaw);
-    Matrix mat3 = MatrixRotateX(-pitch);
-    Matrix result;
-    result = mat1;
-    result = MatrixMultiply(result, mat2);
-    result = MatrixMultiply(result, mat3);
-    return result;
-}
-static inline Matrix MatrixView2(Vector3 eye, Vector3 target, Vector3 up)
-{
-    // v1
-    // Vector3 zAxis = Vector3Sub(target, eye);
-    //         zAxis = Vector3Normalize(zAxis);
-
-    // float roty = atan2(zAxis.x, zAxis.z);
-    // float rotx = -zAxis.y*MATH_PI_DIV_4;
-
-    // Matrix result = MatrixTranslate(Vector3Neg(eye));
-    // result = MatrixMultiply(result, MatrixRotateY(roty));
-    // result = MatrixMultiply(result, MatrixRotateX(rotx));
-    // return result;
-
-
-    // v2
-    Vector3 zAxis = Vector3Sub(target, eye);
-            zAxis = Vector3Normalize(zAxis);
-
-    Vector3 xAxis = Vector3Cross(up, zAxis);
-            xAxis = Vector3Normalize(xAxis);
-
-    Vector3 yAxis = Vector3Cross(zAxis, xAxis);
-
-    Matrix result =
-    {{
-        { xAxis.x, xAxis.y, xAxis.z, 0 },
-        { yAxis.x, yAxis.y, yAxis.z, 0 },
-        { zAxis.x, zAxis.y, zAxis.z, 0 },
-        {   eye.x,   eye.y,   eye.z, 1 }
-    }};
-
-    result = MatrixInvert(result);
-
-    return result;
-}
-static inline Matrix MatrixView3(Camera* camera)
-{
-    return MatrixView1(camera->pos, camera->yaw, camera->pitch);
-}
 static inline Matrix MatrixProjOrthographic(float width, float height, float near, float far)
 {
     float w = 2.0f / width;
@@ -657,74 +605,6 @@ static inline Matrix MatrixProjPerspective3(float width, float height, float nea
     {0,  0, -PROJ_O(w,h,n,f),  0}\
 }})
 #define MATRIX_PROJ_PERSPECTIVE(width, height, near, far) PROJ(width, height, near, far)
-
-static inline Vector3 QuaternionToEuler(Vector4 q)
-{
-    Vector3 result;
-
-    float x = q.x;
-    float y = q.y;
-    float z = q.z;
-    float w = q.w;
-
-    float x0 = 2.0f*(w*x + y*z);
-    float x1 = 1.0f - 2.0f*(x*x + y*y);
-    result.x = atan2f(x0, x1);
-
-    float y0 = 2.0f*(w*y - z*x);
-    y0 = y0 >  1.0f ?  1.0f : y0;
-    y0 = y0 < -1.0f ? -1.0f : y0;
-    result.y = asinf(y0);
-
-    float z0 = 2.0f*(w*z + x*y);
-    float z1 = 1.0f - 2.0f*(y*y + z*z);
-    result.z = atan2f(z0, z1);
-
-    return result;
-}
-static inline Vector4 EulerToQuaternion(Vector3 e)
-{
-    Vector4 result;
-
-    float pitch = e.x /= 2;
-    float yaw   = e.y /= 2;
-    float roll  = e.z /= 2;
-
-    float x0 = cosf(pitch);
-    float x1 = sinf(pitch);
-    float y0 = cosf(yaw);
-    float y1 = sinf(yaw);
-    float z0 = cosf(roll);
-    float z1 = sinf(roll);
-
-    result.x = x1*y0*z0 - x0*y1*z1;
-    result.y = x0*y1*z0 + x1*y0*z1;
-    result.z = x0*y0*z1 - x1*y1*z0;
-    result.w = x0*y0*z0 + x1*y1*z1;
-
-    return result;
-}
-static inline Vector3 MatrixToEuler(Matrix m)
-{
-    // TODO test
-    float x = asinf(m.m[2][1]);
-    float y = atan2f(m.m[0][2], m.m[0][0]);
-    float z = 0; // TODO
-    return { x, y, z };
-}
-
-static inline Vector3 RotateGlobalXTODO(Vector3 euler, Vector3 rot)
-{
-    // TODO test
-    Matrix mat = MatrixIdentity();
-    mat = MatrixMultiply(mat, MatrixRotateX(euler.x));
-    mat = MatrixMultiply(mat, MatrixRotateY(euler.y));
-    mat = MatrixMultiply(mat, MatrixRotateZ(euler.z));
-    mat = MatrixMultiply(mat, MatrixRotateX(rot.x));
-    mat = MatrixMultiply(mat, MatrixRotateY(rot.y));
-    mat = MatrixMultiply(mat, MatrixRotateZ(rot.z));
-    return MatrixToEuler(mat);
-}
 
 static inline Vector3 WorldToNdc(Vector3 p, Matrix view, Matrix proj)
 {
@@ -2544,10 +2424,61 @@ static inline void BitmapReset(Bitmap* bitmap)
     for (int i = 0; i < size; i++)
         bitmap->buffer[i] = 1;
 }
-static inline void BitmapSetView(Bitmap* bitmap, Camera* camera)
+
+static inline void BitmapSetViewByEuler(Bitmap* bitmap, Vector3 eye, float x, float y, float z)
 {
-    bitmap->view = MatrixView3(camera);
+    eye = Vector3Neg(eye);
+    Matrix result = MatrixTranslate(eye);
+    result = MatrixMultiply(result, MatrixRotateY(-y));
+    result = MatrixMultiply(result, MatrixRotateX(-x));
+    result = MatrixMultiply(result, MatrixRotateZ(-z));
+    bitmap->view = result;
 }
+static inline void BitmapSetViewByPyr(Bitmap* bitmap, Vector3 eye, float pitch, float yaw, float roll)
+{
+    eye = Vector3Neg(eye);
+    Matrix result = MatrixTranslate(eye);
+    result = MatrixMultiply(result, MatrixRotateY(yaw));
+    result = MatrixMultiply(result, MatrixRotateX(-pitch));
+    result = MatrixMultiply(result, MatrixRotateZ(-roll));
+    bitmap->view = result;
+}
+static inline void BitmapSetViewByTarget(Bitmap* bitmap, Vector3 eye, Vector3 target, Vector3 up)
+{
+    // v1
+    Vector3 zAxis = Vector3Sub(target, eye);
+            zAxis = Vector3Normalize(zAxis);
+
+    Vector3 xAxis = Vector3Cross(up, zAxis);
+            xAxis = Vector3Normalize(xAxis);
+
+    Vector3 yAxis = Vector3Cross(zAxis, xAxis);
+
+    Matrix result =
+    {{
+        { xAxis.x, xAxis.y, xAxis.z, 0 },
+        { yAxis.x, yAxis.y, yAxis.z, 0 },
+        { zAxis.x, zAxis.y, zAxis.z, 0 },
+        {   eye.x,   eye.y,   eye.z, 1 }
+    }};
+
+    result = MatrixInvert(result);
+
+    bitmap->view = result;
+
+    // v2
+    // Vector3 zAxis = Vector3Sub(target, eye);
+    //         zAxis = Vector3Normalize(zAxis);
+
+    // float roty = atan2(zAxis.x, zAxis.z);
+    // float rotx = -zAxis.y*MATH_PI_DIV_4;
+
+    // Matrix result = MatrixTranslate(Vector3Neg(eye));
+    // result = MatrixMultiply(result, MatrixRotateY(roty));
+    // result = MatrixMultiply(result, MatrixRotateX(rotx));
+    // return result;
+}
+
 static inline void BitmapSetProj(Bitmap* bitmap, float near, float far)
 {
     bitmap->neari = 1.0f / near;
@@ -2883,19 +2814,15 @@ static inline void BitmapApplyDepthAdjustedInvert(Bitmap* bitmap)
 
 static inline void UpdateShadows1(void (*draw)(Bitmap* bitmap), SpotLight* light)
 {
-    Camera cf = {}; cf.pos = light->pos; cf.yaw = MATH_PI_DIV_2*0;
-    Camera cr = {}; cr.pos = light->pos; cr.yaw = MATH_PI_DIV_2*1;
-    Camera cb = {}; cb.pos = light->pos; cb.yaw = MATH_PI_DIV_2*2;
-    Camera cl = {}; cl.pos = light->pos; cl.yaw = MATH_PI_DIV_2*3;
-    Camera cu = {}; cu.pos = light->pos; cu.pitch = +MATH_PI_DIV_2;
-    Camera cd = {}; cd.pos = light->pos; cd.pitch = -MATH_PI_DIV_2;
+    Vector3 eye = Vector3Neg(light->pos);
+    Matrix mat = MatrixTranslate(eye);
 
-    light->matf = MatrixView3(&cf);
-    light->matr = MatrixView3(&cr);
-    light->matb = MatrixView3(&cb);
-    light->matl = MatrixView3(&cl);
-    light->matu = MatrixView3(&cu);
-    light->matd = MatrixView3(&cd);
+    light->matf = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*0));
+    light->matr = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*1));
+    light->matb = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*2));
+    light->matl = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*3));
+    light->matu = MatrixMultiply(mat, MatrixRotateX(-MATH_PI_DIV_2));
+    light->matd = MatrixMultiply(mat, MatrixRotateX(+MATH_PI_DIV_2));
 
     Bitmap bf; bf.buffer = light->buff; bf.view = light->matf; bf.proj = SHADOW_MAP_PROJ; bf.width = SHADOW_MAP_SIZE; bf.height = SHADOW_MAP_SIZE; bf.far = LIGHT_MAX_DIST;
     Bitmap br; br.buffer = light->bufr; br.view = light->matr; br.proj = SHADOW_MAP_PROJ; br.width = SHADOW_MAP_SIZE; br.height = SHADOW_MAP_SIZE; br.far = LIGHT_MAX_DIST;
