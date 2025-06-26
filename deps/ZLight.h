@@ -45,13 +45,6 @@ typedef struct Matrix
     float m[4][4];
 }
 Matrix;
-typedef struct Camera
-{
-    Vector3 pos;
-    float yaw;
-    float pitch;
-}
-Camera;
 typedef struct Bitmap
 {
     int width;
@@ -106,20 +99,6 @@ static inline float MathCos(float x)
 {
     return cosf(x);
 }
-static inline float MathMod(float x, float div)
-{
-    return fmodf(x, div);
-}
-static inline float MathToDegree(float rad)
-{
-    float _180_div_pi = (float)57.2957795130823208768;
-    return _180_div_pi * rad;
-}
-static inline float MathToRadians(float deg)
-{
-    float _pi_div_180 = (float)0.01745329251994329576;
-    return _pi_div_180 * deg;
-}
 static inline float MathClamp(float x, float min, float max)
 {
     if (x < min) { return min; };
@@ -133,25 +112,6 @@ static inline float MathLerp(float a, float b, float t)
 static inline float MathLerpInverse(float a, float b, float x)
 {
     return (x - a) / (b - a);
-}
-
-static inline Vector2 Vector2Sub(Vector2 l, Vector2 r)
-{
-    l.x -= r.x;
-    l.y -= r.y;
-    return l;
-}
-static inline Vector2 Vector2Mul(Vector2 l, float r)
-{
-    l.x *= r;
-    l.y *= r;
-    return l;
-}
-static inline Vector2 Vector2Div(Vector2 l, float r)
-{
-    l.x /= r;
-    l.y /= r;
-    return l;
 }
 
 static inline Vector3 Vector3Neg(Vector3 r)
@@ -206,10 +166,6 @@ static inline float Vector4Dot(Vector4 l, Vector4 r)
     return x + y + z + w;
 }
 
-static inline float Vector2Cross(Vector2 a, Vector2 b)
-{
-    return a.x * b.y - a.y * b.x;
-}
 static inline Vector3 Vector3Cross(Vector3 a, Vector3 b)
 {
     float x = a.y*b.z - a.z*b.y;
@@ -218,12 +174,6 @@ static inline Vector3 Vector3Cross(Vector3 a, Vector3 b)
     return (Vector3){ x, y, z };
 }
 
-static inline float Vector2Length(Vector2 v)
-{
-    float x = v.x * v.x;
-    float y = v.y * v.y;
-    return MathSqrt(x + y);
-}
 static inline float Vector3Length(Vector3 v)
 {
     float x = v.x * v.x;
@@ -250,13 +200,6 @@ static inline Vector4 Vector4Lerp(Vector4 a, Vector4 b, float t)
     return a;
 }
 
-static inline Vector2 Vector2Normalize(Vector2 v)
-{
-    // TODO remove "if (length == 0)" ?
-    float length = Vector2Length(v);
-    if (length == 0) return v;
-    return Vector2Div(v, length);
-}
 static inline Vector3 Vector3Normalize(Vector3 v)
 {
     // TODO remove "if (length == 0)" ?
@@ -495,30 +438,6 @@ static inline Matrix MatrixWorld(Vector3 position, Vector3 rotation, Vector3 sca
     result = MatrixMultiply(result, MatrixTranslate(position));
     return result;
 }
-static inline Matrix MatrixWorldDir(Vector3 position, Vector3 direction)
-{
-    Vector3 up = { 0, 1, 0 };
-
-    Vector3 zAxis = direction;
-            zAxis = Vector3Normalize(zAxis); // maybe remove
-
-    Vector3 xAxis = Vector3Cross(up, zAxis);
-            xAxis = Vector3Normalize(xAxis);
-
-    Vector3 yAxis = Vector3Cross(zAxis, xAxis);
-
-    float x = position.x;
-    float y = position.y;
-    float z = position.z;
-
-    return (Matrix)
-    {{
-        {xAxis.x, xAxis.y, xAxis.z, 0.0f},
-        {yAxis.x, yAxis.y, yAxis.z, 0.0f},
-        {zAxis.x, zAxis.y, zAxis.z, 0.0f},
-        {      x,       y,       z, 1.0f}
-    }};
-}
 static inline Matrix MatrixProjOrthographic(float width, float height, float near, float far)
 {
     float w = 2.0f / width;
@@ -545,26 +464,6 @@ static inline Matrix MatrixProjPerspective1(float width, float height, float nea
         {x,  0,  0,  0},
         {0,  y,  0,  0},
         {0,  0,  z,  1},
-        {0,  0, -o,  0}
-    }};
-}
-static inline Matrix MatrixProjPerspective2(float width, float height, float near, float far)
-{
-    float n = near;
-    float f = far;
-
-    float aspectRatio = width / height;
-    float fov = (float)(MATH_PI_DIV_2);
-    float h = 1.0f / tanf(fov / 2);
-    float w = h / aspectRatio;
-    float a = f / (f - n);
-    float o = a * n;
-
-    return (Matrix)
-    {{
-        {w,  0,  0,  0},
-        {0,  h,  0,  0},
-        {0,  0,  a,  1},
         {0,  0, -o,  0}
     }};
 }
@@ -637,19 +536,6 @@ static inline Vector3 NdcToWorld(Vector3 p, Matrix viewi, Matrix proji)
     _p.w = 1;
     _p = MatrixMultiply4L(_p, viewi);
     return (Vector3){ _p.x, _p.y, _p.z };
-}
-
-static inline float NdcToWorldZ(Vector3 p, Matrix proji)
-{
-    Vector4 v = { p.x, p.y, p.z, 1 };
-    Matrix m = proji;
-    Vector4 col2 = { m.m[0][2], m.m[1][2], m.m[2][2], m.m[3][2] };
-    Vector4 col3 = { m.m[0][3], m.m[1][3], m.m[2][3], m.m[3][3] };
-    Vector4 row = v;
-    v.z = Vector4Dot(row, col2);
-    v.w = Vector4Dot(row, col3);
-    v.z /= v.w;
-    return v.z;
 }
 
 static inline Vector3 NdcToScreenSpace(Vector3 v, int width, int height)
@@ -2840,50 +2726,6 @@ static inline void UpdateShadows2(void (*draw)(Bitmap* bitmap), LightData* light
 
 static inline float CalcLight1(Vector3 surPos, float lum, Vector3 lightPos)
 {
-    float t;
-
-    float dist1 = Vector3Distance(surPos, lightPos);
-    float dist2 = LIGHT_MAX_DIST;
-    t = dist1 / dist2;
-    t = t < 1 ? (1 - t) * lum : 0;
-
-    return t;
-}
-static inline float CalcLight2(Vector3 surPos, float lum, Vector3 lightPos, Vector3 surNormal)
-{
-    float t;
-
-    float dist1 = Vector3Distance(surPos, lightPos);
-    float dist2 = LIGHT_MAX_DIST;
-    t = dist1 / dist2;
-    t = t < 1 ? (1 - t) * lum : 0;
-
-    Vector3 dirNorm;
-    dirNorm = Vector3Sub(lightPos, surPos);
-    dirNorm = Vector3Normalize(dirNorm);
-    float dot = Vector3Dot(dirNorm, surNormal);
-    t = dot > 0 ? t * dot : 0;
-
-    return t;
-}
-static inline float CalcLight3(Vector3 surPos, float lum, Vector3 lightPos, Bitmap* m)
-{
-    Vector3 ndc = WorldToNdc(surPos, m->view, m->proj);
-
-    if (ndc.x < -1 || +1 < ndc.x) return 0.0f;
-    if (ndc.y < -1 || +1 < ndc.y) return 0.0f;
-    if (ndc.z < -1 || +1 < ndc.z) return 0.0f;
-
-    int x = (+ndc.x + 1.0f) / 2.0f * (m->width  - 1);
-    int y = (-ndc.y + 1.0f) / 2.0f * (m->height - 1);
-
-    int i = x + y * m->width;
-
-    float z1 = m->buffer[i] + SHADOW_MAP_BIAS;
-    float z2 = ndc.z;
-
-    if (z1 < z2) return 0.0f;
-
     float t;
 
     float dist1 = Vector3Distance(surPos, lightPos);

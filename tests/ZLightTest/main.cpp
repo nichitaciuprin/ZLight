@@ -3,10 +3,60 @@
 #include "SysWindow.h"
 #include "ZLight.h"
 
-#define DELTA_TIME 0.020f
+typedef struct Camera
+{
+    Vector3 pos;
+    float yaw;
+    float pitch;
+}
+Camera;
 
-Camera cam = { 0, 1.70f, 0 };
-Vector3 light = { 0, 1, 0 };
+static inline float MathMod(float x, float div)
+{
+    return fmodf(x, div);
+}
+static inline float MathToDegree(float rad)
+{
+    float _180_div_pi = (float)57.2957795130823208768;
+    return _180_div_pi * rad;
+}
+static inline float MathToRadians(float deg)
+{
+    float _pi_div_180 = (float)0.01745329251994329576;
+    return _pi_div_180 * deg;
+}
+
+static inline Vector2 Vector2Sub(Vector2 l, Vector2 r)
+{
+    l.x -= r.x;
+    l.y -= r.y;
+    return l;
+}
+static inline Vector2 Vector2Mul(Vector2 l, float r)
+{
+    l.x *= r;
+    l.y *= r;
+    return l;
+}
+static inline Vector2 Vector2Div(Vector2 l, float r)
+{
+    l.x /= r;
+    l.y /= r;
+    return l;
+}
+static inline float Vector2Length(Vector2 v)
+{
+    float x = v.x * v.x;
+    float y = v.y * v.y;
+    return MathSqrt(x + y);
+}
+static inline Vector2 Vector2Normalize(Vector2 v)
+{
+    // TODO remove "if (length == 0)" ?
+    float length = Vector2Length(v);
+    if (length == 0) return v;
+    return Vector2Div(v, length);
+}
 
 static inline Vector3 CameraGetAxisX(Camera* camera)
 {
@@ -133,6 +183,12 @@ void UpdatePlayerCamera(Camera* camera, SysWindow* window, float delta)
     int x, y; SysWindowGetMouseDelta(window, &x, &y);
     CameraRotateClamped(camera, { x*0.01f, y*0.01f });
 }
+
+#define DELTA_TIME 0.020f
+
+Camera cam = { 0, 1.70f, 0 };
+Vector3 light = { 0, 1, 0 };
+
 void DrawFunc(Bitmap* bitmap)
 {
     // BitmapExtDrawGrid(bitmap);
