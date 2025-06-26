@@ -469,12 +469,9 @@ static inline Matrix MatrixTranslate(Vector3 position)
 static inline Matrix MatrixRotate(Vector3 rotation)
 {
     Matrix result;
-    Matrix matX = MatrixRotateX(rotation.x);
-    Matrix matY = MatrixRotateY(rotation.y);
-    Matrix matZ = MatrixRotateZ(rotation.z);
-    result = matX;
-    result = MatrixMultiply(result, matY);
-    result = MatrixMultiply(result, matZ);
+    result = MatrixRotateX(rotation.x);
+    result = MatrixMultiply(result, MatrixRotateY(rotation.y));
+    result = MatrixMultiply(result, MatrixRotateZ(rotation.z));
     return result;
 }
 static inline Matrix MatrixScale(Vector3 scale)
@@ -493,12 +490,9 @@ static inline Matrix MatrixScale(Vector3 scale)
 static inline Matrix MatrixWorld(Vector3 position, Vector3 rotation, Vector3 scale)
 {
     Matrix result;
-    Matrix mat1 = MatrixScale(scale);
-    Matrix mat2 = MatrixRotate(rotation);
-    Matrix mat3 = MatrixTranslate(position);
-    result = mat1;
-    result = MatrixMultiply(result, mat2);
-    result = MatrixMultiply(result, mat3);
+    result = MatrixScale(scale);
+    result = MatrixMultiply(result, MatrixRotate(rotation));
+    result = MatrixMultiply(result, MatrixTranslate(position));
     return result;
 }
 static inline Matrix MatrixWorldDir(Vector3 position, Vector3 direction)
