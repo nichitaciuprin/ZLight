@@ -126,30 +126,6 @@ static inline Vector3 Vector3Div(Vector3 l, float r)
     return l;
 }
 
-static inline float Vector3Dot(Vector3 l, Vector3 r)
-{
-    float x = l.x * r.x;
-    float y = l.y * r.y;
-    float z = l.z * r.z;
-    return x + y + z;
-}
-static inline float Vector4Dot(Vector4 l, Vector4 r)
-{
-    float x = l.x * r.x;
-    float y = l.y * r.y;
-    float z = l.z * r.z;
-    float w = l.w * r.w;
-    return x + y + z + w;
-}
-
-static inline Vector3 Vector3Cross(Vector3 a, Vector3 b)
-{
-    float x = a.y*b.z - a.z*b.y;
-    float y = a.z*b.x - a.x*b.z;
-    float z = a.x*b.y - a.y*b.x;
-    return (Vector3){ x, y, z };
-}
-
 static inline float Vector3Length(Vector3 v)
 {
     float x = v.x * v.x;
@@ -157,7 +133,6 @@ static inline float Vector3Length(Vector3 v)
     float z = v.z * v.z;
     return sqrtf(x + y + z);
 }
-
 static inline float Vector3Distance(Vector3 a, Vector3 b)
 {
     Vector3 v = Vector3Sub(a, b);
@@ -166,7 +141,6 @@ static inline float Vector3Distance(Vector3 a, Vector3 b)
     float z = v.z * v.z;
     return sqrtf(x + y + z);
 }
-
 static inline Vector4 Vector4Lerp(Vector4 a, Vector4 b, float t)
 {
     a.x = MathLerp(a.x, b.x, t);
@@ -175,7 +149,6 @@ static inline Vector4 Vector4Lerp(Vector4 a, Vector4 b, float t)
     a.w = MathLerp(a.w, b.w, t);
     return a;
 }
-
 static inline Vector3 Vector3Normalize(Vector3 v)
 {
     // TODO remove "if (length == 0)" ?
@@ -210,6 +183,30 @@ static inline Vector3 Vector3RotateZ(Vector3 v, float rad)
     float y = v.x * (-sin) + v.y * ( cos);
     float z = v.z;
     return (Vector3){ x, y, z };
+}
+
+static inline Vector3 Vector3Cross(Vector3 a, Vector3 b)
+{
+    float x = a.y*b.z - a.z*b.y;
+    float y = a.z*b.x - a.x*b.z;
+    float z = a.x*b.y - a.y*b.x;
+    return (Vector3){ x, y, z };
+}
+
+static inline float Vector3Dot(Vector3 l, Vector3 r)
+{
+    float x = l.x * r.x;
+    float y = l.y * r.y;
+    float z = l.z * r.z;
+    return x + y + z;
+}
+static inline float Vector4Dot(Vector4 l, Vector4 r)
+{
+    float x = l.x * r.x;
+    float y = l.y * r.y;
+    float z = l.z * r.z;
+    float w = l.w * r.w;
+    return x + y + z + w;
 }
 
 static inline Vector3 MatrixMultiply3L(Vector3 v, Matrix m)
