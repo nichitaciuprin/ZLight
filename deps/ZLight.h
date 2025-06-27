@@ -484,40 +484,14 @@ static inline Vector3 NdcToWorld(Vector3 p, Matrix viewi, Matrix proji)
 
 static inline Vector3 NdcToScreenSpace(Vector3 v, int width, int height)
 {
-    // v.y = -v.y;
-    // v.x += 1.0f;
-    // v.y += 1.0f;
-    // v.x /= 2.0f;
-    // v.y /= 2.0f;
-    // v.x = maxx * v.x;
-    // v.y = maxy * v.y;
-
     v.x = (+v.x + 1) / 2 * (width  - 1);
     v.y = (-v.y + 1) / 2 * (height - 1);
-
-    // TODO temp, remove if not called
-    assert(0 <= v.x && v.x <= (width  - 1));
-    assert(0 <= v.y && v.y <= (height - 1));
-
     return v;
 }
 static inline Vector3 ScreenSpaceToNdc(Vector3 v, int maxx, int maxy)
 {
-    // v.x /= maxx;
-    // v.y /= maxy;
-    // v.x *= 2.0f;
-    // v.y *= 2.0f;
-    // v.x -= 1.0f;
-    // v.y -= 1.0f;
-    // v.y = -v.y;
-
     v.x = +(v.x / maxx * 2 - 1);
     v.y = -(v.y / maxy * 2 - 1);
-
-    // TODO temp, remove if not called
-    assert(-1 <= v.x && v.x <= +1);
-    assert(-1 <= v.y && v.y <= +1);
-
     return v;
 }
 
