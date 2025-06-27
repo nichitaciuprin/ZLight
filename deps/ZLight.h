@@ -14,8 +14,6 @@
 #define LIGHT_MAX_DIST 15
 #define SHADOW_MAP_SIZE 128
 #define SHADOW_MAP_BIAS 0.001f
-// #define SHADOW_MAP_BIAS 0.002f
-// #define SHADOW_MAP_BIAS 0.005f
 #define SHADOW_MAP_PROJ_MACRO(near, far) ((Matrix)\
 {{\
     {1, 0, 0, 0},\
@@ -474,19 +472,6 @@ static inline Vector3 WorldToNdc(Vector3 p, Matrix view, Matrix proj)
 }
 static inline Vector3 NdcToWorld(Vector3 p, Matrix viewi, Matrix proji)
 {
-    // maybe
-    // Vector4 _p;
-    // _p.x = p.x * proji.m[0][0];
-    // _p.y = p.y;
-    // _p.z = 1;
-    // _p.w = p.z * proji.m[2][3] + proji.m[3][3];
-    // _p.x /= _p.w;
-    // _p.y /= _p.w;
-    // _p.z /= _p.w;
-    // _p.w = 1;
-    // _p = MatrixMultiply4L(_p, viewi);
-    // return (Vector3){ _p.x, _p.y, _p.z };
-
     Vector4 _p = { p.x, p.y, p.z, 1 };
     _p = MatrixMultiply4L(_p, proji);
     _p.x /= _p.w;
@@ -1536,7 +1521,6 @@ static inline void BitmapSetViewByPyr(Bitmap* bitmap, Vector3 eye, float pitch, 
 }
 static inline void BitmapSetViewByTarget(Bitmap* bitmap, Vector3 eye, Vector3 target, Vector3 up)
 {
-    // v1
     Vector3 zAxis = Vector3Sub(target, eye);
             zAxis = Vector3Normalize(zAxis);
 
@@ -1556,18 +1540,6 @@ static inline void BitmapSetViewByTarget(Bitmap* bitmap, Vector3 eye, Vector3 ta
     result = MatrixInvert(result);
 
     bitmap->view = result;
-
-    // v2
-    // Vector3 zAxis = Vector3Sub(target, eye);
-    //         zAxis = Vector3Normalize(zAxis);
-
-    // float roty = atan2(zAxis.x, zAxis.z);
-    // float rotx = -zAxis.y*MATH_PI_DIV_4;
-
-    // Matrix result = MatrixTranslate(Vector3Neg(eye));
-    // result = MatrixMultiply(result, MatrixRotateY(roty));
-    // result = MatrixMultiply(result, MatrixRotateX(rotx));
-    // return result;
 }
 
 static inline void BitmapSetProj(Bitmap* bitmap, float near, float far)
@@ -1622,7 +1594,6 @@ static inline void BitmapDrawLineSp(Bitmap* bitmap, Vector3 v0, Vector3 v1)
     if (y0 < y1) { dy = y1 - y0; sy =  1; }
     else         { dy = y0 - y1; sy = -1; }
 
-    // TODO maybe refactor branching
     if (dx > dy)
     {
         float offset = (z1 - z0) / dx;
@@ -1954,7 +1925,6 @@ static inline float CalcLight4(Vector3 surPos, float lum, Vector3 lightPos, floa
     if (ndc.y < -1 || +1 < ndc.y) return 0.0f;
     // if (ndc.z < -1 || +1 < ndc.z) return 0.0f;
 
-    // maybe use this
     if (ndc.z < -1) return lum;
     if (ndc.z > +1) return 0.0f;
 
