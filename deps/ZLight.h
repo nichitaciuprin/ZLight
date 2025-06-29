@@ -577,7 +577,7 @@ static inline bool Hiden(Vector3 pos, float radius, Matrix view, float far)
     return false;
 }
 
-static inline bool ClipInFrustum(Vector4 p)
+static inline bool ClipPointClipSpace(Vector4 p)
 {
     return
     (-p.w <= p.x && p.x <= p.w) &&
@@ -1685,7 +1685,7 @@ static inline void BitmapDrawVertex(Bitmap* bitmap, Vector3 v0)
     _v0 = MatrixMultiply4L(_v0, bitmap->view);
     _v0 = MatrixMultiply4L(_v0, bitmap->proj);
 
-    if (!ClipInFrustum(_v0)) return;
+    if (!ClipPointClipSpace(_v0)) return;
 
     _v0.x /= _v0.w;
     _v0.y /= _v0.w;
