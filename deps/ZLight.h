@@ -510,19 +510,9 @@ static inline bool TriangleIsInside(Vector3 v0, Vector3 v1, Vector3 v2, float x,
     // In general, the simplest (and quite optimal) algorithm is
     // checking on which side of the half-plane created by the edges the point is.
 
-    Vector2 v = { x, y };
-
-    #define SIGN(v0, v1, v2) (v0.x - v2.x) * (v1.y - v2.y) - (v1.x - v2.x) * (v0.y - v2.y)
-
-    float d0 = SIGN(v, v0, v1);
-    float d1 = SIGN(v, v1, v2);
-    float d2 = SIGN(v, v2, v0);
-
-    #undef SIGN
-
-    // float d0 = (v.x - v1.x) * (v0.y - v1.y) - (v0.x - v1.x) * (v.y - v1.y);
-    // float d1 = (v.x - v2.x) * (v1.y - v2.y) - (v1.x - v2.x) * (v.y - v2.y);
-    // float d2 = (v.x - v0.x) * (v2.y - v0.y) - (v2.x - v0.x) * (v.y - v0.y);
+    float d0 = (x - v1.x) * (v0.y - v1.y) - (v0.x - v1.x) * (y - v1.y);
+    float d1 = (x - v2.x) * (v1.y - v2.y) - (v1.x - v2.x) * (y - v2.y);
+    float d2 = (x - v0.x) * (v2.y - v0.y) - (v2.x - v0.x) * (y - v0.y);
 
     bool neg = (d0 < 0) || (d1 < 0) || (d2 < 0);
     bool pos = (d0 > 0) || (d1 > 0) || (d2 > 0);
