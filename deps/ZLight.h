@@ -482,13 +482,13 @@ static inline Vector3 NdcToWorld(Vector3 p, Matrix viewi, Matrix proji)
     return (Vector3){ _p.x, _p.y, _p.z };
 }
 
-static inline Vector3 NdcToScreenSpace(Vector3 v, int width, int height)
+static inline Vector3 NdcToSp(Vector3 v, int width, int height)
 {
     v.x = (+v.x + 1) / 2 * (width  - 1);
     v.y = (-v.y + 1) / 2 * (height - 1);
     return v;
 }
-static inline Vector3 ScreenSpaceToNdc(Vector3 v, int maxx, int maxy)
+static inline Vector3 SpToNdc(Vector3 v, int maxx, int maxy)
 {
     v.x = +(v.x / maxx * 2 - 1);
     v.y = -(v.y / maxy * 2 - 1);
@@ -1609,7 +1609,7 @@ static inline void BitmapDrawVertexNdc(Bitmap* bitmap, Vector3 v0)
     assert(-1 <= v0.y && v0.y <= 1);
     assert(-1 <= v0.z && v0.z <= 1);
 
-    v0 = NdcToScreenSpace(v0, bitmap->width, bitmap->height);
+    v0 = NdcToSp(v0, bitmap->width, bitmap->height);
 
     BitmapDrawVertexSp(bitmap, v0);
 }
@@ -1623,8 +1623,8 @@ static inline void BitmapDrawLineNdc(Bitmap* bitmap, Vector3 v0, Vector3 v1)
     assert(-1 <= v1.y && v1.y <= 1);
     assert(-1 <= v1.z && v1.z <= 1);
 
-    v0 = NdcToScreenSpace(v0, bitmap->width, bitmap->height);
-    v1 = NdcToScreenSpace(v1, bitmap->width, bitmap->height);
+    v0 = NdcToSp(v0, bitmap->width, bitmap->height);
+    v1 = NdcToSp(v1, bitmap->width, bitmap->height);
 
     BitmapDrawLineSp(bitmap, v0, v1);
 }
@@ -1645,9 +1645,9 @@ static inline void BitmapDrawTriangleNdc(Bitmap* bitmap, Vector3 v0, Vector3 v1,
     // TODO move to BitmapDrawTriangleSp?
     if (!TriangleIsClockwise(v0, v1, v2)) return;
 
-    v0 = NdcToScreenSpace(v0, bitmap->width, bitmap->height);
-    v1 = NdcToScreenSpace(v1, bitmap->width, bitmap->height);
-    v2 = NdcToScreenSpace(v2, bitmap->width, bitmap->height);
+    v0 = NdcToSp(v0, bitmap->width, bitmap->height);
+    v1 = NdcToSp(v1, bitmap->width, bitmap->height);
+    v2 = NdcToSp(v2, bitmap->width, bitmap->height);
 
     BitmapDrawTriangleSp(bitmap, v0, v1, v2);
 }
@@ -2002,7 +2002,7 @@ static inline void ApplyLight(Bitmap* bitmap, LightData* lightData)
         float z = bitmap->buffer[i];
         if (z == 1) { pixels[i] = ColorCreateBwFloat(0); continue; }
         Vector3 sp = (Vector3){ (float)x, (float)y, z };
-        Vector3 ndc = ScreenSpaceToNdc(sp, bitmap->width-1, bitmap->height-1);
+        Vector3 ndc = SpToNdc(sp, bitmap->width-1, bitmap->height-1);
         Vector3 surPos = NdcToWorld(ndc, viewi, proji);
         float t = CalcLight(surPos, lightData);
         pixels[i] = ColorCreateBwFloat(t);
@@ -2022,7 +2022,7 @@ static inline void ApplyLightNoShadow(Bitmap* bitmap, LightData* lightData)
         float z = bitmap->buffer[i];
         if (z == 1) { pixels[i] = ColorCreateBwFloat(0); continue; }
         Vector3 sp = (Vector3){ (float)x, (float)y, z };
-        Vector3 ndc = ScreenSpaceToNdc(sp, bitmap->width-1, bitmap->height-1);
+        Vector3 ndc = SpToNdc(sp, bitmap->width-1, bitmap->height-1);
         Vector3 surPos = NdcToWorld(ndc, viewi, proji);
         float t = CalcLightNoShadow(surPos, lightData);
         pixels[i] = ColorCreateBwFloat(t);
