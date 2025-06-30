@@ -567,7 +567,7 @@ static inline bool Hiden(Vector3 pos, float radius, Matrix view, float far)
     return false;
 }
 
-static inline bool ClipPointClipSpace(Vector4 p)
+static inline bool ClipPoint(Vector4 p)
 {
     return
     (-p.w <= p.x && p.x <= p.w) &&
@@ -575,7 +575,7 @@ static inline bool ClipPointClipSpace(Vector4 p)
     (-p.w <= p.z && p.z <= p.w);
 }
 
-static inline bool ClipLineWClipSpace(Vector4* p0, Vector4* p1)
+static inline bool ClipLineW(Vector4* p0, Vector4* p1)
 {
     int flags = 0;
 
@@ -616,7 +616,7 @@ static inline bool ClipLineWClipSpace(Vector4* p0, Vector4* p1)
         }
     }
 }
-static inline bool ClipLineBackClipSpace(Vector4* p0, Vector4* p1)
+static inline bool ClipLineB(Vector4* p0, Vector4* p1)
 {
     int flags = 0;
 
@@ -657,7 +657,7 @@ static inline bool ClipLineBackClipSpace(Vector4* p0, Vector4* p1)
         }
     }
 }
-static inline bool ClipLineFrontClipSpace(Vector4* p0, Vector4* p1)
+static inline bool ClipLineF(Vector4* p0, Vector4* p1)
 {
     int flags = 0;
 
@@ -698,7 +698,7 @@ static inline bool ClipLineFrontClipSpace(Vector4* p0, Vector4* p1)
         }
     }
 }
-static inline bool ClipLineLeftClipSpace(Vector4* p0, Vector4* p1)
+static inline bool ClipLineL(Vector4* p0, Vector4* p1)
 {
     int flags = 0;
 
@@ -739,7 +739,7 @@ static inline bool ClipLineLeftClipSpace(Vector4* p0, Vector4* p1)
         }
     }
 }
-static inline bool ClipLineRightClipSpace(Vector4* p0, Vector4* p1)
+static inline bool ClipLineR(Vector4* p0, Vector4* p1)
 {
     int flags = 0;
 
@@ -780,7 +780,7 @@ static inline bool ClipLineRightClipSpace(Vector4* p0, Vector4* p1)
         }
     }
 }
-static inline bool ClipLineDownClipSpace(Vector4* p0, Vector4* p1)
+static inline bool ClipLineD(Vector4* p0, Vector4* p1)
 {
     int flags = 0;
 
@@ -821,7 +821,7 @@ static inline bool ClipLineDownClipSpace(Vector4* p0, Vector4* p1)
         }
     }
 }
-static inline bool ClipLineUpClipSpace(Vector4* p0, Vector4* p1)
+static inline bool ClipLineU(Vector4* p0, Vector4* p1)
 {
     int flags = 0;
 
@@ -863,7 +863,7 @@ static inline bool ClipLineUpClipSpace(Vector4* p0, Vector4* p1)
     }
 }
 
-static inline void ClipPoligonWClipSpace(Vector4* input, Vector4* output, int* vertexCount)
+static inline void ClipPoligonW(Vector4* input, Vector4* output, int* vertexCount)
 {
     int flags = 0;
     int index = 0;
@@ -938,7 +938,7 @@ static inline void ClipPoligonWClipSpace(Vector4* input, Vector4* output, int* v
 
     *vertexCount = finalCount;
 }
-static inline void ClipPoligonBackClipSpace(Vector4* input, Vector4* output, int* vertexCount)
+static inline void ClipPoligonB(Vector4* input, Vector4* output, int* vertexCount)
 {
     int flags = 0;
     int index = 0;
@@ -1013,7 +1013,7 @@ static inline void ClipPoligonBackClipSpace(Vector4* input, Vector4* output, int
 
     *vertexCount = finalCount;
 }
-static inline void ClipPoligonFrontClipSpace(Vector4* input, Vector4* output, int* vertexCount)
+static inline void ClipPoligonF(Vector4* input, Vector4* output, int* vertexCount)
 {
     int flags = 0;
     int index = 0;
@@ -1088,7 +1088,7 @@ static inline void ClipPoligonFrontClipSpace(Vector4* input, Vector4* output, in
 
     *vertexCount = finalCount;
 }
-static inline void ClipPoligonLeftClipSpace(Vector4* input, Vector4* output, int* vertexCount)
+static inline void ClipPoligonL(Vector4* input, Vector4* output, int* vertexCount)
 {
     int flags = 0;
     int index = 0;
@@ -1163,7 +1163,7 @@ static inline void ClipPoligonLeftClipSpace(Vector4* input, Vector4* output, int
 
     *vertexCount = finalCount;
 }
-static inline void ClipPoligonRightClipSpace(Vector4* input, Vector4* output, int* vertexCount)
+static inline void ClipPoligonR(Vector4* input, Vector4* output, int* vertexCount)
 {
     int flags = 0;
     int index = 0;
@@ -1238,7 +1238,7 @@ static inline void ClipPoligonRightClipSpace(Vector4* input, Vector4* output, in
 
     *vertexCount = finalCount;
 }
-static inline void ClipPoligonDownClipSpace(Vector4* input, Vector4* output, int* vertexCount)
+static inline void ClipPoligonD(Vector4* input, Vector4* output, int* vertexCount)
 {
     int flags = 0;
     int index = 0;
@@ -1313,7 +1313,7 @@ static inline void ClipPoligonDownClipSpace(Vector4* input, Vector4* output, int
 
     *vertexCount = finalCount;
 }
-static inline void ClipPoligonUpClipSpace(Vector4* input, Vector4* output, int* vertexCount)
+static inline void ClipPoligonU(Vector4* input, Vector4* output, int* vertexCount)
 {
     int flags = 0;
     int index = 0;
@@ -1659,7 +1659,7 @@ static inline void BitmapDrawVertex(Bitmap* bitmap, Vector3 v0)
     _v0 = MatrixMultiply4L(_v0, bitmap->view);
     _v0 = MatrixMultiply4L(_v0, bitmap->proj);
 
-    if (!ClipPointClipSpace(_v0)) return;
+    if (!ClipPoint(_v0)) return;
 
     _v0.x /= _v0.w;
     _v0.y /= _v0.w;
@@ -1680,13 +1680,13 @@ static inline void BitmapDrawLine(Bitmap* bitmap, Vector3 v0, Vector3 v1)
     _v0 = MatrixMultiply4L(_v0, bitmap->proj);
     _v1 = MatrixMultiply4L(_v1, bitmap->proj);
 
-    if (ClipLineWClipSpace      (&_v0, &_v1)) return;
-    if (ClipLineBackClipSpace   (&_v0, &_v1)) return;
-    if (ClipLineFrontClipSpace  (&_v0, &_v1)) return;
-    if (ClipLineLeftClipSpace   (&_v0, &_v1)) return;
-    if (ClipLineRightClipSpace  (&_v0, &_v1)) return;
-    if (ClipLineDownClipSpace   (&_v0, &_v1)) return;
-    if (ClipLineUpClipSpace     (&_v0, &_v1)) return;
+    if (ClipLineW(&_v0, &_v1)) return;
+    if (ClipLineB(&_v0, &_v1)) return;
+    if (ClipLineF(&_v0, &_v1)) return;
+    if (ClipLineL(&_v0, &_v1)) return;
+    if (ClipLineR(&_v0, &_v1)) return;
+    if (ClipLineD(&_v0, &_v1)) return;
+    if (ClipLineU(&_v0, &_v1)) return;
 
     _v0.x /= _v0.w;
     _v0.y /= _v0.w;
@@ -1731,13 +1731,13 @@ static inline void BitmapDrawTriangle(Bitmap* bitmap, Vector3 v0, Vector3 v1, Ve
     vs0[1] = MatrixMultiply4L(vs0[1], bitmap->proj);
     vs0[2] = MatrixMultiply4L(vs0[2], bitmap->proj);
 
-    ClipPoligonWClipSpace      (vs0, vs1, &vertexCount); if (vertexCount < 3) return;
-    ClipPoligonBackClipSpace   (vs1, vs0, &vertexCount); if (vertexCount < 3) return;
-    ClipPoligonFrontClipSpace  (vs0, vs1, &vertexCount); if (vertexCount < 3) return;
-    ClipPoligonLeftClipSpace   (vs1, vs0, &vertexCount); if (vertexCount < 3) return;
-    ClipPoligonRightClipSpace  (vs0, vs1, &vertexCount); if (vertexCount < 3) return;
-    ClipPoligonDownClipSpace   (vs1, vs0, &vertexCount); if (vertexCount < 3) return;
-    ClipPoligonUpClipSpace     (vs0, vs1, &vertexCount); if (vertexCount < 3) return;
+    ClipPoligonW(vs0, vs1, &vertexCount); if (vertexCount < 3) return;
+    ClipPoligonB(vs1, vs0, &vertexCount); if (vertexCount < 3) return;
+    ClipPoligonF(vs0, vs1, &vertexCount); if (vertexCount < 3) return;
+    ClipPoligonL(vs1, vs0, &vertexCount); if (vertexCount < 3) return;
+    ClipPoligonR(vs0, vs1, &vertexCount); if (vertexCount < 3) return;
+    ClipPoligonD(vs1, vs0, &vertexCount); if (vertexCount < 3) return;
+    ClipPoligonU(vs0, vs1, &vertexCount); if (vertexCount < 3) return;
 
     for (int i = 0; i < vertexCount; i++)
     {
