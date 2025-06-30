@@ -1388,22 +1388,6 @@ static inline void ClipPoligonUpClipSpace(Vector4* input, Vector4* output, int* 
 
     *vertexCount = finalCount;
 }
-static inline void ClipPoligonClipSpaceDiv(Vector4* vs, int vertexCount)
-{
-    for (int i = 0; i < vertexCount; i++)
-    {
-        vs[i].x /= vs[i].w;
-        vs[i].y /= vs[i].w;
-        vs[i].z /= vs[i].w;
-
-        // linear interpolation, in clipping, accumulates error
-        // values, in NDC, can become slightly outside
-        // duno what to do about that, I just clamp them
-        vs[i].x = MathClamp(vs[i].x, -1, +1);
-        vs[i].y = MathClamp(vs[i].y, -1, +1);
-        vs[i].z = MathClamp(vs[i].z, -1, +1);
-    }
-}
 
 static inline uint32_t ColorCreateRgb(uint8_t r, uint8_t g, uint8_t b)
 {
@@ -1754,7 +1738,20 @@ static inline void BitmapDrawTriangle(Bitmap* bitmap, Vector3 v0, Vector3 v1, Ve
     ClipPoligonRightClipSpace  (vs0, vs1, &vertexCount); if (vertexCount < 3) return;
     ClipPoligonDownClipSpace   (vs1, vs0, &vertexCount); if (vertexCount < 3) return;
     ClipPoligonUpClipSpace     (vs0, vs1, &vertexCount); if (vertexCount < 3) return;
-    ClipPoligonClipSpaceDiv    (vs1,       vertexCount);
+
+    for (int i = 0; i < vertexCount; i++)
+    {
+        vs1[i].x /= vs1[i].w;
+        vs1[i].y /= vs1[i].w;
+        vs1[i].z /= vs1[i].w;
+
+        // linear interpolation, in clipping, accumulates error
+        // values, in NDC, can become slightly outside
+        // duno what to do about that, I just clamp them
+        vs1[i].x = MathClamp(vs1[i].x, -1, +1);
+        vs1[i].y = MathClamp(vs1[i].y, -1, +1);
+        vs1[i].z = MathClamp(vs1[i].z, -1, +1);
+    }
 
     for (int i = 1; i < vertexCount - 1; i++)
     {
