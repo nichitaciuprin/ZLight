@@ -127,7 +127,7 @@ static inline float CalcLight3(Vector3 surPos, float lum, Vector3 lightPos, Bitm
 
     return t;
 }
-static inline float CalcLight4(Vector3 surPos, float lum, Vector3 lightPos, float* buffer, Matrix view)
+static inline float CalcLight2(Vector3 surPos, float lum, Vector3 lightPos, float* buffer, Matrix view)
 {
     Vector3 ndc = WorldToNdc(surPos, view, SHADOW_MAP_PROJ);
 
@@ -187,12 +187,12 @@ static inline float CalcLightSpot(Vector3 surPos, SpotLight* light)
     {
         switch (sectorId)
         {
-            case 0: { t = CalcLight4(surPos, light->lum, light->pos, light->bufl, light->matl); break; }
-            case 1: { t = CalcLight4(surPos, light->lum, light->pos, light->bufr, light->matr); break; }
-            case 2: { t = CalcLight4(surPos, light->lum, light->pos, light->bufd, light->matd); break; }
-            case 3: { t = CalcLight4(surPos, light->lum, light->pos, light->bufu, light->matu); break; }
-            case 4: { t = CalcLight4(surPos, light->lum, light->pos, light->bufb, light->matb); break; }
-            case 5: { t = CalcLight4(surPos, light->lum, light->pos, light->buff, light->matf); break; }
+            case 0: { t = CalcLight2(surPos, light->lum, light->pos, light->bufl, light->matl); break; }
+            case 1: { t = CalcLight2(surPos, light->lum, light->pos, light->bufr, light->matr); break; }
+            case 2: { t = CalcLight2(surPos, light->lum, light->pos, light->bufd, light->matd); break; }
+            case 3: { t = CalcLight2(surPos, light->lum, light->pos, light->bufu, light->matu); break; }
+            case 4: { t = CalcLight2(surPos, light->lum, light->pos, light->bufb, light->matb); break; }
+            case 5: { t = CalcLight2(surPos, light->lum, light->pos, light->buff, light->matf); break; }
         }
     }
 

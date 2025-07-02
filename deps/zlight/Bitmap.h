@@ -96,7 +96,7 @@ static inline void BitmapSetPixel(Bitmap* bitmap, int x, int y, Color color)
 
     ((uint32_t*)bitmap->buffer)[i] = color;
 }
-static inline void BitmapSetPixelZ(Bitmap* bitmap, int x, int y, float z)
+static inline void BitmapSetDepth(Bitmap* bitmap, int x, int y, float z)
 {
     assert( 0 <= x && x < bitmap->width);
     assert( 0 <= y && y < bitmap->height);
@@ -111,7 +111,7 @@ static inline void BitmapSetPixelZ(Bitmap* bitmap, int x, int y, float z)
 
 static inline void BitmapDrawVertexSp(Bitmap* bitmap, Vector3 v0)
 {
-    BitmapSetPixelZ(bitmap, v0.x, v0.y, v0.z);
+    BitmapSetDepth(bitmap, v0.x, v0.y, v0.z);
 }
 static inline void BitmapDrawLineSp(Bitmap* bitmap, Vector3 v0, Vector3 v1)
 {
@@ -141,7 +141,7 @@ static inline void BitmapDrawLineSp(Bitmap* bitmap, Vector3 v0, Vector3 v1)
 
         for (int i = 0; i < dx; i++)
         {
-            BitmapSetPixelZ(bitmap, x0, y0, z0);
+            BitmapSetDepth(bitmap, x0, y0, z0);
 
                           { err -= dy; x0 += sx; }
             if (err <= 0) { err += dx; y0 += sy; }
@@ -149,7 +149,7 @@ static inline void BitmapDrawLineSp(Bitmap* bitmap, Vector3 v0, Vector3 v1)
             z0 += offset;
         }
 
-        BitmapSetPixelZ(bitmap, x0, y0, z1);
+        BitmapSetDepth(bitmap, x0, y0, z1);
     }
     else
     {
@@ -159,7 +159,7 @@ static inline void BitmapDrawLineSp(Bitmap* bitmap, Vector3 v0, Vector3 v1)
 
         for (int i = 0; i < dy; i++)
         {
-            BitmapSetPixelZ(bitmap, x0, y0, z0);
+            BitmapSetDepth(bitmap, x0, y0, z0);
 
                           { err -= dx; y0 += sy; }
             if (err <= 0) { err += dy; x0 += sx; }
@@ -167,7 +167,7 @@ static inline void BitmapDrawLineSp(Bitmap* bitmap, Vector3 v0, Vector3 v1)
             z0 += offset;
         }
 
-        BitmapSetPixelZ(bitmap, x0, y0, z1);
+        BitmapSetDepth(bitmap, x0, y0, z1);
     }
 }
 static inline void BitmapDrawTriangleSp(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2)
@@ -190,7 +190,7 @@ static inline void BitmapDrawTriangleSp(Bitmap* bitmap, Vector3 v0, Vector3 v1, 
     {
         if (!TriangleIsInside3(v0, v1, v2, x, y)) continue;
         float z = TriangleBarycentric2(v0, v1, v2, x, y);
-        BitmapSetPixelZ(bitmap, x, y, z);
+        BitmapSetDepth(bitmap, x, y, z);
     }
 }
 
