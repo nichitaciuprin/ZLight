@@ -2483,22 +2483,22 @@ static inline void BitmapExtDrawCubeWire(Bitmap* bitmap, Vector3 pos, Vector3 ro
 }
 
 
-static inline Bitmap* ZLightBitmapCreate(int width, int height);
-static inline void ZLightBitmapDestroy(Bitmap* bitmap);
-static inline void ZLightBitmapReset(Bitmap* bitmap);
-static inline void ZLightBitmapSetViewByEuler(Bitmap* bitmap, Vector3 eye, float x, float y, float z);
-static inline void ZLightBitmapSetViewByPyr(Bitmap* bitmap, Vector3 eye, float pitch, float yaw, float roll);
-static inline void ZLightBitmapSetViewByTarget(Bitmap* bitmap, Vector3 eye, Vector3 target, Vector3 up);
-static inline void ZLightBitmapSetProj(Bitmap* bitmap, float near, float far);
-static inline void ZLightBitmapSetPixel(Bitmap* bitmap, int x, int y, uint32_t color);
-static inline void ZLightBitmapDrawVertex(Bitmap* bitmap, Vector3 v0);
-static inline void ZLightBitmapDrawLine(Bitmap* bitmap, Vector3 v0, Vector3 v1);
-static inline void ZLightBitmapDrawTriangle(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2);
-static inline void ZLightBitmapApplyDepth(Bitmap* bitmap);
-static inline void ZLightBitmapApplyDepthInvert(Bitmap* bitmap);
-static inline void ZLightBitmapApplyDepthAdjusted(Bitmap* bitmap);
-static inline void ZLightBitmapApplyDepthAdjustedInvert(Bitmap* bitmap);
-static inline void ZLightLightRemove();
-static inline void ZLightLightAdd(Vector3 pos, float lum);
-static inline void ZLightLightUpdate(void (*draw)(Bitmap* bitmap));
-static inline void ZLightLightApply(Bitmap* bitmap);
+static inline Bitmap* ZLightBitmapCreate(int width, int height)                                              { return BitmapCreate(width, height); }
+static inline void ZLightBitmapDestroy(Bitmap* bitmap)                                                       { BitmapDestroy(bitmap); }
+static inline void ZLightBitmapReset(Bitmap* bitmap)                                                         { BitmapReset(bitmap); }
+static inline void ZLightBitmapSetViewByEuler(Bitmap* bitmap, Vector3 eye, float x, float y, float z)        { BitmapSetViewByEuler(bitmap, eye, x, y, z); }
+static inline void ZLightBitmapSetViewByPyr(Bitmap* bitmap, Vector3 eye, float pitch, float yaw, float roll) { BitmapSetViewByPyr(bitmap, eye, pitch, yaw, roll); }
+static inline void ZLightBitmapSetViewByTarget(Bitmap* bitmap, Vector3 eye, Vector3 target, Vector3 up)      { BitmapSetViewByTarget(bitmap, eye, target, up); }
+static inline void ZLightBitmapSetProj(Bitmap* bitmap, float near, float far)                                { BitmapSetProj(bitmap, near, far); }
+static inline void ZLightBitmapSetPixel(Bitmap* bitmap, int x, int y, uint32_t color)                        { BitmapSetPixel(bitmap, x, y, color); }
+static inline void ZLightBitmapDrawVertex(Bitmap* bitmap, Vector3 v0)                                        { BitmapDrawVertex(bitmap, v0); }
+static inline void ZLightBitmapDrawLine(Bitmap* bitmap, Vector3 v0, Vector3 v1)                              { BitmapDrawLine(bitmap, v0, v1); }
+static inline void ZLightBitmapDrawTriangle(Bitmap* bitmap, Vector3 v0, Vector3 v1, Vector3 v2)              { BitmapDrawTriangle(bitmap, v0, v1, v2); }
+static inline void ZLightBitmapApplyDepth(Bitmap* bitmap)                                                    { BitmapApplyDepth(bitmap); }
+static inline void ZLightBitmapApplyDepthInvert(Bitmap* bitmap)                                              { BitmapApplyDepthInvert(bitmap); }
+static inline void ZLightBitmapApplyDepthAdjusted(Bitmap* bitmap)                                            { BitmapApplyDepthAdjusted(bitmap); }
+static inline void ZLightBitmapApplyDepthAdjustedInvert(Bitmap* bitmap)                                      { BitmapApplyDepthAdjustedInvert(bitmap); }
+static inline void ZLightLightRemove()                                                                       { LightData1RemoveLight(); }
+static inline void ZLightLightAdd(Vector3 pos, float lum)                                                    { LightData1AddLight(pos, lum); }
+static inline void ZLightLightUpdate(void (*draw)(Bitmap* bitmap))                                           { LightData1UpdateShadows(draw); }
+static inline void ZLightLightApply(Bitmap* bitmap)                                                          { LightData1ApplyLight(bitmap); }
