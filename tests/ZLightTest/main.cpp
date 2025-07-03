@@ -189,56 +189,39 @@ void UpdatePlayerCamera(Camera* camera, SysWindow* window, float delta)
 Camera cam = { 0, 1.70f, 0 };
 Vector3 light = { 0, 1, 0 };
 
-void DrawFunc(Bitmap* bitmap)
+void Draw(Bitmap* bitmap)
 {
-    // BitmapExtDrawGrid(bitmap);
     BitmapExtDrawPlane(bitmap);
     BitmapExtDrawCube(bitmap, light, {}, { 0.2f, 0.2f, 0.2f });
 
     for (int x = -10; x < 10; x++)
     for (int z = -10; z < 10; z++)
-    {
-        float scale = 0.5f;
-        BitmapExtDrawCube(bitmap, { (float)x, 0, (float)z }, { (float)x, (float)z, (float)(x+z) }, { scale, scale, scale });
-        // BitmapExtDrawCubeWire(bitmap, { (float)x, 0, (float)z }, { (float)x, (float)z, (float)(x+z) }, { scale, scale, scale });
-    }
+        BitmapExtDrawCube(bitmap, { (float)x, 0, (float)z }, { (float)x, (float)z, (float)(x+z) }, { 0.5f, 0.5f, 0.5f });
 }
 
 int main()
 {
-    SysHelperCreateEscThread();
-
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowShow(window);
-    // Bitmap* bitmap = BitmapCreate(128, 128);
-    Bitmap* bitmap = BitmapCreate(256, 256);
+
+    Bitmap* bitmap = ZLightBitmapCreate(256, 256);
 
     while (SysWindowExists(window))
     {
         REC_1
         {
-            // animation
-            // float time = SysHelperGetTime();
-            // time /= 1000;
-            // time = MathSin(time);
-            // light.y = 1 + time / 4;
+            UpdatePlayerCamera(&cam, window, 4*0.020f);
 
-            UpdatePlayerCamera(&cam, window, 4*DELTA_TIME);
-            BitmapReset(bitmap);
+            ZLightBitmapReset(bitmap);
+            ZLightBitmapSetViewByPyr(bitmap, cam.pos, cam.pitch, cam.yaw, 0);
 
-            BitmapSetViewByPyr(bitmap, cam.pos, cam.pitch, cam.yaw, 0);
-            // BitmapSetViewByEuler(bitmap, cam.pos, cam.pitch, -cam.yaw, 0);
-            // BitmapSetViewByTarget(bitmap, cam.pos, {}, { 0, 1, 0 });
+            Draw(bitmap);
 
-            DrawFunc(bitmap);
-            LightData1RemoveLight();
-            LightData1AddLight(light, 1);
-            LightData1UpdateShadows(DrawFunc);
-            LightData1ApplyLight(bitmap);
-
-            // DrawFunc(bitmap);
-            // BitmapApplyDepthAdjusted(bitmap);
+            ZLightLightRemove();
+            ZLightLightAdd(light, 1);
+            ZLightLightUpdate(Draw);
+            ZLightLightApply(bitmap);
 
             SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
         }
