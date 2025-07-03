@@ -184,8 +184,6 @@ void UpdatePlayerCamera(Camera* camera, SysWindow* window, float delta)
     CameraRotateClamped(camera, { x*0.01f, y*0.01f });
 }
 
-#define DELTA_TIME 0.020f
-
 Camera cam = { 0, 1.70f, 0 };
 Vector3 light = { 0, 1, 0 };
 
@@ -209,23 +207,16 @@ int main()
 
     while (SysWindowExists(window))
     {
-        REC_1
-        {
-            UpdatePlayerCamera(&cam, window, 4*0.020f);
+        UpdatePlayerCamera(&cam, window, 4*0.020f);
 
-            ZLightBitmapReset(bitmap);
-            ZLightBitmapSetViewByPyr(bitmap, cam.pos, cam.pitch, cam.yaw, 0);
-
-            Draw(bitmap);
-
-            ZLightLightRemove();
-            ZLightLightAdd(light, 1);
-            ZLightLightUpdate(Draw);
-            ZLightLightApply(bitmap);
-
-            SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
-        }
-        REC_2
+        ZLightBitmapReset(bitmap);
+        ZLightBitmapSetViewByPyr(bitmap, cam.pos, cam.pitch, cam.yaw, 0);
+        Draw(bitmap);
+        ZLightLightRemove();
+        ZLightLightAdd(light, 1);
+        ZLightLightUpdate(Draw);
+        ZLightLightApply(bitmap);
+        SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
 
         SysWindowUpdate(window);
         SysHelperHaltLoop(20);
