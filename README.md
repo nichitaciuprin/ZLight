@@ -26,10 +26,10 @@ int main()
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowShow(window);
+    float time = 0;
 
     while (SysWindowExists(window))
     {
-        float time = (float)SysHelperGetTime() / 2000;
         ZLightBitmapReset(bitmap);
         ZLightBitmapSetViewByTarget(bitmap, { sinf(time)*2, sin(time)+2, cosf(time)*4 }, light, { 0, 1, 0 });
         Draw(bitmap);
@@ -40,6 +40,7 @@ int main()
         SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
         SysWindowUpdate(window);
         SysHelperHaltLoop(20);
+        time += 0.020f;
     }
 
     return 0;
