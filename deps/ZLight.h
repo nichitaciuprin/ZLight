@@ -71,6 +71,7 @@ typedef struct LightData
 {
     SpotLight* lights;
     int lightsc;
+    int _LightData1_max;
 }
 LightData;
 
@@ -1992,8 +1993,8 @@ static inline void LightData1AddLight(Vector3 pos, float lum)
 }
 static inline void LightData1UpdateShadows(void (*draw)(Bitmap* bitmap))
 {
-    for (int i = 0; i < _LightData1_data->lightsc; i++)
-        UpdateShadows(draw, &_LightData1_data->lights[i]);
+    for (int i = 0; i < _LightData1_data.lightsc; i++)
+        UpdateShadows(draw, &_LightData1_data.lights[i]);
 }
 static inline void LightData1ApplyLight(Bitmap* bitmap)
 {
