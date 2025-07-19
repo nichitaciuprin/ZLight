@@ -19,7 +19,7 @@ void Draw(SysWindow* window, int width, int height)
             (g << (8 * 1)) +
             (b << (8 * 0));
 
-        SysWindowSetPixel(window, x, y, pixel);
+        SysWindowSetPixelRgb(window, x, y, pixel);
     }
 }
 
@@ -28,6 +28,7 @@ int main()
     int size = 512;
 
     SysWindow* window = SysWindowCreate(0, 0, size, size);
+    SysWindowSetFormatRgb(window);
     SysWindowShow(window);
 
     while (SysWindowExists(window))
