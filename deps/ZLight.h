@@ -1834,52 +1834,7 @@ static inline void BitmapApplyDepthAdjustedInvert(Bitmap* bitmap)
     }
 }
 
-
-
-static inline void UpdateShadows1(void (*draw)(Bitmap* bitmap), SpotLight* light)
-{
-    Vector3 eye = Vector3Neg(light->pos);
-    Matrix mat = MatrixTranslate(eye);
-
-    light->matf = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*0));
-    light->matr = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*1));
-    light->matb = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*2));
-    light->matl = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*3));
-    light->matu = MatrixMultiply(mat, MatrixRotateX(-MATH_PI_DIV_2));
-    light->matd = MatrixMultiply(mat, MatrixRotateX(+MATH_PI_DIV_2));
-
-    Bitmap bf; bf.buffer = light->buff; bf.view = light->matf; bf.proj = SHADOW_MAP_PROJ; bf.width = SHADOW_MAP_SIZE; bf.height = SHADOW_MAP_SIZE; bf.far = LIGHT_MAX_DIST;
-    Bitmap br; br.buffer = light->bufr; br.view = light->matr; br.proj = SHADOW_MAP_PROJ; br.width = SHADOW_MAP_SIZE; br.height = SHADOW_MAP_SIZE; br.far = LIGHT_MAX_DIST;
-    Bitmap bb; bb.buffer = light->bufb; bb.view = light->matb; bb.proj = SHADOW_MAP_PROJ; bb.width = SHADOW_MAP_SIZE; bb.height = SHADOW_MAP_SIZE; bb.far = LIGHT_MAX_DIST;
-    Bitmap bl; bl.buffer = light->bufl; bl.view = light->matl; bl.proj = SHADOW_MAP_PROJ; bl.width = SHADOW_MAP_SIZE; bl.height = SHADOW_MAP_SIZE; bl.far = LIGHT_MAX_DIST;
-    Bitmap bu; bu.buffer = light->bufu; bu.view = light->matu; bu.proj = SHADOW_MAP_PROJ; bu.width = SHADOW_MAP_SIZE; bu.height = SHADOW_MAP_SIZE; bu.far = LIGHT_MAX_DIST;
-    Bitmap bd; bd.buffer = light->bufd; bd.view = light->matd; bd.proj = SHADOW_MAP_PROJ; bd.width = SHADOW_MAP_SIZE; bd.height = SHADOW_MAP_SIZE; bd.far = LIGHT_MAX_DIST;
-
-    BitmapReset(&bf); draw(&bf);
-    BitmapReset(&br); draw(&br);
-    BitmapReset(&bb); draw(&bb);
-    BitmapReset(&bl); draw(&bl);
-    BitmapReset(&bu); draw(&bu);
-    BitmapReset(&bd); draw(&bd);
-}
-static inline void UpdateShadows2(void (*draw)(Bitmap* bitmap), LightData* lightData)
-{
-    for (int i = 0; i < lightData->lightsc; i++)
-        UpdateShadows1(draw, &lightData->lights[i]);
-}
-
-static inline float CalcLight1(Vector3 surPos, float lum, Vector3 lightPos)
-{
-    float t;
-
-    float dist1 = Vector3Distance(surPos, lightPos);
-    float dist2 = LIGHT_MAX_DIST;
-    t = dist1 / dist2;
-    t = t < 1 ? (1 - t) * lum : 0;
-
-    return t;
-}
-static inline float CalcLight2(Vector3 surPos, float lum, Vector3 lightPos, float* buffer, Matrix view)
+static inline float CalcLight(Vector3 surPos, float lum, Vector3 lightPos, float* buffer, Matrix view)
 {
     Vector3 ndc = WorldToNdc(surPos, view, SHADOW_MAP_PROJ);
 
@@ -1909,7 +1864,6 @@ static inline float CalcLight2(Vector3 surPos, float lum, Vector3 lightPos, floa
 
     return t;
 }
-
 static inline float CalcLightSpot(Vector3 surPos, SpotLight* light)
 {
     int sectorId = 0;
@@ -1938,23 +1892,18 @@ static inline float CalcLightSpot(Vector3 surPos, SpotLight* light)
     {
         switch (sectorId)
         {
-            case 0: { t = CalcLight2(surPos, light->lum, light->pos, light->bufl, light->matl); break; }
-            case 1: { t = CalcLight2(surPos, light->lum, light->pos, light->bufr, light->matr); break; }
-            case 2: { t = CalcLight2(surPos, light->lum, light->pos, light->bufd, light->matd); break; }
-            case 3: { t = CalcLight2(surPos, light->lum, light->pos, light->bufu, light->matu); break; }
-            case 4: { t = CalcLight2(surPos, light->lum, light->pos, light->bufb, light->matb); break; }
-            case 5: { t = CalcLight2(surPos, light->lum, light->pos, light->buff, light->matf); break; }
+            case 0: { t = CalcLight(surPos, light->lum, light->pos, light->bufl, light->matl); break; }
+            case 1: { t = CalcLight(surPos, light->lum, light->pos, light->bufr, light->matr); break; }
+            case 2: { t = CalcLight(surPos, light->lum, light->pos, light->bufd, light->matd); break; }
+            case 3: { t = CalcLight(surPos, light->lum, light->pos, light->bufu, light->matu); break; }
+            case 4: { t = CalcLight(surPos, light->lum, light->pos, light->bufb, light->matb); break; }
+            case 5: { t = CalcLight(surPos, light->lum, light->pos, light->buff, light->matf); break; }
         }
     }
 
     return t;
 }
-static inline float CalcLightSpotNoShadow(Vector3 surPos, SpotLight* light)
-{
-    return CalcLight1(surPos, light->lum, light->pos);
-}
-
-static inline float CalcLight(Vector3 surPos, LightData* lightData)
+static inline float CalcLightLightData(Vector3 surPos, LightData* lightData)
 {
     float result = 0;
 
@@ -1971,24 +1920,32 @@ static inline float CalcLight(Vector3 surPos, LightData* lightData)
 
     return result;
 }
-static inline float CalcLightNoShadow(Vector3 surPos, LightData* lightData)
+static inline void UpdateShadows(void (*draw)(Bitmap* bitmap), SpotLight* light)
 {
-    float result = 0;
+    Vector3 eye = Vector3Neg(light->pos);
+    Matrix mat = MatrixTranslate(eye);
 
-    for (int i = 0; i < lightData->lightsc; i++)
-    {
-        SpotLight* light = &lightData->lights[i];
+    light->matf = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*0));
+    light->matr = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*1));
+    light->matb = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*2));
+    light->matl = MatrixMultiply(mat, MatrixRotateY(MATH_PI_DIV_2*3));
+    light->matu = MatrixMultiply(mat, MatrixRotateX(-MATH_PI_DIV_2));
+    light->matd = MatrixMultiply(mat, MatrixRotateX(+MATH_PI_DIV_2));
 
-        float t = CalcLightSpotNoShadow(surPos, light);
+    Bitmap bf; bf.buffer = light->buff; bf.view = light->matf; bf.proj = SHADOW_MAP_PROJ; bf.width = SHADOW_MAP_SIZE; bf.height = SHADOW_MAP_SIZE; bf.far = LIGHT_MAX_DIST;
+    Bitmap br; br.buffer = light->bufr; br.view = light->matr; br.proj = SHADOW_MAP_PROJ; br.width = SHADOW_MAP_SIZE; br.height = SHADOW_MAP_SIZE; br.far = LIGHT_MAX_DIST;
+    Bitmap bb; bb.buffer = light->bufb; bb.view = light->matb; bb.proj = SHADOW_MAP_PROJ; bb.width = SHADOW_MAP_SIZE; bb.height = SHADOW_MAP_SIZE; bb.far = LIGHT_MAX_DIST;
+    Bitmap bl; bl.buffer = light->bufl; bl.view = light->matl; bl.proj = SHADOW_MAP_PROJ; bl.width = SHADOW_MAP_SIZE; bl.height = SHADOW_MAP_SIZE; bl.far = LIGHT_MAX_DIST;
+    Bitmap bu; bu.buffer = light->bufu; bu.view = light->matu; bu.proj = SHADOW_MAP_PROJ; bu.width = SHADOW_MAP_SIZE; bu.height = SHADOW_MAP_SIZE; bu.far = LIGHT_MAX_DIST;
+    Bitmap bd; bd.buffer = light->bufd; bd.view = light->matd; bd.proj = SHADOW_MAP_PROJ; bd.width = SHADOW_MAP_SIZE; bd.height = SHADOW_MAP_SIZE; bd.far = LIGHT_MAX_DIST;
 
-        result =
-        result > t ?
-        result : t;
-    }
-
-    return result;
+    BitmapReset(&bf); draw(&bf);
+    BitmapReset(&br); draw(&br);
+    BitmapReset(&bb); draw(&bb);
+    BitmapReset(&bl); draw(&bl);
+    BitmapReset(&bu); draw(&bu);
+    BitmapReset(&bd); draw(&bd);
 }
-
 static inline void ApplyLight(Bitmap* bitmap, LightData* lightData)
 {
     uint32_t* pixels = (uint32_t*)bitmap->buffer;
@@ -2005,27 +1962,7 @@ static inline void ApplyLight(Bitmap* bitmap, LightData* lightData)
         Vector3 sp = (Vector3){ (float)x, (float)y, z };
         Vector3 ndc = SpToNdc(sp, bitmap->width-1, bitmap->height-1);
         Vector3 surPos = NdcToWorld(ndc, viewi, proji);
-        float t = CalcLight(surPos, lightData);
-        pixels[i] = ColorCreateBwFloat(t);
-    }
-}
-static inline void ApplyLightNoShadow(Bitmap* bitmap, LightData* lightData)
-{
-    uint32_t* pixels = (uint32_t*)bitmap->buffer;
-
-    Matrix viewi = MatrixInvert(bitmap->view);
-    Matrix proji = MatrixInvert(bitmap->proj);
-
-    for (int y = 0; y < bitmap->height; y++)
-    for (int x = 0; x < bitmap->width;  x++)
-    {
-        int i = x + y * bitmap->width;
-        float z = bitmap->buffer[i];
-        if (z == 1) { pixels[i] = ColorCreateBwFloat(0); continue; }
-        Vector3 sp = (Vector3){ (float)x, (float)y, z };
-        Vector3 ndc = SpToNdc(sp, bitmap->width-1, bitmap->height-1);
-        Vector3 surPos = NdcToWorld(ndc, viewi, proji);
-        float t = CalcLightNoShadow(surPos, lightData);
+        float t = CalcLightLightData(surPos, lightData);
         pixels[i] = ColorCreateBwFloat(t);
     }
 }
@@ -2055,15 +1992,12 @@ static inline void LightData1AddLight(Vector3 pos, float lum)
 }
 static inline void LightData1UpdateShadows(void (*draw)(Bitmap* bitmap))
 {
-    UpdateShadows2(draw, &_LightData1_data);
+    for (int i = 0; i < _LightData1_data.lightsc; i++)
+        UpdateShadows(draw, &_LightData1_data.lights[i]);
 }
 static inline void LightData1ApplyLight(Bitmap* bitmap)
 {
     ApplyLight(bitmap, &_LightData1_data);
-}
-static inline void LightData1ApplyLightNoShadow(Bitmap* bitmap)
-{
-    ApplyLightNoShadow(bitmap, &_LightData1_data);
 }
 
 const Vector3 ModelCubeVerteces[8] =
