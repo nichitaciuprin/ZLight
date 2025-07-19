@@ -2411,31 +2411,31 @@ static inline void _ZLBitmapExtDrawCubeWire(ZlBitmap* bitmap, ZlVector3 pos, ZlV
 }
 
 // === Core ===
-static inline ZlBitmap* ZlBitmapCreate(int width, int height)                                               { return _ZlBitmapCreate(width, height); }
-static inline void ZlBitmapDestroy(ZlBitmap* bitmap)                                                        { _ZlBitmapDestroy(bitmap); }
-static inline void ZlBitmapReset(ZlBitmap* bitmap)                                                          { _ZlBitmapReset(bitmap); }
+static inline ZlBitmap* ZlBitmapCreate(int width, int height)                                                 { return _ZlBitmapCreate(width, height); }
+static inline void ZlBitmapDestroy(ZlBitmap* bitmap)                                                          { _ZlBitmapDestroy(bitmap); }
+static inline void ZlBitmapReset(ZlBitmap* bitmap)                                                            { _ZlBitmapReset(bitmap); }
 static inline void ZlBitmapSetViewByEuler(ZlBitmap* bitmap, ZlVector3 eye, float x, float y, float z)         { _ZlBitmapSetViewByEuler(bitmap, eye, x, y, z); }
 static inline void ZlBitmapSetViewByPyr(ZlBitmap* bitmap, ZlVector3 eye, float pitch, float yaw, float roll)  { _ZlBitmapSetViewByPyr(bitmap, eye, pitch, yaw, roll); }
-static inline void ZlBitmapSetViewByTarget(ZlBitmap* bitmap, ZlVector3 eye, ZlVector3 target, ZlVector3 up)       { _ZlBitmapSetViewByTarget(bitmap, eye, target, up); }
-static inline void ZlBitmapSetProj(ZlBitmap* bitmap, float near, float far)                                 { _ZlBitmapSetProj(bitmap, near, far); }
-static inline void ZlBitmapSetPixel(ZlBitmap* bitmap, int x, int y, uint32_t color)                         { _ZlBitmapSetPixel(bitmap, x, y, color); }
+static inline void ZlBitmapSetViewByTarget(ZlBitmap* bitmap, ZlVector3 eye, ZlVector3 target, ZlVector3 up)   { _ZlBitmapSetViewByTarget(bitmap, eye, target, up); }
+static inline void ZlBitmapSetProj(ZlBitmap* bitmap, float near, float far)                                   { _ZlBitmapSetProj(bitmap, near, far); }
+static inline void ZlBitmapSetPixel(ZlBitmap* bitmap, int x, int y, uint32_t color)                           { _ZlBitmapSetPixel(bitmap, x, y, color); }
 static inline void ZlBitmapDrawVertex(ZlBitmap* bitmap, ZlVector3 v0)                                         { _ZlBitmapDrawVertex(bitmap, v0); }
-static inline void ZlBitmapDrawLine(ZlBitmap* bitmap, ZlVector3 v0, ZlVector3 v1)                               { _ZlBitmapDrawLine(bitmap, v0, v1); }
-static inline void ZlBitmapDrawTriangle(ZlBitmap* bitmap, ZlVector3 v0, ZlVector3 v1, ZlVector3 v2)               { _ZlBitmapDrawTriangle(bitmap, v0, v1, v2); }
-static inline void ZlBitmapApplyDepth(ZlBitmap* bitmap)                                                     { _ZlBitmapApplyDepth(bitmap); }
-static inline void ZlBitmapApplyDepthInvert(ZlBitmap* bitmap)                                               { _ZlBitmapApplyDepthInvert(bitmap); }
-static inline void ZlBitmapApplyDepthAdjusted(ZlBitmap* bitmap)                                             { _ZlBitmapApplyDepthAdjusted(bitmap); }
-static inline void ZlBitmapApplyDepthAdjustedInvert(ZlBitmap* bitmap)                                       { _ZlBitmapApplyDepthAdjustedInvert(bitmap); }
+static inline void ZlBitmapDrawLine(ZlBitmap* bitmap, ZlVector3 v0, ZlVector3 v1)                             { _ZlBitmapDrawLine(bitmap, v0, v1); }
+static inline void ZlBitmapDrawTriangle(ZlBitmap* bitmap, ZlVector3 v0, ZlVector3 v1, ZlVector3 v2)           { _ZlBitmapDrawTriangle(bitmap, v0, v1, v2); }
+static inline void ZlBitmapApplyDepth(ZlBitmap* bitmap)                                                       { _ZlBitmapApplyDepth(bitmap); }
+static inline void ZlBitmapApplyDepthInvert(ZlBitmap* bitmap)                                                 { _ZlBitmapApplyDepthInvert(bitmap); }
+static inline void ZlBitmapApplyDepthAdjusted(ZlBitmap* bitmap)                                               { _ZlBitmapApplyDepthAdjusted(bitmap); }
+static inline void ZlBitmapApplyDepthAdjustedInvert(ZlBitmap* bitmap)                                         { _ZlBitmapApplyDepthAdjustedInvert(bitmap); }
 
 // === Light and Shadow ===
-static inline void ZlLightRemove()                                                                        { _ZlLightData1RemoveLight(); }
-static inline void ZlLightAdd(ZlVector3 pos, float lum)                                                     { _ZlLightData1AddLight(pos, lum); }
-static inline void ZlLightUpdate(void (*draw)(ZlBitmap* bitmap))                                            { _ZlLightData1UpdateShadows(draw); }
-static inline void ZlLightApply(ZlBitmap* bitmap)                                                           { _ZlLightData1ApplyLight(bitmap); }
+static inline void ZlLightRemove()                                                                            { _ZlLightData1RemoveLight(); }
+static inline void ZlLightAdd(ZlVector3 pos, float lum)                                                       { _ZlLightData1AddLight(pos, lum); }
+static inline void ZlLightUpdate(void (*draw)(ZlBitmap* bitmap))                                              { _ZlLightData1UpdateShadows(draw); }
+static inline void ZlLightApply(ZlBitmap* bitmap)                                                             { _ZlLightData1ApplyLight(bitmap); }
 
 // === Extra Draw ===
-static inline void ZlBitmapExtDrawGrid(ZlBitmap* bitmap)                                                    { _ZLBitmapExtDrawGrid(bitmap); }
-static inline void ZlBitmapExtDrawPlane(ZlBitmap* bitmap)                                                   { _ZLBitmapExtDrawPlane(bitmap); }
-static inline void ZlBitmapExtDrawCube(ZlBitmap* bitmap, ZlVector3 pos, ZlVector3 rot, ZlVector3 scale)           { _ZLBitmapExtDrawCube(bitmap, pos, rot, scale); }
-static inline void ZlBitmapExtDrawCubeWire(ZlBitmap* bitmap, ZlVector3 pos, ZlVector3 rot, ZlVector3 scale)       { _ZLBitmapExtDrawCubeWire(bitmap, pos, rot, scale); }
-static inline void ZlBitmapExtDrawChar(ZlBitmap* bitmap, int x, int y, char c)                              { _ZLBitmapExtDrawChar(bitmap, x, y, c); }
+static inline void ZlBitmapExtDrawGrid(ZlBitmap* bitmap)                                                      { _ZLBitmapExtDrawGrid(bitmap); }
+static inline void ZlBitmapExtDrawPlane(ZlBitmap* bitmap)                                                     { _ZLBitmapExtDrawPlane(bitmap); }
+static inline void ZlBitmapExtDrawCube(ZlBitmap* bitmap, ZlVector3 pos, ZlVector3 rot, ZlVector3 scale)       { _ZLBitmapExtDrawCube(bitmap, pos, rot, scale); }
+static inline void ZlBitmapExtDrawCubeWire(ZlBitmap* bitmap, ZlVector3 pos, ZlVector3 rot, ZlVector3 scale)   { _ZLBitmapExtDrawCubeWire(bitmap, pos, rot, scale); }
+static inline void ZlBitmapExtDrawChar(ZlBitmap* bitmap, int x, int y, char c)                                { _ZLBitmapExtDrawChar(bitmap, x, y, c); }
