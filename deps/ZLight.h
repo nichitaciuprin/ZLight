@@ -71,6 +71,7 @@ typedef struct LightData
 {
     SpotLight* lights;
     int lightsc;
+    int lightsmax;
 }
 LightData;
 
@@ -1968,7 +1969,6 @@ static inline void ApplyLight(Bitmap* bitmap, LightData* lightData)
 }
 
 LightData _LightData1_data = {};
-int _LightData1_max = 0;
 static inline void LightData1RemoveLight()
 {
     _LightData1_data.lightsc = 0;
@@ -1977,10 +1977,10 @@ static inline void LightData1AddLight(Vector3 pos, float lum)
 {
     int size = _LightData1_data.lightsc + 1;
 
-    if (_LightData1_max < size)
+    if (_LightData1_data.lightsmax < size)
     {
-        _LightData1_max = size * 2;
-        _LightData1_data.lights = (SpotLight*)realloc(_LightData1_data.lights, _LightData1_max*sizeof(SpotLight));
+        _LightData1_data.lightsmax = size * 2;
+        _LightData1_data.lights = (SpotLight*)realloc(_LightData1_data.lights, _LightData1_data.lightsmax*sizeof(SpotLight));
     }
 
     SpotLight* light = &_LightData1_data.lights[_LightData1_data.lightsc];
