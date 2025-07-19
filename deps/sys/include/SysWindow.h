@@ -32,10 +32,6 @@ void SysWindowSetPixelBw(SysWindow* instance, int x, int y, uint8_t pixel);
 void SysWindowSetPixelsAutoScaleBw1(SysWindow* instance, uint32_t* pixels, int width, int height);
 void SysWindowSetPixelsAutoScaleBw2(SysWindow* instance, uint8_t* pixels, int width, int height);
 
-void SysWindowSetPixel(SysWindow* instance, int x, int y, uint32_t pixel);
-void SysWindowSetPixelsAutoScale1(SysWindow* instance, uint32_t* pixels, int width, int height);
-void SysWindowSetPixelsAutoScale2(SysWindow* instance, uint8_t* pixels, int width, int height);
-
 void SysWindowGetMouseDelta(SysWindow* instance, int* dx, int* dy);
 
 bool SysWindowKeyDown(SysWindow* instance, char key);
