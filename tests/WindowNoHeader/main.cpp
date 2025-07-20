@@ -1,4 +1,4 @@
-#include "SysWindowTemp.h"
+#include "SysWindow.h"
 
 void Draw(SysWindow* window, int width, int height)
 {
