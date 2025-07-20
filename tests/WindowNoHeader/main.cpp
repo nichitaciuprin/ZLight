@@ -1,4 +1,4 @@
-#include "SysWindowWin.h"
+#include "SysWindowTemp.h"
 
 void Draw(SysWindow* window, int width, int height)
 {
@@ -36,8 +36,6 @@ int main()
         Draw(window, size, size);
         SysWindowUpdate(window);
     }
-
-    SysWindowDestroy(window);
 
     return 0;
 }
