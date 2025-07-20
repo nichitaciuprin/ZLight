@@ -12,7 +12,7 @@ Used in https://nichitaciuprin.itch.io/frostwhite.
 
 example
 --------
-Example uses SysWindow to display bitmap and SysHelper for basic loop
+Example uses SysWindow for window and SysHelper for basic loop
 ```c
 #include "SysHelper.h"
 #include "SysWindow.h"
@@ -99,14 +99,14 @@ Windows
 Depends on MinGW version x86_64-14.2.0-release-posix-seh-ucrt-rt_v12-rev1
 MSVC is not suported, but should work
 How to build and run?
-cd tests/ZLightTest
+cd tests/Scene1
 build
 run
 
 Linux
 Depends on GCC
 How to build and run?
-cd tests/ZLightTest
+cd tests/Scene1
 bash build.bash
 bash run.bash
 ```
