@@ -10,23 +10,6 @@
 extern "C" {
 #endif
 
-// #define NULL 0
-// #define true 1
-// #define false 0
-// typedef _Bool bool;
-// typedef unsigned char uint8_t;
-// typedef unsigned short uint16_t;
-// typedef unsigned uint32_t;
-// typedef long long int64_t;
-// typedef unsigned long long size_t;
-// void  __cdecl free(void* memory);
-// void* __cdecl calloc(size_t numOfElements, size_t sizeOfElements);
-// void* __cdecl malloc(size_t size);
-// void* __cdecl realloc(void* memory, size_t newSize);
-// void* __cdecl memcpy(void* _Dst, const void* _Src, size_t _Size);
-// void __cdecl _assert(const char* message, const char* file, unsigned line);
-// #define assert(x) (void)((!!(x)) || (_assert(#x, __FILE__, __LINE__), 0))
-
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
