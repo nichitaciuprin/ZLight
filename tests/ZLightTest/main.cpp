@@ -1,5 +1,5 @@
-#include "SysHelper.h"
-#include "SysWindow.h"
+#include "SysHelperTemp.h"
+#include "SysWindowTemp.h"
 #include "ZLight.h"
 
 ZlVector3 light = { 0, 1, 0 };
