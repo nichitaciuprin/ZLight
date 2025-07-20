@@ -235,12 +235,18 @@ void SysWindowSetPixelsAutoScaleRgb2(SysWindow* instance, uint8_t* pixels, int w
 
 void SysWindowSetPixelBw(SysWindow* instance, int x, int y, uint8_t pixel)
 {
+    // TODO
+    SysWindowSetPixelRgb(instance, x, y, pixel);
 }
 void SysWindowSetPixelsAutoScaleBw1(SysWindow* instance, uint32_t* pixels, int width, int height)
 {
+    // TODO
+    SysWindowSetPixelsAutoScaleRgb1(instance, pixels, width, height);
 }
 void SysWindowSetPixelsAutoScaleBw2(SysWindow* instance, uint8_t* pixels, int width, int height)
 {
+    // TODO
+    SysWindowSetPixelsAutoScaleRgb2(instance, pixels, width, height);
 }
 
 void SysWindowDrawDebugBorder(SysWindow* instance)
