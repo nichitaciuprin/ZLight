@@ -1,24 +1,12 @@
 #pragma once
 
-#include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <process.h>
 #include <time.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
-#include <windef.h>
-#include <winbase.h>
-#include <wingdi.h>
-#include <winuser.h>
-#include <wincon.h>
-#include <timeapi.h>
+#include "WinDefMin.h"
 
 static FILETIME idleOld = {};
 static FILETIME idleNew = {};

@@ -3,6 +3,7 @@
 // TODO remove std=gnu99 ?
 // #define __USE_POSIX199309
 
+#define _XOPEN_SOURCE 600
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
