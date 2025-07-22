@@ -25,11 +25,6 @@
 }})
 #define _ZL_SHADOW_MAP_PROJ _ZL_SHADOW_MAP_PROJ_MACRO(0.1f, ZL_LIGHT_MAX_DIST)
 
-typedef struct ZlVector2
-{
-    float x, y;
-}
-ZlVector2;
 typedef struct ZlVector3
 {
     float x, y, z;
