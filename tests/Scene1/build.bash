@@ -1,5 +1,6 @@
 #!/bin/bash
 
+flags="$flags -Werror -Wall"
 flags="$flags -std=c99 -m64"
 flags="$flags -g0 -O3 -D NDEBUG"
 
