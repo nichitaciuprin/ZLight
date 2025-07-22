@@ -2029,22 +2029,6 @@ const int _ZlModelCubeIndecesLine[12][2] =
     {5, 7},
     {4, 6}
 };
-// TODO
-const int _ZlModelCubeIndecesTriangle[12][3] =
-{
-    {2, 6, 4},
-    {4, 0, 2},
-    {6, 7, 5},
-    {5, 4, 6},
-    {7, 3, 1},
-    {1, 5, 7},
-    {3, 2, 0},
-    {0, 1, 3},
-    {1, 0, 4},
-    {4, 5, 1},
-    {3, 7, 6},
-    {6, 2, 3}
-};
 const int _ZlModelCubeIndecesQuad[6][4] =
 {
     {2, 6, 4, 0},
