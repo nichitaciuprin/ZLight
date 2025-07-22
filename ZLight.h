@@ -433,7 +433,7 @@ static inline zlmat _ZlMatrixProjPerspective1(float width, float height, float n
         {0,  0, -o,  0}
     }};
 }
-static inline zlmat _ZlMatrixProjPerspective3(float width, float height, float near, float far, float fov)
+static inline zlmat _ZlMatrixProjPerspective2(float width, float height, float near, float far, float fov)
 {
     float ratio = width / height;
 
