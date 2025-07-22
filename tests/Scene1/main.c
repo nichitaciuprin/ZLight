@@ -2,26 +2,26 @@
 #include "SysWindow.h"
 #include "ZLight.h"
 
-ZlVector3 light = { 0, 1, 0 };
+zlvec3 light = { 0, 1, 0 };
 
-void Draw(ZlBitmap* bitmap)
+void Draw(zlmap* bitmap)
 {
     ZlBitmapExtDrawPlane(bitmap);
-    ZlBitmapExtDrawCube(bitmap, light, (ZlVector3){}, (ZlVector3){ 0.2f, 0.2f, 0.2f });
+    ZlBitmapExtDrawCube(bitmap, light, (zlvec3){}, (zlvec3){ 0.2f, 0.2f, 0.2f });
 
     for (int x = -10; x < 10; x++)
     for (int z = -10; z < 10; z++)
     {
-        ZlVector3 pos = { (float)x, 0, (float)z };
-        ZlVector3 rot = { (float)x, (float)z, (float)(x+z) };
-        ZlVector3 scale = { 0.5f, 0.5f, 0.5f };
+        zlvec3 pos = { (float)x, 0, (float)z };
+        zlvec3 rot = { (float)x, (float)z, (float)(x+z) };
+        zlvec3 scale = { 0.5f, 0.5f, 0.5f };
         ZlBitmapExtDrawCube(bitmap, pos, rot, scale);
     }
 }
 
 int main()
 {
-    ZlBitmap* bitmap = ZlBitmapCreate(256, 256);
+    zlmap* bitmap = ZlBitmapCreate(256, 256);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowShow(window);
@@ -30,8 +30,8 @@ int main()
     while (SysWindowExists(window))
     {
         ZlBitmapReset(bitmap);
-        ZlVector3 target = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
-        ZlVector3 up = { 0, 1, 0 };
+        zlvec3 target = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
+        zlvec3 up = { 0, 1, 0 };
         ZlBitmapSetViewByTarget(bitmap, target, light, up);
         Draw(bitmap);
         ZlLightRemove();
