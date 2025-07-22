@@ -81,10 +81,6 @@ static inline float _ZlMathLerp(float a, float b, float t)
 {
     return a + (b - a) * t;
 }
-static inline float _ZlMathLerpInverse(float a, float b, float x)
-{
-    return (x - a) / (b - a);
-}
 
 static inline zlvec3 _ZlVector3Neg(zlvec3 r)
 {
