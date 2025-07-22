@@ -137,14 +137,6 @@ static inline float _ZlVector3Distance(zlvec3 a, zlvec3 b)
     float z = v.z * v.z;
     return sqrtf(x + y + z);
 }
-static inline zlvec4 _ZlVector4Lerp(zlvec4 a, zlvec4 b, float t)
-{
-    a.x = _ZlMathLerp(a.x, b.x, t);
-    a.y = _ZlMathLerp(a.y, b.y, t);
-    a.z = _ZlMathLerp(a.z, b.z, t);
-    a.w = _ZlMathLerp(a.w, b.w, t);
-    return a;
-}
 static inline zlvec3 _ZlVector3Normalize(zlvec3 v)
 {
     // TODO remove "if (length == 0)" ?
@@ -203,6 +195,15 @@ static inline float _ZlVector4Dot(zlvec4 l, zlvec4 r)
     float z = l.z * r.z;
     float w = l.w * r.w;
     return x + y + z + w;
+}
+
+static inline zlvec4 _ZlVector4Lerp(zlvec4 a, zlvec4 b, float t)
+{
+    a.x = _ZlMathLerp(a.x, b.x, t);
+    a.y = _ZlMathLerp(a.y, b.y, t);
+    a.z = _ZlMathLerp(a.z, b.z, t);
+    a.w = _ZlMathLerp(a.w, b.w, t);
+    return a;
 }
 
 static inline zlvec3 _ZlMatrixMultiply3L(zlvec3 v, zlmat m)
