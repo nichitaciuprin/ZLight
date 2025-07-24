@@ -4,7 +4,7 @@
 
 zlvec3 light = { 0, 1, 0 };
 
-void Draw(zlmap* bitmap)
+void Draw(zlbitmap* bitmap)
 {
     ZlBitmapExtDrawPlane(bitmap);
     ZlBitmapExtDrawCube(bitmap, light, (zlvec3){}, (zlvec3){ 0.2f, 0.2f, 0.2f });
@@ -21,7 +21,7 @@ void Draw(zlmap* bitmap)
 
 int main()
 {
-    zlmap* bitmap = ZlBitmapCreate(256, 256);
+    zlbitmap* bitmap = ZlBitmapCreate(256, 256);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowShow(window);

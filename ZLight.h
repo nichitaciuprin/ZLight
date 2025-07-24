@@ -40,7 +40,7 @@ typedef struct zlmat
     float m[4][4];
 }
 zlmat;
-typedef struct zlmap
+typedef struct zlbitmap
 {
     int width;
     int height;
@@ -50,7 +50,7 @@ typedef struct zlmap
     float far;
     float* buffer;
 }
-zlmap;
+zlbitmap;
 typedef struct _zlSpotLight
 {
     zlvec3 pos;
@@ -1404,14 +1404,14 @@ static inline uint32_t _ZlColorCreateBwFloat(float t)
     return _ZlColorCreateRgb(byte, byte, byte);
 }
 
-#define _ZlBitmapSizeOf(width, height) (sizeof(zlmap) + sizeof(float)*width*height)
-static inline zlmap* _ZLBitmapInit(int width, int height, void* mem)
+#define _ZlBitmapSizeOf(width, height) (sizeof(zlbitmap) + sizeof(float)*width*height)
+static inline zlbitmap* _ZLBitmapInit(int width, int height, void* mem)
 {
     assert(width > 0);
     assert(height > 0);
 
-    zlmap* bitmap = (zlmap*)((char*)mem);
-    float* buffer  = (float*)((char*)mem + sizeof(zlmap));
+    zlbitmap* bitmap = (zlbitmap*)((char*)mem);
+    float* buffer  = (float*)((char*)mem + sizeof(zlbitmap));
 
     float near = 0.1f;
     float far = 100.f;
@@ -1426,25 +1426,25 @@ static inline zlmap* _ZLBitmapInit(int width, int height, void* mem)
 
     return bitmap;
 }
-static inline zlmap* _ZlBitmapCreate(int width, int height)
+static inline zlbitmap* _ZlBitmapCreate(int width, int height)
 {
     int size = _ZlBitmapSizeOf(width, height);
     void* mem = malloc(size);
     return _ZLBitmapInit(width, height, mem);
 }
-static inline void _ZlBitmapDestroy(zlmap* bitmap)
+static inline void _ZlBitmapDestroy(zlbitmap* bitmap)
 {
     free((void*)bitmap);
 }
 
-static inline void _ZlBitmapReset(zlmap* bitmap)
+static inline void _ZlBitmapReset(zlbitmap* bitmap)
 {
     int size = bitmap->width * bitmap->height;
     for (int i = 0; i < size; i++)
         bitmap->buffer[i] = 1;
 }
 
-static inline void _ZlBitmapSetViewByEuler(zlmap* bitmap, zlvec3 eye, float x, float y, float z)
+static inline void _ZlBitmapSetViewByEuler(zlbitmap* bitmap, zlvec3 eye, float x, float y, float z)
 {
     eye = _ZlVector3Neg(eye);
     zlmat result = _ZlMatrixTranslate(eye);
@@ -1453,7 +1453,7 @@ static inline void _ZlBitmapSetViewByEuler(zlmap* bitmap, zlvec3 eye, float x, f
     result = _ZlMatrixMultiply(result, _ZlMatrixRotateZ(-z));
     bitmap->view = result;
 }
-static inline void _ZlBitmapSetViewByPyr(zlmap* bitmap, zlvec3 eye, float pitch, float yaw, float roll)
+static inline void _ZlBitmapSetViewByPyr(zlbitmap* bitmap, zlvec3 eye, float pitch, float yaw, float roll)
 {
     eye = _ZlVector3Neg(eye);
     zlmat result = _ZlMatrixTranslate(eye);
@@ -1462,7 +1462,7 @@ static inline void _ZlBitmapSetViewByPyr(zlmap* bitmap, zlvec3 eye, float pitch,
     result = _ZlMatrixMultiply(result, _ZlMatrixRotateZ(-roll));
     bitmap->view = result;
 }
-static inline void _ZlBitmapSetViewByTarget(zlmap* bitmap, zlvec3 eye, zlvec3 target, zlvec3 up)
+static inline void _ZlBitmapSetViewByTarget(zlbitmap* bitmap, zlvec3 eye, zlvec3 target, zlvec3 up)
 {
     zlvec3 zAxis = _ZlVector3Sub(target, eye);
             zAxis = _ZlVector3Normalize(zAxis);
@@ -1485,14 +1485,14 @@ static inline void _ZlBitmapSetViewByTarget(zlmap* bitmap, zlvec3 eye, zlvec3 ta
     bitmap->view = result;
 }
 
-static inline void _ZlBitmapSetProj(zlmap* bitmap, float near, float far)
+static inline void _ZlBitmapSetProj(zlbitmap* bitmap, float near, float far)
 {
     bitmap->neari = 1.0f / near;
     bitmap->far = far;
     bitmap->proj = _ZlMatrixProjPerspective1(bitmap->width, bitmap->height, near, far);
 }
 
-static inline void _ZlBitmapSetPixel(zlmap* bitmap, int x, int y, uint32_t color)
+static inline void _ZlBitmapSetPixel(zlbitmap* bitmap, int x, int y, uint32_t color)
 {
     assert(0 <= x && x < bitmap->width);
     assert(0 <= y && y < bitmap->height);
@@ -1501,7 +1501,7 @@ static inline void _ZlBitmapSetPixel(zlmap* bitmap, int x, int y, uint32_t color
 
     ((uint32_t*)bitmap->buffer)[i] = color;
 }
-static inline void _ZlBitmapSetDepth(zlmap* bitmap, int x, int y, float z)
+static inline void _ZlBitmapSetDepth(zlbitmap* bitmap, int x, int y, float z)
 {
     assert( 0 <= x && x < bitmap->width);
     assert( 0 <= y && y < bitmap->height);
@@ -1514,11 +1514,11 @@ static inline void _ZlBitmapSetDepth(zlmap* bitmap, int x, int y, float z)
     bitmap->buffer[i] : z;
 }
 
-static inline void _ZlBitmapDrawVertexSp(zlmap* bitmap, zlvec3 v0)
+static inline void _ZlBitmapDrawVertexSp(zlbitmap* bitmap, zlvec3 v0)
 {
     _ZlBitmapSetDepth(bitmap, v0.x, v0.y, v0.z);
 }
-static inline void _ZlBitmapDrawLineSp(zlmap* bitmap, zlvec3 v0, zlvec3 v1)
+static inline void _ZlBitmapDrawLineSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 {
     int x0 = (int)v0.x;
     int y0 = (int)v0.y;
@@ -1574,7 +1574,7 @@ static inline void _ZlBitmapDrawLineSp(zlmap* bitmap, zlvec3 v0, zlvec3 v1)
         _ZlBitmapSetDepth(bitmap, x0, y0, z1);
     }
 }
-static inline void _ZlBitmapDrawTriangleSp(zlmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
+static inline void _ZlBitmapDrawTriangleSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
 {
     // pushes corners
     // v0.x = (float)(int)v0.x;
@@ -1598,7 +1598,7 @@ static inline void _ZlBitmapDrawTriangleSp(zlmap* bitmap, zlvec3 v0, zlvec3 v1, 
     }
 }
 
-static inline void _ZlBitmapDrawVertexNdc(zlmap* bitmap, zlvec3 v0)
+static inline void _ZlBitmapDrawVertexNdc(zlbitmap* bitmap, zlvec3 v0)
 {
     assert(-1 <= v0.x && v0.x <= 1);
     assert(-1 <= v0.y && v0.y <= 1);
@@ -1608,7 +1608,7 @@ static inline void _ZlBitmapDrawVertexNdc(zlmap* bitmap, zlvec3 v0)
 
     _ZlBitmapDrawVertexSp(bitmap, v0);
 }
-static inline void _ZlBitmapDrawLineNdc(zlmap* bitmap, zlvec3 v0, zlvec3 v1)
+static inline void _ZlBitmapDrawLineNdc(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 {
     assert(-1 <= v0.x && v0.x <= 1);
     assert(-1 <= v0.y && v0.y <= 1);
@@ -1623,7 +1623,7 @@ static inline void _ZlBitmapDrawLineNdc(zlmap* bitmap, zlvec3 v0, zlvec3 v1)
 
     _ZlBitmapDrawLineSp(bitmap, v0, v1);
 }
-static inline void _ZlBitmapDrawTriangleNdc(zlmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
+static inline void _ZlBitmapDrawTriangleNdc(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
 {
     assert(-1 <= v0.x && v0.x <= 1);
     assert(-1 <= v0.y && v0.y <= 1);
@@ -1647,7 +1647,7 @@ static inline void _ZlBitmapDrawTriangleNdc(zlmap* bitmap, zlvec3 v0, zlvec3 v1,
     _ZlBitmapDrawTriangleSp(bitmap, v0, v1, v2);
 }
 
-static inline void _ZlBitmapDrawVertex(zlmap* bitmap, zlvec3 v0)
+static inline void _ZlBitmapDrawVertex(zlbitmap* bitmap, zlvec3 v0)
 {
     zlvec4 _v0 = { v0.x, v0.y, v0.z, 1 };
 
@@ -1664,7 +1664,7 @@ static inline void _ZlBitmapDrawVertex(zlmap* bitmap, zlvec3 v0)
 
     _ZlBitmapDrawVertexNdc(bitmap, v0);
 }
-static inline void _ZlBitmapDrawLine(zlmap* bitmap, zlvec3 v0, zlvec3 v1)
+static inline void _ZlBitmapDrawLine(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 {
     zlvec4 _v0 = { v0.x, v0.y, v0.z, 1 };
     zlvec4 _v1 = { v1.x, v1.y, v1.z, 1 };
@@ -1707,7 +1707,7 @@ static inline void _ZlBitmapDrawLine(zlmap* bitmap, zlvec3 v0, zlvec3 v1)
 
     _ZlBitmapDrawLineNdc(bitmap, v0, v1);
 }
-static inline void _ZlBitmapDrawTriangle(zlmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
+static inline void _ZlBitmapDrawTriangle(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
 {
     int vertexCount = 3;
 
@@ -1762,7 +1762,7 @@ static inline void _ZlBitmapDrawTriangle(zlmap* bitmap, zlvec3 v0, zlvec3 v1, zl
     }
 }
 
-static inline void _ZlBitmapApplyDepth(zlmap* bitmap)
+static inline void _ZlBitmapApplyDepth(zlbitmap* bitmap)
 {
     float* zbuffer = (float*)bitmap->buffer;
     uint32_t* pixels = (uint32_t*)bitmap->buffer;
@@ -1776,7 +1776,7 @@ static inline void _ZlBitmapApplyDepth(zlmap* bitmap)
         pixels[i] = _ZlColorCreateBwFloat(t);
     }
 }
-static inline void _ZlBitmapApplyDepthInvert(zlmap* bitmap)
+static inline void _ZlBitmapApplyDepthInvert(zlbitmap* bitmap)
 {
     float* zbuffer = (float*)bitmap->buffer;
     uint32_t* pixels = (uint32_t*)bitmap->buffer;
@@ -1792,7 +1792,7 @@ static inline void _ZlBitmapApplyDepthInvert(zlmap* bitmap)
     }
 }
 
-static inline void _ZlBitmapApplyDepthAdjusted(zlmap* bitmap)
+static inline void _ZlBitmapApplyDepthAdjusted(zlbitmap* bitmap)
 {
     float* zbuffer = (float*)bitmap->buffer;
     uint32_t* pixels = (uint32_t*)bitmap->buffer;
@@ -1810,7 +1810,7 @@ static inline void _ZlBitmapApplyDepthAdjusted(zlmap* bitmap)
         pixels[i] = _ZlColorCreateBwFloat(t);
     }
 }
-static inline void _ZlBitmapApplyDepthAdjustedInvert(zlmap* bitmap)
+static inline void _ZlBitmapApplyDepthAdjustedInvert(zlbitmap* bitmap)
 {
     float* zbuffer = (float*)bitmap->buffer;
     uint32_t* pixels = (uint32_t*)bitmap->buffer;
@@ -1914,7 +1914,7 @@ static inline float _ZlCalcLightLightData(zlvec3 surPos, _zlLightData* lightData
 
     return result;
 }
-static inline void _ZlUpdateShadows(void (*draw)(zlmap* bitmap), _zlSpotLight* light)
+static inline void _ZlUpdateShadows(void (*draw)(zlbitmap* bitmap), _zlSpotLight* light)
 {
     zlvec3 eye = _ZlVector3Neg(light->pos);
     zlmat mat = _ZlMatrixTranslate(eye);
@@ -1926,12 +1926,12 @@ static inline void _ZlUpdateShadows(void (*draw)(zlmap* bitmap), _zlSpotLight* l
     light->matu = _ZlMatrixMultiply(mat, _ZlMatrixRotateX(-_ZL_PI_DIV_2));
     light->matd = _ZlMatrixMultiply(mat, _ZlMatrixRotateX(+_ZL_PI_DIV_2));
 
-    zlmap bf; bf.buffer = light->buff; bf.view = light->matf;
-    zlmap br; br.buffer = light->bufr; br.view = light->matr;
-    zlmap bb; bb.buffer = light->bufb; bb.view = light->matb;
-    zlmap bl; bl.buffer = light->bufl; bl.view = light->matl;
-    zlmap bu; bu.buffer = light->bufu; bu.view = light->matu;
-    zlmap bd; bd.buffer = light->bufd; bd.view = light->matd;
+    zlbitmap bf; bf.buffer = light->buff; bf.view = light->matf;
+    zlbitmap br; br.buffer = light->bufr; br.view = light->matr;
+    zlbitmap bb; bb.buffer = light->bufb; bb.view = light->matb;
+    zlbitmap bl; bl.buffer = light->bufl; bl.view = light->matl;
+    zlbitmap bu; bu.buffer = light->bufu; bu.view = light->matu;
+    zlbitmap bd; bd.buffer = light->bufd; bd.view = light->matd;
 
     bf.proj = _ZL_SHADOW_MAP_PROJ; bf.width = ZL_SHADOW_MAP_SIZE; bf.height = ZL_SHADOW_MAP_SIZE; bf.far = ZL_LIGHT_MAX_DIST;
     br.proj = _ZL_SHADOW_MAP_PROJ; br.width = ZL_SHADOW_MAP_SIZE; br.height = ZL_SHADOW_MAP_SIZE; br.far = ZL_LIGHT_MAX_DIST;
@@ -1947,7 +1947,7 @@ static inline void _ZlUpdateShadows(void (*draw)(zlmap* bitmap), _zlSpotLight* l
     _ZlBitmapReset(&bu); draw(&bu);
     _ZlBitmapReset(&bd); draw(&bd);
 }
-static inline void _ZlApplyLight(zlmap* bitmap, _zlLightData* lightData)
+static inline void _ZlApplyLight(zlbitmap* bitmap, _zlLightData* lightData)
 {
     uint32_t* pixels = (uint32_t*)bitmap->buffer;
 
@@ -1990,12 +1990,12 @@ static inline void _ZlLightData1AddLight(zlvec3 pos, float lum)
 
     _LightData1_data.lightsc++;
 }
-static inline void _ZlLightData1UpdateShadows(void (*draw)(zlmap* bitmap))
+static inline void _ZlLightData1UpdateShadows(void (*draw)(zlbitmap* bitmap))
 {
     for (int i = 0; i < _LightData1_data.lightsc; i++)
         _ZlUpdateShadows(draw, &_LightData1_data.lights[i]);
 }
-static inline void _ZlLightData1ApplyLight(zlmap* bitmap)
+static inline void _ZlLightData1ApplyLight(zlbitmap* bitmap)
 {
     _ZlApplyLight(bitmap, &_LightData1_data);
 }
@@ -2133,12 +2133,12 @@ const int _ZlModelSphereIndecesTriangles[60][3] =
     {30, 5, 31},
     {31, 5, 6},
 };
-static inline void _ZLBitmapExtDrawQuad(zlmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2, zlvec3 v3)
+static inline void _ZLBitmapExtDrawQuad(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2, zlvec3 v3)
 {
     _ZlBitmapDrawTriangle(bitmap, v0, v1, v2);
     _ZlBitmapDrawTriangle(bitmap, v2, v3, v0);
 }
-static inline void _ZLBitmapExtDrawBound(zlmap* bitmap, zlvec3* vs, int vsc)
+static inline void _ZLBitmapExtDrawBound(zlbitmap* bitmap, zlvec3* vs, int vsc)
 {
     float maxx;
     float maxy;
@@ -2180,7 +2180,7 @@ static inline void _ZLBitmapExtDrawBound(zlmap* bitmap, zlvec3* vs, int vsc)
     _ZlBitmapDrawLine(bitmap, p5, p7);
     _ZlBitmapDrawLine(bitmap, p4, p6);
 }
-static inline void _ZLBitmapExtDrawCubeMat(zlmap* bitmap, zlmat mat)
+static inline void _ZLBitmapExtDrawCubeMat(zlbitmap* bitmap, zlmat mat)
 {
     #define DRAW(INDEX)                               \
     {                                                 \
@@ -2208,12 +2208,12 @@ static inline void _ZLBitmapExtDrawCubeMat(zlmap* bitmap, zlmat mat)
 
     #undef DRAW
 }
-static inline void _ZLBitmapExtDrawCube(zlmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)
+static inline void _ZLBitmapExtDrawCube(zlbitmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)
 {
     zlmat mat = _ZlMatrixWorld(pos, rot, scale);
     _ZLBitmapExtDrawCubeMat(bitmap, mat);
 }
-static inline void _ZLBitmapExtDrawSphere(zlmap* bitmap, zlvec3 pos)
+static inline void _ZLBitmapExtDrawSphere(zlbitmap* bitmap, zlvec3 pos)
 {
     if (_ZlHiden(pos, 1.0f, bitmap->view, bitmap->far)) return;
 
@@ -2231,7 +2231,7 @@ static inline void _ZLBitmapExtDrawSphere(zlmap* bitmap, zlvec3 pos)
         _ZlBitmapDrawTriangle(bitmap, v0, v1, v2);
     }
 }
-static inline void _ZLBitmapExtDrawBorder(zlmap* bitmap, float color)
+static inline void _ZLBitmapExtDrawBorder(zlbitmap* bitmap, float color)
 {
     int x = bitmap->width - 1;
     int y = bitmap->height - 1;
@@ -2240,12 +2240,12 @@ static inline void _ZLBitmapExtDrawBorder(zlmap* bitmap, float color)
     for (int i = 0; i < bitmap->height; i++) _ZlBitmapSetPixel(bitmap, 0, i, color);
     for (int i = 0; i < bitmap->height; i++) _ZlBitmapSetPixel(bitmap, x, i, color);
 }
-static inline void _ZLBitmapExtDrawCross(zlmap* bitmap, float color)
+static inline void _ZLBitmapExtDrawCross(zlbitmap* bitmap, float color)
 {
     for (int i = 0; i < bitmap->width;  i++) _ZlBitmapSetPixel(bitmap, i, (bitmap->height-1) / 2, color);
     for (int i = 0; i < bitmap->height; i++) _ZlBitmapSetPixel(bitmap, (bitmap->width-1) / 2, i, color);
 }
-static inline void _ZLBitmapExtDrawChar(zlmap* bitmap, int x, int y, char c)
+static inline void _ZLBitmapExtDrawChar(zlbitmap* bitmap, int x, int y, char c)
 {
     #define P(x2, y2) _ZlBitmapSetPixel(bitmap, x+x2, y+y2, 0x00FFFFFF);
 
@@ -2346,7 +2346,7 @@ static inline void _ZLBitmapExtDrawChar(zlmap* bitmap, int x, int y, char c)
 
     #undef P
 }
-static inline void _ZLBitmapExtDrawGrid(zlmap* bitmap)
+static inline void _ZLBitmapExtDrawGrid(zlbitmap* bitmap)
 {
     int count = 10;
 
@@ -2366,7 +2366,7 @@ static inline void _ZLBitmapExtDrawGrid(zlmap* bitmap)
         _ZlBitmapDrawLine(bitmap, v0, v1);
     }
 }
-static inline void _ZLBitmapExtDrawPlane(zlmap* bitmap)
+static inline void _ZLBitmapExtDrawPlane(zlbitmap* bitmap)
 {
     float size = 10;
 
@@ -2377,7 +2377,7 @@ static inline void _ZLBitmapExtDrawPlane(zlmap* bitmap)
 
     _ZLBitmapExtDrawQuad(bitmap, p0, p1, p2, p3);
 }
-static inline void _ZLBitmapExtDrawCubeWire(zlmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)
+static inline void _ZLBitmapExtDrawCubeWire(zlbitmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)
 {
     zlmat model = _ZlMatrixWorld(pos, rot, scale);
 
@@ -2394,31 +2394,31 @@ static inline void _ZLBitmapExtDrawCubeWire(zlmap* bitmap, zlvec3 pos, zlvec3 ro
 }
 
 // === Core ===
-static inline zlmap* ZlBitmapCreate(int width, int height)                                             { return _ZlBitmapCreate(width, height); }
-static inline void ZlBitmapDestroy(zlmap* bitmap)                                                      { _ZlBitmapDestroy(bitmap); }
-static inline void ZlBitmapReset(zlmap* bitmap)                                                        { _ZlBitmapReset(bitmap); }
-static inline void ZlBitmapSetViewByEuler(zlmap* bitmap, zlvec3 eye, float x, float y, float z)        { _ZlBitmapSetViewByEuler(bitmap, eye, x, y, z); }
-static inline void ZlBitmapSetViewByPyr(zlmap* bitmap, zlvec3 eye, float pitch, float yaw, float roll) { _ZlBitmapSetViewByPyr(bitmap, eye, pitch, yaw, roll); }
-static inline void ZlBitmapSetViewByTarget(zlmap* bitmap, zlvec3 eye, zlvec3 target, zlvec3 up)        { _ZlBitmapSetViewByTarget(bitmap, eye, target, up); }
-static inline void ZlBitmapSetProj(zlmap* bitmap, float near, float far)                               { _ZlBitmapSetProj(bitmap, near, far); }
-static inline void ZlBitmapSetPixel(zlmap* bitmap, int x, int y, uint32_t color)                       { _ZlBitmapSetPixel(bitmap, x, y, color); }
-static inline void ZlBitmapDrawVertex(zlmap* bitmap, zlvec3 v0)                                        { _ZlBitmapDrawVertex(bitmap, v0); }
-static inline void ZlBitmapDrawLine(zlmap* bitmap, zlvec3 v0, zlvec3 v1)                               { _ZlBitmapDrawLine(bitmap, v0, v1); }
-static inline void ZlBitmapDrawTriangle(zlmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)                { _ZlBitmapDrawTriangle(bitmap, v0, v1, v2); }
-static inline void ZlBitmapApplyDepth(zlmap* bitmap)                                                   { _ZlBitmapApplyDepth(bitmap); }
-static inline void ZlBitmapApplyDepthInvert(zlmap* bitmap)                                             { _ZlBitmapApplyDepthInvert(bitmap); }
-static inline void ZlBitmapApplyDepthAdjusted(zlmap* bitmap)                                           { _ZlBitmapApplyDepthAdjusted(bitmap); }
-static inline void ZlBitmapApplyDepthAdjustedInvert(zlmap* bitmap)                                     { _ZlBitmapApplyDepthAdjustedInvert(bitmap); }
+static inline zlbitmap* ZlBitmapCreate(int width, int height)                                             { return _ZlBitmapCreate(width, height); }
+static inline void ZlBitmapDestroy(zlbitmap* bitmap)                                                      { _ZlBitmapDestroy(bitmap); }
+static inline void ZlBitmapReset(zlbitmap* bitmap)                                                        { _ZlBitmapReset(bitmap); }
+static inline void ZlBitmapSetViewByEuler(zlbitmap* bitmap, zlvec3 eye, float x, float y, float z)        { _ZlBitmapSetViewByEuler(bitmap, eye, x, y, z); }
+static inline void ZlBitmapSetViewByPyr(zlbitmap* bitmap, zlvec3 eye, float pitch, float yaw, float roll) { _ZlBitmapSetViewByPyr(bitmap, eye, pitch, yaw, roll); }
+static inline void ZlBitmapSetViewByTarget(zlbitmap* bitmap, zlvec3 eye, zlvec3 target, zlvec3 up)        { _ZlBitmapSetViewByTarget(bitmap, eye, target, up); }
+static inline void ZlBitmapSetProj(zlbitmap* bitmap, float near, float far)                               { _ZlBitmapSetProj(bitmap, near, far); }
+static inline void ZlBitmapSetPixel(zlbitmap* bitmap, int x, int y, uint32_t color)                       { _ZlBitmapSetPixel(bitmap, x, y, color); }
+static inline void ZlBitmapDrawVertex(zlbitmap* bitmap, zlvec3 v0)                                        { _ZlBitmapDrawVertex(bitmap, v0); }
+static inline void ZlBitmapDrawLine(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)                               { _ZlBitmapDrawLine(bitmap, v0, v1); }
+static inline void ZlBitmapDrawTriangle(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)                { _ZlBitmapDrawTriangle(bitmap, v0, v1, v2); }
+static inline void ZlBitmapApplyDepth(zlbitmap* bitmap)                                                   { _ZlBitmapApplyDepth(bitmap); }
+static inline void ZlBitmapApplyDepthInvert(zlbitmap* bitmap)                                             { _ZlBitmapApplyDepthInvert(bitmap); }
+static inline void ZlBitmapApplyDepthAdjusted(zlbitmap* bitmap)                                           { _ZlBitmapApplyDepthAdjusted(bitmap); }
+static inline void ZlBitmapApplyDepthAdjustedInvert(zlbitmap* bitmap)                                     { _ZlBitmapApplyDepthAdjustedInvert(bitmap); }
 
 // === Light and Shadow ===
-static inline void ZlLightRemove()                                                                     { _ZlLightData1RemoveLight(); }
-static inline void ZlLightAdd(zlvec3 pos, float lum)                                                   { _ZlLightData1AddLight(pos, lum); }
-static inline void ZlLightUpdate(void (*draw)(zlmap* bitmap))                                          { _ZlLightData1UpdateShadows(draw); }
-static inline void ZlLightApply(zlmap* bitmap)                                                         { _ZlLightData1ApplyLight(bitmap); }
+static inline void ZlLightRemove()                                                                        { _ZlLightData1RemoveLight(); }
+static inline void ZlLightAdd(zlvec3 pos, float lum)                                                      { _ZlLightData1AddLight(pos, lum); }
+static inline void ZlLightUpdate(void (*draw)(zlbitmap* bitmap))                                          { _ZlLightData1UpdateShadows(draw); }
+static inline void ZlLightApply(zlbitmap* bitmap)                                                         { _ZlLightData1ApplyLight(bitmap); }
 
 // === Extra Draw ===
-static inline void ZlBitmapExtDrawGrid(zlmap* bitmap)                                                  { _ZLBitmapExtDrawGrid(bitmap); }
-static inline void ZlBitmapExtDrawPlane(zlmap* bitmap)                                                 { _ZLBitmapExtDrawPlane(bitmap); }
-static inline void ZlBitmapExtDrawCube(zlmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)            { _ZLBitmapExtDrawCube(bitmap, pos, rot, scale); }
-static inline void ZlBitmapExtDrawCubeWire(zlmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)        { _ZLBitmapExtDrawCubeWire(bitmap, pos, rot, scale); }
-static inline void ZlBitmapExtDrawChar(zlmap* bitmap, int x, int y, char c)                            { _ZLBitmapExtDrawChar(bitmap, x, y, c); }
+static inline void ZlBitmapExtDrawGrid(zlbitmap* bitmap)                                                  { _ZLBitmapExtDrawGrid(bitmap); }
+static inline void ZlBitmapExtDrawPlane(zlbitmap* bitmap)                                                 { _ZLBitmapExtDrawPlane(bitmap); }
+static inline void ZlBitmapExtDrawCube(zlbitmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)            { _ZLBitmapExtDrawCube(bitmap, pos, rot, scale); }
+static inline void ZlBitmapExtDrawCubeWire(zlbitmap* bitmap, zlvec3 pos, zlvec3 rot, zlvec3 scale)        { _ZLBitmapExtDrawCubeWire(bitmap, pos, rot, scale); }
+static inline void ZlBitmapExtDrawChar(zlbitmap* bitmap, int x, int y, char c)                            { _ZLBitmapExtDrawChar(bitmap, x, y, c); }
