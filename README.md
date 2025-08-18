@@ -46,9 +46,9 @@ int main()
     while (SysWindowExists(window))
     {
         ZlBitmapReset(bitmap);
-        zlvec3 target = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
+        zlvec3 eye = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
         zlvec3 up = { 0, 1, 0 };
-        ZlBitmapSetViewByTarget(bitmap, target, light, up);
+        ZlBitmapSetViewByTarget(bitmap, eye, light, up);
         Draw(bitmap);
         ZlLightRemove();
         ZlLightAdd(light, 1);
