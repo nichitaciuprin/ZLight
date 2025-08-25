@@ -2030,30 +2030,6 @@ const zlvec3 _ZlModelCubeVerteces[8] =
     {  0.5f,  0.5f, -0.5f },
     {  0.5f,  0.5f,  0.5f }
 };
-const int _ZlModelCubeIndecesLine[12][2] =
-{
-    {0, 1},
-    {1, 5},
-    {5, 4},
-    {4, 0},
-    {2, 3},
-    {3, 7},
-    {7, 6},
-    {6, 2},
-    {0, 2},
-    {1, 3},
-    {5, 7},
-    {4, 6}
-};
-const int _ZlModelCubeIndecesQuad[6][4] =
-{
-    {2, 6, 4, 0},
-    {6, 7, 5, 4},
-    {7, 3, 1, 5},
-    {3, 2, 0, 1},
-    {1, 0, 4, 5},
-    {3, 7, 6, 2}
-};
 const zlvec3 _ZlModelSphereVerteces[32] =
 {
     {  0.000000,  0.500000, -0.000000  },
@@ -2088,6 +2064,30 @@ const zlvec3 _ZlModelSphereVerteces[32] =
     {  0.250000, -0.000000, -0.433000  },
     {  0.216500, -0.250000, -0.375000  },
     {  0.125000, -0.433000, -0.216500  }
+};
+const int _ZlModelCubeIndecesLine[12][2] =
+{
+    {0, 1},
+    {1, 5},
+    {5, 4},
+    {4, 0},
+    {2, 3},
+    {3, 7},
+    {7, 6},
+    {6, 2},
+    {0, 2},
+    {1, 3},
+    {5, 7},
+    {4, 6}
+};
+const int _ZlModelCubeIndecesQuad[6][4] =
+{
+    {2, 6, 4, 0},
+    {6, 7, 5, 4},
+    {7, 3, 1, 5},
+    {3, 2, 0, 1},
+    {1, 0, 4, 5},
+    {3, 7, 6, 2}
 };
 const int _ZlModelSphereIndecesTriangles[60][3] =
 {
@@ -2152,6 +2152,7 @@ const int _ZlModelSphereIndecesTriangles[60][3] =
     {30, 5, 31},
     {31, 5, 6},
 };
+
 static inline void _ZLBitmapExtDrawQuad(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2, zlvec3 v3)
 {
     _ZlBitmapDrawTriangle(bitmap, v0, v1, v2);
