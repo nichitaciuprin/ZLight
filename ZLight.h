@@ -1537,6 +1537,34 @@ static inline void _ZlBitmapDrawVertexSp(zlbitmap* bitmap, zlvec3 v0)
 {
     _ZlBitmapSetDepth(bitmap, v0.x, v0.y, v0.z);
 }
+static inline void _ZlBitmapDrawVertexNdc(zlbitmap* bitmap, zlvec3 v0)
+{
+    assert(-1 <= v0.x && v0.x <= 1);
+    assert(-1 <= v0.y && v0.y <= 1);
+    assert(-1 <= v0.z && v0.z <= 1);
+
+    v0 = _ZlNdcToSp(v0, bitmap->width, bitmap->height);
+
+    _ZlBitmapDrawVertexSp(bitmap, v0);
+}
+static inline void _ZlBitmapDrawVertex(zlbitmap* bitmap, zlvec3 v0)
+{
+    zlvec4 _v0 = { v0.x, v0.y, v0.z, 1 };
+
+    _v0 = _ZlMatrixMultiply4L(_v0, bitmap->view);
+    _v0 = _ZlMatrixMultiply4L(_v0, bitmap->proj);
+
+    if (!_ZlClipPoint(_v0)) return;
+
+    _v0.x /= _v0.w;
+    _v0.y /= _v0.w;
+    _v0.z /= _v0.w;
+
+    v0 = (zlvec3){ _v0.x, _v0.y, _v0.z };
+
+    _ZlBitmapDrawVertexNdc(bitmap, v0);
+}
+
 static inline void _ZlBitmapDrawLineSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 {
     int x0 = (int)v0.x;
@@ -1593,40 +1621,6 @@ static inline void _ZlBitmapDrawLineSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
         _ZlBitmapSetDepth(bitmap, x0, y0, z1);
     }
 }
-static inline void _ZlBitmapDrawTriangleSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
-{
-    // pushes corners
-    // v0.x = (float)(int)v0.x;
-    // v0.y = (float)(int)v0.y;
-    // v1.x = (float)(int)v1.x;
-    // v1.y = (float)(int)v1.y;
-    // v2.x = (float)(int)v2.x;
-    // v2.y = (float)(int)v2.y;
-
-    int maxx = fmaxf(v0.x, fmaxf(v1.x, v2.x));
-    int minx = fminf(v0.x, fminf(v1.x, v2.x));
-    int maxy = fmaxf(v0.y, fmaxf(v1.y, v2.y));
-    int miny = fminf(v0.y, fminf(v1.y, v2.y));
-
-    for (int y = miny; y <= maxy; y++)
-    for (int x = minx; x <= maxx; x++)
-    {
-        if (!_ZlTriangleIsInside(v0, v1, v2, x, y)) continue;
-        float z = _ZlTriangleBarycentric(v0, v1, v2, x, y);
-        _ZlBitmapSetDepth(bitmap, x, y, z);
-    }
-}
-
-static inline void _ZlBitmapDrawVertexNdc(zlbitmap* bitmap, zlvec3 v0)
-{
-    assert(-1 <= v0.x && v0.x <= 1);
-    assert(-1 <= v0.y && v0.y <= 1);
-    assert(-1 <= v0.z && v0.z <= 1);
-
-    v0 = _ZlNdcToSp(v0, bitmap->width, bitmap->height);
-
-    _ZlBitmapDrawVertexSp(bitmap, v0);
-}
 static inline void _ZlBitmapDrawLineNdc(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 {
     assert(-1 <= v0.x && v0.x <= 1);
@@ -1641,47 +1635,6 @@ static inline void _ZlBitmapDrawLineNdc(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
     v1 = _ZlNdcToSp(v1, bitmap->width, bitmap->height);
 
     _ZlBitmapDrawLineSp(bitmap, v0, v1);
-}
-static inline void _ZlBitmapDrawTriangleNdc(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
-{
-    assert(-1 <= v0.x && v0.x <= 1);
-    assert(-1 <= v0.y && v0.y <= 1);
-    assert(-1 <= v0.z && v0.z <= 1);
-
-    assert(-1 <= v1.x && v1.x <= 1);
-    assert(-1 <= v1.y && v1.y <= 1);
-    assert(-1 <= v1.z && v1.z <= 1);
-
-    assert(-1 <= v2.x && v2.x <= 1);
-    assert(-1 <= v2.y && v2.y <= 1);
-    assert(-1 <= v2.z && v2.z <= 1);
-
-    // TODO move to _ZlBitmapDrawTriangleSp?
-    if (!_ZlTriangleIsClockwise(v0, v1, v2)) return;
-
-    v0 = _ZlNdcToSp(v0, bitmap->width, bitmap->height);
-    v1 = _ZlNdcToSp(v1, bitmap->width, bitmap->height);
-    v2 = _ZlNdcToSp(v2, bitmap->width, bitmap->height);
-
-    _ZlBitmapDrawTriangleSp(bitmap, v0, v1, v2);
-}
-
-static inline void _ZlBitmapDrawVertex(zlbitmap* bitmap, zlvec3 v0)
-{
-    zlvec4 _v0 = { v0.x, v0.y, v0.z, 1 };
-
-    _v0 = _ZlMatrixMultiply4L(_v0, bitmap->view);
-    _v0 = _ZlMatrixMultiply4L(_v0, bitmap->proj);
-
-    if (!_ZlClipPoint(_v0)) return;
-
-    _v0.x /= _v0.w;
-    _v0.y /= _v0.w;
-    _v0.z /= _v0.w;
-
-    v0 = (zlvec3){ _v0.x, _v0.y, _v0.z };
-
-    _ZlBitmapDrawVertexNdc(bitmap, v0);
 }
 static inline void _ZlBitmapDrawLine(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 {
@@ -1725,6 +1678,53 @@ static inline void _ZlBitmapDrawLine(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
     v1.z = _v1.z;
 
     _ZlBitmapDrawLineNdc(bitmap, v0, v1);
+}
+
+static inline void _ZlBitmapDrawTriangleSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
+{
+    // pushes corners
+    // v0.x = (float)(int)v0.x;
+    // v0.y = (float)(int)v0.y;
+    // v1.x = (float)(int)v1.x;
+    // v1.y = (float)(int)v1.y;
+    // v2.x = (float)(int)v2.x;
+    // v2.y = (float)(int)v2.y;
+
+    int maxx = fmaxf(v0.x, fmaxf(v1.x, v2.x));
+    int minx = fminf(v0.x, fminf(v1.x, v2.x));
+    int maxy = fmaxf(v0.y, fmaxf(v1.y, v2.y));
+    int miny = fminf(v0.y, fminf(v1.y, v2.y));
+
+    for (int y = miny; y <= maxy; y++)
+    for (int x = minx; x <= maxx; x++)
+    {
+        if (!_ZlTriangleIsInside(v0, v1, v2, x, y)) continue;
+        float z = _ZlTriangleBarycentric(v0, v1, v2, x, y);
+        _ZlBitmapSetDepth(bitmap, x, y, z);
+    }
+}
+static inline void _ZlBitmapDrawTriangleNdc(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
+{
+    assert(-1 <= v0.x && v0.x <= 1);
+    assert(-1 <= v0.y && v0.y <= 1);
+    assert(-1 <= v0.z && v0.z <= 1);
+
+    assert(-1 <= v1.x && v1.x <= 1);
+    assert(-1 <= v1.y && v1.y <= 1);
+    assert(-1 <= v1.z && v1.z <= 1);
+
+    assert(-1 <= v2.x && v2.x <= 1);
+    assert(-1 <= v2.y && v2.y <= 1);
+    assert(-1 <= v2.z && v2.z <= 1);
+
+    // TODO move to _ZlBitmapDrawTriangleSp?
+    if (!_ZlTriangleIsClockwise(v0, v1, v2)) return;
+
+    v0 = _ZlNdcToSp(v0, bitmap->width, bitmap->height);
+    v1 = _ZlNdcToSp(v1, bitmap->width, bitmap->height);
+    v2 = _ZlNdcToSp(v2, bitmap->width, bitmap->height);
+
+    _ZlBitmapDrawTriangleSp(bitmap, v0, v1, v2);
 }
 static inline void _ZlBitmapDrawTriangle(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
 {
