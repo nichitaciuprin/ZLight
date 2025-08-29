@@ -100,7 +100,6 @@ static inline float _ZlMathLerp(float a, float b, float t)
 {
     return a + (b - a) * t;
 }
-
 static inline zlvec3 _ZlVector3Neg(zlvec3 r)
 {
     r.x = -r.x;
@@ -136,7 +135,6 @@ static inline zlvec3 _ZlVector3Div(zlvec3 l, float r)
     l.z /= r;
     return l;
 }
-
 static inline float _ZlVector3Length(zlvec3 v)
 {
     float x = v.x * v.x;
@@ -159,7 +157,6 @@ static inline zlvec3 _ZlVector3Normalize(zlvec3 v)
     if (length == 0) return v;
     return _ZlVector3Div(v, length);
 }
-
 static inline zlvec3 _ZlVector3RotateX(zlvec3 v, float rad)
 {
     float sin = sinf(rad);
@@ -187,7 +184,6 @@ static inline zlvec3 _ZlVector3RotateZ(zlvec3 v, float rad)
     float z = v.z;
     return (zlvec3){ x, y, z };
 }
-
 static inline zlvec3 _ZlVector3Cross(zlvec3 a, zlvec3 b)
 {
     float x = a.y*b.z - a.z*b.y;
@@ -195,7 +191,6 @@ static inline zlvec3 _ZlVector3Cross(zlvec3 a, zlvec3 b)
     float z = a.x*b.y - a.y*b.x;
     return (zlvec3){ x, y, z };
 }
-
 static inline float _ZlVector3Dot(zlvec3 l, zlvec3 r)
 {
     float x = l.x * r.x;
@@ -211,7 +206,6 @@ static inline float _ZlVector4Dot(zlvec4 l, zlvec4 r)
     float w = l.w * r.w;
     return x + y + z + w;
 }
-
 static inline zlvec4 _ZlVector4Lerp(zlvec4 a, zlvec4 b, float t)
 {
     a.x = _ZlMathLerp(a.x, b.x, t);
@@ -220,7 +214,6 @@ static inline zlvec4 _ZlVector4Lerp(zlvec4 a, zlvec4 b, float t)
     a.w = _ZlMathLerp(a.w, b.w, t);
     return a;
 }
-
 static inline zlvec3 _ZlMatrixMultiply3L(zlvec3 v, zlmat m)
 {
     zlvec4 col0 = { m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0] };
@@ -251,7 +244,6 @@ static inline zlvec4 _ZlMatrixMultiply4L(zlvec4 v, zlmat m)
 
     return v;
 }
-
 static inline zlmat _ZlMatrixIdentity()
 {
     return (zlmat)
@@ -469,7 +461,6 @@ static inline zlmat _ZlMatrixProjPerspective2(float width, float height, float n
         {0,  0, -o,  0}
     }};
 }
-
 static inline zlvec3 _ZlWorldToNdc(zlvec3 p, zlmat view, zlmat proj)
 {
     zlvec4 _p = { p.x, p.y, p.z, 1 };
@@ -495,7 +486,6 @@ static inline zlvec3 _ZlNdcToWorld(zlvec3 p, zlmat viewi, zlmat proji)
     _p = _ZlMatrixMultiply4L(_p, viewi);
     return (zlvec3){ _p.x, _p.y, _p.z };
 }
-
 static inline zlvec3 _ZlNdcToSp(zlvec3 v, int width, int height)
 {
     v.x = (+v.x + 1) / 2 * (width  - 1);
@@ -508,7 +498,6 @@ static inline zlvec3 _ZlSpToNdc(zlvec3 v, int maxx, int maxy)
     v.y = -(v.y / maxy * 2 - 1);
     return v;
 }
-
 static inline bool _ZlTriangleIsClockwise(zlvec3 v0, zlvec3 v1, zlvec3 v2)
 {
     zlvec3 d0 = _ZlVector3Sub(v1, v0);
@@ -568,7 +557,6 @@ static inline float _ZlTriangleBarycentric(zlvec3 v0, zlvec3 v1, zlvec3 v2, floa
 
     return result;
 }
-
 static inline bool _ZlHiden(zlvec3 pos, float radius, zlmat view, float far)
 {
     zlvec3 pos2 = _ZlMatrixMultiply3L(pos, view);
@@ -580,7 +568,6 @@ static inline bool _ZlHiden(zlvec3 pos, float radius, zlmat view, float far)
     if (_ZlVector3RotateX(pos2, -_ZL_PI_DIV_4).y > +radius) return true;
     return false;
 }
-
 static inline bool _ZlClipPoint(zlvec4 p)
 {
     return
@@ -588,7 +575,6 @@ static inline bool _ZlClipPoint(zlvec4 p)
     (-p.w <= p.y && p.y <= p.w) &&
     (-p.w <= p.z && p.z <= p.w);
 }
-
 static inline bool _ZlClipLineW(zlvec4* p0, zlvec4* p1)
 {
     int flags = 0;
@@ -876,7 +862,6 @@ static inline bool _ZlClipLineU(zlvec4* p0, zlvec4* p1)
         }
     }
 }
-
 static inline void _ZlClipPoligonW(zlvec4* input, zlvec4* output, int* vertexCount)
 {
     int flags = 0;
@@ -1402,7 +1387,6 @@ static inline void _ZlClipPoligonU(zlvec4* input, zlvec4* output, int* vertexCou
 
     *vertexCount = finalCount;
 }
-
 static inline uint32_t _ZlColorCreateRgb(uint8_t r, uint8_t g, uint8_t b)
 {
     uint32_t result = 0;
@@ -1455,14 +1439,12 @@ static inline void _ZlBitmapDestroy(zlbitmap* bitmap)
 {
     free((void*)bitmap);
 }
-
 static inline void _ZlBitmapReset(zlbitmap* bitmap)
 {
     int size = bitmap->width * bitmap->height;
     for (int i = 0; i < size; i++)
         bitmap->buffer[i] = 1;
 }
-
 static inline void _ZlBitmapSetViewByEuler(zlbitmap* bitmap, zlvec3 eye, float x, float y, float z)
 {
     eye = _ZlVector3Neg(eye);
@@ -1503,14 +1485,12 @@ static inline void _ZlBitmapSetViewByTarget(zlbitmap* bitmap, zlvec3 eye, zlvec3
 
     bitmap->view = result;
 }
-
 static inline void _ZlBitmapSetProj(zlbitmap* bitmap, float near, float far)
 {
     bitmap->neari = 1.0f / near;
     bitmap->far = far;
     bitmap->proj = _ZlMatrixProjPerspective1(bitmap->width, bitmap->height, near, far);
 }
-
 static inline void _ZlBitmapSetPixel(zlbitmap* bitmap, int x, int y, uint32_t color)
 {
     assert(0 <= x && x < bitmap->width);
@@ -1532,7 +1512,6 @@ static inline void _ZlBitmapSetDepth(zlbitmap* bitmap, int x, int y, float z)
     bitmap->buffer[i] < z ?
     bitmap->buffer[i] : z;
 }
-
 static inline void _ZlBitmapDrawVertexSp(zlbitmap* bitmap, zlvec3 v0)
 {
     _ZlBitmapSetDepth(bitmap, v0.x, v0.y, v0.z);
@@ -1564,7 +1543,6 @@ static inline void _ZlBitmapDrawVertex(zlbitmap* bitmap, zlvec3 v0)
 
     _ZlBitmapDrawVertexNdc(bitmap, v0);
 }
-
 static inline void _ZlBitmapDrawLineSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 {
     int x0 = (int)v0.x;
@@ -1679,7 +1657,6 @@ static inline void _ZlBitmapDrawLine(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1)
 
     _ZlBitmapDrawLineNdc(bitmap, v0, v1);
 }
-
 static inline void _ZlBitmapDrawTriangleSp(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, zlvec3 v2)
 {
     // pushes corners
@@ -1780,7 +1757,6 @@ static inline void _ZlBitmapDrawTriangle(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1,
         _ZlBitmapDrawTriangleNdc(bitmap, v0, v1, v2);
     }
 }
-
 static inline void _ZlBitmapApplyDepth(zlbitmap* bitmap)
 {
     float* zbuffer = (float*)bitmap->buffer;
@@ -1810,7 +1786,6 @@ static inline void _ZlBitmapApplyDepthInvert(zlbitmap* bitmap)
         pixels[i] = _ZlColorCreateBwFloat(t);
     }
 }
-
 static inline void _ZlBitmapApplyDepthAdjusted(zlbitmap* bitmap)
 {
     float* zbuffer = (float*)bitmap->buffer;
