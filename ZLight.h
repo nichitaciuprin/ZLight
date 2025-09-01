@@ -162,25 +162,25 @@ static inline zlvec3 _ZlVector3RotateX(zlvec3 v, float rad)
     float sin = sinf(rad);
     float cos = cosf(rad);
     float x = v.x;
-    float y = v.y * ( cos) + v.z * ( sin);
-    float z = v.y * (-sin) + v.z * ( cos);
+    float y = v.y*cos + v.z*sin;
+    float z = v.z*cos - v.y*sin;
     return (zlvec3){ x, y, z };
 }
 static inline zlvec3 _ZlVector3RotateY(zlvec3 v, float rad)
 {
     float sin = sinf(rad);
     float cos = cosf(rad);
-    float x = v.x * ( cos) + v.z * (-sin);
+    float x = v.x*cos - v.z*sin;
     float y = v.y;
-    float z = v.x * ( sin) + v.z * ( cos);
+    float z = v.z*cos + v.x*sin;
     return (zlvec3){ x, y, z };
 }
 static inline zlvec3 _ZlVector3RotateZ(zlvec3 v, float rad)
 {
     float sin = sinf(rad);
     float cos = cosf(rad);
-    float x = v.x * ( cos) + v.y * ( sin);
-    float y = v.x * (-sin) + v.y * ( cos);
+    float x = v.x*cos + v.y*sin;
+    float y = v.y*cos - v.x*sin;
     float z = v.z;
     return (zlvec3){ x, y, z };
 }

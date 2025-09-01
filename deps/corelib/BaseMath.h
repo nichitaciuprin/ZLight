@@ -659,28 +659,28 @@ static inline Vector2 Vector2Rotate(Vector2 v, float rad)
 
 static inline Vector3 Vector3RotateX(Vector3 v, float rad)
 {
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
+    float sin = sinf(rad);
+    float cos = cosf(rad);
     float x = v.x;
-    float y = v.y * ( cos) + v.z * ( sin);
-    float z = v.y * (-sin) + v.z * ( cos);
+    float y = v.y*cos + v.z*sin;
+    float z = v.z*cos - v.y*sin;
     return (Vector3){ x, y, z };
 }
 static inline Vector3 Vector3RotateY(Vector3 v, float rad)
 {
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
-    float x = v.x * ( cos) + v.z * (-sin);
+    float sin = sinf(rad);
+    float cos = cosf(rad);
+    float x = v.x*cos - v.z*sin;
     float y = v.y;
-    float z = v.x * ( sin) + v.z * ( cos);
+    float z = v.z*cos + v.x*sin;
     return (Vector3){ x, y, z };
 }
 static inline Vector3 Vector3RotateZ(Vector3 v, float rad)
 {
-    float sin = MathSin(rad);
-    float cos = MathCos(rad);
-    float x = v.x * ( cos) + v.y * ( sin);
-    float y = v.x * (-sin) + v.y * ( cos);
+    float sin = sinf(rad);
+    float cos = cosf(rad);
+    float x = v.x*cos + v.y*sin;
+    float y = v.y*cos - v.x*sin;
     float z = v.z;
     return (Vector3){ x, y, z };
 }
