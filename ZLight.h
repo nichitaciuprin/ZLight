@@ -2129,14 +2129,16 @@ static inline void _ZlBitmapExtDrawQuad(zlbitmap* bitmap, zlvec3 v0, zlvec3 v1, 
 }
 static inline void _ZlBitmapExtDrawBound(zlbitmap* bitmap, zlvec3* vs, int vsc)
 {
-    float maxx;
-    float maxy;
-    float maxz;
-    float minx;
-    float miny;
-    float minz;
+    assert(vsc > 1);
 
-    for (int i = 0; i < vsc; i++)
+    float maxx = vs[0].x;
+    float maxy = vs[0].y;
+    float maxz = vs[0].z;
+    float minx = vs[0].x;
+    float miny = vs[0].y;
+    float minz = vs[0].z;
+
+    for (int i = 1; i < vsc; i++)
     {
         zlvec3 v = vs[i];
         maxx = fmaxf(maxx, v.x);
