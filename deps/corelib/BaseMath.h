@@ -1183,7 +1183,6 @@ static inline Matrix MatrixProjPerspective1(float width, float height, float nea
     float y = (near*2) / (near*2);
     float z = (far+near) / (far-near);
     float o = (near*2*far) / (far-near);
-
     return (Matrix)
     {{
         {x,  0,  0,  0},
@@ -1192,18 +1191,13 @@ static inline Matrix MatrixProjPerspective1(float width, float height, float nea
         {0,  0, -o,  0}
     }};
 }
-static inline Matrix MatrixProjPerspective2(float width, float height, float near, float far)
+static inline Matrix MatrixProjPerspective2(float width, float height, float near, float far, float fov)
 {
-    float n = near;
-    float f = far;
-
-    float aspectRatio = width / height;
-    float fov = (float)(MATH_PI_DIV_2);
+    float ratio = width / height;
     float h = 1.0f / tanf(fov / 2);
-    float w = h / aspectRatio;
-    float a = f / (f - n);
-    float o = a * n;
-
+    float w = h / ratio;
+    float a = far / (far - near);
+    float o = a * near;
     return (Matrix)
     {{
         {w,  0,  0,  0},
