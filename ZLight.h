@@ -432,7 +432,7 @@ static inline zlmat _ZlMatrixProjOrthographic(float width, float height, float n
 static inline zlmat _ZlMatrixProjPerspective1(float width, float height, float near, float far)
 {
     float x = (near*2) / (near*2/width*height);
-    float y = (near*2) / (near*2);
+    float y = 1;
     float z = (far+near) / (far-near);
     float o = (near*2*far) / (far-near);
     return (zlmat)
