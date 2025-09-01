@@ -466,7 +466,6 @@ static inline zlvec3 _ZlWorldToNdc(zlvec3 p, zlmat view, zlmat proj)
     _p.x /= _p.w;
     _p.y /= _p.w;
     _p.z /= _p.w;
-    _p.w = 1;
     return (zlvec3) { _p.x, _p.y, _p.z };
 }
 static inline zlvec3 _ZlNdcToWorld(zlvec3 p, zlmat viewi, zlmat proji)
