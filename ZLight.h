@@ -554,8 +554,8 @@ static inline float _ZlTriangleBarycentric(zlvec3 v0, zlvec3 v1, zlvec3 v2, floa
 static inline bool _ZlHiden(zlvec3 pos, float radius, zlmat view, float far)
 {
     zlvec3 pos2 = _ZlMatrixMultiply3L(pos, view);
-    if (pos2.z < -radius)                                 return true;
-    if (pos2.z > +radius + far)                           return true;
+    if (pos2.z < -radius)                                   return true;
+    if (pos2.z > +radius + far)                             return true;
     if (_ZlVector3RotateY(pos2, -_ZL_PI_DIV_4).x < -radius) return true;
     if (_ZlVector3RotateY(pos2, +_ZL_PI_DIV_4).x > +radius) return true;
     if (_ZlVector3RotateX(pos2, +_ZL_PI_DIV_4).y < -radius) return true;
@@ -1460,10 +1460,10 @@ static inline void _ZlBitmapSetViewByPyr(zlbitmap* bitmap, zlvec3 eye, float pit
 static inline void _ZlBitmapSetViewByTarget(zlbitmap* bitmap, zlvec3 eye, zlvec3 target, zlvec3 up)
 {
     zlvec3 zAxis = _ZlVector3Sub(target, eye);
-            zAxis = _ZlVector3Normalize(zAxis);
+           zAxis = _ZlVector3Normalize(zAxis);
 
     zlvec3 xAxis = _ZlVector3Cross(up, zAxis);
-            xAxis = _ZlVector3Normalize(xAxis);
+           xAxis = _ZlVector3Normalize(xAxis);
 
     zlvec3 yAxis = _ZlVector3Cross(zAxis, xAxis);
 
