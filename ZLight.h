@@ -435,7 +435,6 @@ static inline zlmat _ZlMatrixProjPerspective1(float width, float height, float n
     float y = (near*2) / (near*2);
     float z = (far+near) / (far-near);
     float o = (near*2*far) / (far-near);
-
     return (zlmat)
     {{
         {x,  0,  0,  0},
@@ -447,12 +446,10 @@ static inline zlmat _ZlMatrixProjPerspective1(float width, float height, float n
 static inline zlmat _ZlMatrixProjPerspective2(float width, float height, float near, float far, float fov)
 {
     float ratio = width / height;
-
     float h = 1.0f / tanf(fov / 2);
     float w = h / ratio;
     float a = far / (far - near);
     float o = a * near;
-
     return (zlmat)
     {{
         {w,  0,  0,  0},
@@ -464,15 +461,12 @@ static inline zlmat _ZlMatrixProjPerspective2(float width, float height, float n
 static inline zlvec3 _ZlWorldToNdc(zlvec3 p, zlmat view, zlmat proj)
 {
     zlvec4 _p = { p.x, p.y, p.z, 1 };
-
     _p = _ZlMatrixMultiply4L(_p, view);
-
     _p = _ZlMatrixMultiply4L(_p, proj);
     _p.x /= _p.w;
     _p.y /= _p.w;
     _p.z /= _p.w;
     _p.w = 1;
-
     return (zlvec3) { _p.x, _p.y, _p.z };
 }
 static inline zlvec3 _ZlNdcToWorld(zlvec3 p, zlmat viewi, zlmat proji)
