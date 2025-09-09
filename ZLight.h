@@ -152,9 +152,10 @@ static inline float _ZlVector3Distance(zlvec3 a, zlvec3 b)
 }
 static inline zlvec3 _ZlVector3Normalize(zlvec3 v)
 {
-    // TODO remove "if (length == 0)" ?
-    float length = _ZlVector3Length(v);
-    if (length == 0) return v;
+    float x = v.x * v.x;
+    float y = v.y * v.y;
+    float z = v.z * v.z;
+    float length = sqrtf(x + y + z);
     return _ZlVector3Div(v, length);
 }
 static inline zlvec3 _ZlVector3RotateX(zlvec3 v, float rad)
@@ -1458,6 +1459,9 @@ static inline void _ZlBitmapSetViewByPyr(zlbitmap* bitmap, zlvec3 eye, float pit
 }
 static inline void _ZlBitmapSetViewByTarget(zlbitmap* bitmap, zlvec3 eye, zlvec3 target, zlvec3 up)
 {
+    assert(eye != target);
+    assert(up != ((zlvec3){ 0, 0, 0 }));
+
     zlvec3 zAxis = _ZlVector3Sub(target, eye);
            zAxis = _ZlVector3Normalize(zAxis);
 
