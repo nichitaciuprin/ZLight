@@ -1691,7 +1691,6 @@ static inline void _ZlBitmapDrawTriangleNdc(zlbitmap* bitmap, zlvec3 v0, zlvec3 
     assert(-1 <= v2.y && v2.y <= 1);
     assert(-1 <= v2.z && v2.z <= 1);
 
-    // TODO move to _ZlBitmapDrawTriangleSp?
     if (!_ZlTriangleIsClockwise(v0, v1, v2)) return;
 
     v0 = _ZlNdcToSp(v0, bitmap->width, bitmap->height);
