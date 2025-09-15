@@ -518,20 +518,6 @@ static inline bool _ZlTriangleIsInside(zlvec3 v0, zlvec3 v1, zlvec3 v2, float x,
 }
 static inline float _ZlTriangleBarycentric(zlvec3 v0, zlvec3 v1, zlvec3 v2, float x, float y)
 {
-    // TODO check
-
-    // <   0.000000,  +64.579498, +1.000000>
-    // <+127.000000,  +64.579498, +1.000000>
-    // <+127.000000, +127.000000, +0.884352>
-    // <  +2.000000,  +64.000000, +1.001074>
-    // bad +1.001074
-
-    // <+109.000000, +62.000000, +0.987062>
-    // <+117.000000, +71.000000, +0.986772>
-    // <+118.000000, +72.000000, +0.985751>
-    // <+116.000000, +72.000000, +1.003553>
-    // bad +1.003553
-
     float det = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
 
     if (det == 0) return 1;
