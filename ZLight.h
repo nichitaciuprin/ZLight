@@ -1445,8 +1445,15 @@ static inline void _ZlBitmapSetViewByPyr(zlbitmap* bitmap, zlvec3 eye, float pit
 }
 static inline void _ZlBitmapSetViewByTarget(zlbitmap* bitmap, zlvec3 eye, zlvec3 target, zlvec3 up)
 {
-    assert(eye != target);
-    assert(up != ((zlvec3){ 0, 0, 0 }));
+    assert(!(
+    eye.x == target.x &&
+    eye.y == target.y &&
+    eye.z == target.z));
+
+    assert(!(
+    up.x == 0 &&
+    up.y == 0 &&
+    up.z == 0));
 
     zlvec3 zAxis = _ZlVector3Sub(target, eye);
            zAxis = _ZlVector3Normalize(zAxis);
@@ -1456,17 +1463,22 @@ static inline void _ZlBitmapSetViewByTarget(zlbitmap* bitmap, zlvec3 eye, zlvec3
 
     zlvec3 yAxis = _ZlVector3Cross(zAxis, xAxis);
 
-    zlmat result =
-    {{
-        { xAxis.x, xAxis.y, xAxis.z, 0 },
-        { yAxis.x, yAxis.y, yAxis.z, 0 },
-        { zAxis.x, zAxis.y, zAxis.z, 0 },
-        {   eye.x,   eye.y,   eye.z, 1 }
-    }};
-
-    result = _ZlMatrixInvert(result);
-
-    bitmap->view = result;
+    bitmap->view.m[0][0] = xAxis.x;
+    bitmap->view.m[0][1] = yAxis.x;
+    bitmap->view.m[0][2] = zAxis.x;
+    bitmap->view.m[0][3] = 0;
+    bitmap->view.m[1][0] = xAxis.y;
+    bitmap->view.m[1][1] = yAxis.y;
+    bitmap->view.m[1][2] = zAxis.y;
+    bitmap->view.m[1][3] = 0;
+    bitmap->view.m[2][0] = xAxis.z;
+    bitmap->view.m[2][1] = yAxis.z;
+    bitmap->view.m[2][2] = zAxis.z;
+    bitmap->view.m[2][3] = 0;
+    bitmap->view.m[3][0] = -_ZlVector3Dot(xAxis, eye);
+    bitmap->view.m[3][1] = -_ZlVector3Dot(yAxis, eye);
+    bitmap->view.m[3][2] = -_ZlVector3Dot(zAxis, eye);
+    bitmap->view.m[3][3] = 1;
 }
 static inline void _ZlBitmapSetProj(zlbitmap* bitmap, float near, float far)
 {
