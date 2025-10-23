@@ -92,7 +92,7 @@ int main()
                         break;
                     }
                 }
-                SysWindowSetPixelsAutoBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
+                SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
             }
         }
         REC_2
