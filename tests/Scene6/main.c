@@ -69,35 +69,35 @@ void DrawPoint(zlbitmap* bitmap, zlvec3 p)
     ZlBitmapDrawTriangle(bitmap, p0, p1, p2);
     ZlBitmapDrawTriangle(bitmap, p2, p3, p0);
 }
-void DrawCollision(zlbitmap* bitmap)
+void DrawCollision(zlbitmap* bitmap, zlvec3 p0, zlvec3 p1)
 {
-    // test
-    // DrawSquare(bitmap, 0, 0);
-    // DrawSquare(bitmap, 2, 0);
-    // DrawSquare(bitmap, 3, 0);
+    zlvec3 diff = _ZlVector3Sub(p1, p0);
+    float length = _ZlVector3Length(diff);
+    zlvec3 dir = _ZlVector3Div(diff, length);
 
-    float length = _ZlVector3Length(p1);
-    zlvec3 dir = _ZlVector3Normalize(p1);
+    float dx = length / fabsf(diff.x);
+    float dy = length / fabsf(diff.y);
 
-    float dx = fabsf(length / p1.x);
-    float dy = fabsf(length / p1.y);
+    float ox = p0.x < p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
+    float oy = p0.y < p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
 
-    float tx = dx;
-    float ty = dy;
+    float tx = dx*ox;
+    float ty = dy*oy;
 
+    // TODO maybe calc loop count
     for (int i = 0; i < 99; i++)
     {
+        if (length < tx && length < ty) break;
+
         if (tx < ty)
         {
-            if (length < tx) break;
-            zlvec3 cp = _ZlVector3Mul(dir, tx);
+            zlvec3 cp = _ZlVector3Add(p0, _ZlVector3Mul(dir, tx));
             DrawPoint(bitmap, cp);
             tx += dx;
         }
         else
         {
-            if (length < ty) break;
-            zlvec3 cp = _ZlVector3Mul(dir, ty);
+            zlvec3 cp = _ZlVector3Add(p0, _ZlVector3Mul(dir, ty));
             DrawPoint(bitmap, cp);
             ty += dy;
         }
@@ -108,11 +108,14 @@ void Draw(zlbitmap* bitmap)
 {
     DrawGrid(bitmap);
     DrawLine(bitmap);
-    DrawCollision(bitmap);
+    DrawCollision(bitmap, p0, p1);
 }
 
 int main()
 {
+    // printf("%f\n", ClampRight(-1.4f));
+    // return 0;
+
     // zlbitmap* bitmap = ZlBitmapCreate(256, 256);
     zlbitmap* bitmap = ZlBitmapCreate(512, 512);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
@@ -130,6 +133,10 @@ int main()
 
     while (SysWindowExists(window))
     {
+        if (SysWindowKeyDown(window, 'A')) _p0.x -= 0.1f;
+        if (SysWindowKeyDown(window, 'D')) _p0.x += 0.1f;
+        if (SysWindowKeyDown(window, 'S')) _p0.y -= 0.1f;
+        if (SysWindowKeyDown(window, 'W')) _p0.y += 0.1f;
         if (SysWindowKeyDownLEFT(window))  _p1.x -= 0.1f;
         if (SysWindowKeyDownRIGHT(window)) _p1.x += 0.1f;
         if (SysWindowKeyDownDOWN(window))  _p1.y -= 0.1f;
@@ -138,6 +145,8 @@ int main()
         p1 = _p1;
         // p0 = Clamp(_p0);
         // p1 = Clamp(_p1);
+        // p0.x = (float)(int)p0.x;
+        // p1.x = (float)(int)p1.x;
 
         ZlBitmapReset(bitmap);
         Draw(bitmap);

@@ -5,7 +5,11 @@ set build=%~dp0build
 
 set flags=%flags% -Werror -Wall
 set flags=%flags% -std=c99 -m64
-set flags=%flags% -g0 -O3 -D NDEBUG
+set flags=%flags% -g3 -Og
+
+@REM set flags=%flags% -Werror -Wall
+@REM set flags=%flags% -std=c99 -m64
+@REM set flags=%flags% -g0 -O3 -D NDEBUG
 
 if exist %build% rmdir /S /Q %build%
    mkdir %build%
