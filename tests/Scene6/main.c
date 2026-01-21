@@ -32,14 +32,19 @@ void DrawLine(zlbitmap* bitmap)
 {
     ZlBitmapDrawLine(bitmap, (zlvec3){}, target);
 }
+void DrawCollision(zlbitmap* bitmap)
+{
+    // test
+    DrawSquare(bitmap, 0, 0);
+    DrawSquare(bitmap, 2, 0);
+    DrawSquare(bitmap, 3, 0);
+}
 
 void Draw(zlbitmap* bitmap)
 {
     DrawGrid(bitmap);
-    DrawSquare(bitmap, 0, 0);
-    DrawSquare(bitmap, 2, 0);
-    DrawSquare(bitmap, 3, 0);
     DrawLine(bitmap);
+    DrawCollision(bitmap);
 }
 
 int main()
@@ -54,7 +59,7 @@ int main()
     float far = 100.0f;
     bitmap->neari = 1.0f / near;
     bitmap->far = far;
-    bitmap->proj = _ZlMatrixProjOrthographic(bitmap->width/19, bitmap->height/19, near, far);
+    bitmap->proj = _ZlMatrixProjOrthographic(19, 19, near, far);
 
     while (SysWindowExists(window))
     {
