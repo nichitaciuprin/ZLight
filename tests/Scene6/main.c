@@ -2,8 +2,8 @@
 #include "SysWindow.h"
 #include "ZLight.h"
 
-zlvec3 _p0 = {};
-zlvec3 _p1 = {};
+zlvec3 _p0 = { 0, 0, 0 };
+zlvec3 _p1 = { 5, 7, 0 };
 
 zlvec3 p0 = {};
 zlvec3 p1 = {};
@@ -79,38 +79,30 @@ void DrawCollision(zlbitmap* bitmap)
     float length = _ZlVector3Length(p1);
     zlvec3 dir = _ZlVector3Normalize(p1);
 
-    float tx = 0;
-    float ty = 0;
-
     float dx = fabsf(length / p1.x);
     float dy = fabsf(length / p1.y);
 
-    tx += dx;
-    ty += dy;
+    float tx = dx;
+    float ty = dy;
 
     zlvec3 cp;
-
-    if (tx < ty) cp = _ZlVector3Mul(dir, tx);
-    else         cp = _ZlVector3Mul(dir, ty);
-
-    DrawPoint(bitmap, cp);
 
     for (int i = 0; i < 20; i++)
     {
         if (tx < ty)
         {
-            tx += dx;
             if (length < tx) break;
             cp = _ZlVector3Mul(dir, tx);
+            DrawPoint(bitmap, cp);
+            tx += dx;
         }
         else
         {
-            ty += dy;
             if (length < ty) break;
             cp = _ZlVector3Mul(dir, ty);
+            DrawPoint(bitmap, cp);
+            ty += dy;
         }
-
-        DrawPoint(bitmap, cp);
     }
 }
 
@@ -140,14 +132,14 @@ int main()
 
     while (SysWindowExists(window))
     {
-        if (SysWindowKeyDownLEFT(window))  _p1.x -= 0.05f;
-        if (SysWindowKeyDownRIGHT(window)) _p1.x += 0.05f;
-        if (SysWindowKeyDownDOWN(window))  _p1.y -= 0.05f;
-        if (SysWindowKeyDownUP(window))    _p1.y += 0.05f;
-        // p0 = _p0;
-        // p1 = _p1;
-        p0 = Clamp(_p0);
-        p1 = Clamp(_p1);
+        if (SysWindowKeyDownLEFT(window))  _p1.x -= 0.1f;
+        if (SysWindowKeyDownRIGHT(window)) _p1.x += 0.1f;
+        if (SysWindowKeyDownDOWN(window))  _p1.y -= 0.1f;
+        if (SysWindowKeyDownUP(window))    _p1.y += 0.1f;
+        p0 = _p0;
+        p1 = _p1;
+        // p0 = Clamp(_p0);
+        // p1 = Clamp(_p1);
 
         ZlBitmapReset(bitmap);
         Draw(bitmap);
