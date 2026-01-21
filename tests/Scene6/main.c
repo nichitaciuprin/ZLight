@@ -19,7 +19,6 @@ void DrawGrid(zlbitmap* bitmap)
         ZlBitmapDrawLine(bitmap, p0, p1);
     }
 }
-
 void DrawSquare(zlbitmap* bitmap, int x, int y)
 {
     zlvec3 p0 = { -0.5f+x, -0.5f+y, 91 };
@@ -29,6 +28,10 @@ void DrawSquare(zlbitmap* bitmap, int x, int y)
     ZlBitmapDrawTriangle(bitmap, p0, p1, p2);
     ZlBitmapDrawTriangle(bitmap, p2, p3, p0);
 }
+void DrawLine(zlbitmap* bitmap)
+{
+    ZlBitmapDrawLine(bitmap, (zlvec3){}, target);
+}
 
 void Draw(zlbitmap* bitmap)
 {
@@ -36,7 +39,7 @@ void Draw(zlbitmap* bitmap)
     DrawSquare(bitmap, 0, 0);
     DrawSquare(bitmap, 2, 0);
     DrawSquare(bitmap, 3, 0);
-    ZlBitmapDrawLine(bitmap, (zlvec3){}, target);
+    DrawLine(bitmap);
 }
 
 int main()
