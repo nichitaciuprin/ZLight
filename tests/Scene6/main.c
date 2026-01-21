@@ -121,7 +121,6 @@ int main()
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowShow(window);
-    float time = 0;
 
     float near = 0.1f;
     float far = 100.0f;
@@ -129,10 +128,12 @@ int main()
     bitmap->far = far;
     bitmap->proj = _ZlMatrixProjOrthographic(19, 19, near, far);
 
-    // ZlBitmapSetViewByTarget(bitmap, (zlvec3){1, 1, -1}, (zlvec3){}, (zlvec3){0,1,0});
+    // float time = 0;
 
     while (SysWindowExists(window))
     {
+        // time += 0.020f;
+
         if (SysWindowKeyDown(window, 'A')) _p0.x -= 0.1f;
         if (SysWindowKeyDown(window, 'D')) _p0.x += 0.1f;
         if (SysWindowKeyDown(window, 'S')) _p0.y -= 0.1f;
@@ -149,12 +150,13 @@ int main()
         // p1.x = (float)(int)p1.x;
 
         ZlBitmapReset(bitmap);
+        // zlvec3 eye = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
+        // ZlBitmapSetViewByTarget(bitmap, eye, (zlvec3){}, (zlvec3){0,1,0});
         Draw(bitmap);
         ZlBitmapApplyDepthAdjustedInvert(bitmap);
         SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
         SysWindowUpdate(window);
         SysHelperHaltLoop(20);
-        time += 0.020f;
     }
 
     return 0;
