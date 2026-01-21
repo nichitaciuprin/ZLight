@@ -85,21 +85,19 @@ void DrawCollision(zlbitmap* bitmap)
     float tx = dx;
     float ty = dy;
 
-    zlvec3 cp;
-
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 99; i++)
     {
         if (tx < ty)
         {
             if (length < tx) break;
-            cp = _ZlVector3Mul(dir, tx);
+            zlvec3 cp = _ZlVector3Mul(dir, tx);
             DrawPoint(bitmap, cp);
             tx += dx;
         }
         else
         {
             if (length < ty) break;
-            cp = _ZlVector3Mul(dir, ty);
+            zlvec3 cp = _ZlVector3Mul(dir, ty);
             DrawPoint(bitmap, cp);
             ty += dy;
         }
