@@ -29,6 +29,11 @@ void InitVoxels()
     {
         voxels[x][y] = 0;
     }
+
+    SetVoxel(0, 5, 1);
+    SetVoxel(1, 5, 1);
+    SetVoxel(2, 5, 1);
+    SetVoxel(3, 5, 1);
 }
 
 Vector3 Clamp(Vector3 v)
@@ -129,15 +134,12 @@ void DrawCollision(Bitmap* bitmap, Vector3 p0, Vector3 p1)
 void DrawVoxels(Bitmap* bitmap)
 {
     // DrawSquare(bitmap, 0, 0);
-    for (int z = 0; z < UNIT; z++)
-    for (int y = 0; y < UNIT; y++)
     for (int x = 0; x < UNIT; x++)
+    for (int y = 0; y < UNIT; y++)
     {
-        if (voxels[x][y][z] == 1)
+        if (voxels[x][y] == 1)
         {
-            x -= 10;
-            y -= 10;
-            DrawSquare(bitmap, x, y);
+            DrawSquare(bitmap, x-10, y-10);
         }
     }
 }
@@ -152,6 +154,8 @@ void Draw(Bitmap* bitmap)
 
 int main()
 {
+    InitVoxels();
+
     Bitmap* bitmap = BitmapCreate(512, 512);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
