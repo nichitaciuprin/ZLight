@@ -8,6 +8,29 @@ Vector3 _p1 = { 5, 7, 0 };
 Vector3 p0 = {};
 Vector3 p1 = {};
 
+#define UNIT 20
+uint8_t voxels[UNIT][UNIT];
+void SetVoxel(int x, int y, uint8_t value)
+{
+    x += 10; if (x < 0 || x >= UNIT) return;
+    y += 10; if (y < 0 || y >= UNIT) return;
+    voxels[x][y] = value;
+}
+uint8_t GetVoxel(int x, int y)
+{
+    x += 10; if (x < 0 || x >= UNIT) return 1;
+    y += 10; if (y < 0 || y >= UNIT) return 1;
+    return voxels[x][y];
+}
+void InitVoxels()
+{
+    for (int x = 0; x < UNIT; x++)
+    for (int y = 0; y < UNIT; y++)
+    {
+        voxels[x][y] = 0;
+    }
+}
+
 Vector3 Clamp(Vector3 v)
 {
     v.x = (float)(int)v.x;
@@ -45,10 +68,10 @@ void DrawGrid(Bitmap* bitmap)
 }
 void DrawSquare(Bitmap* bitmap, int x, int y)
 {
-    Vector3 p0 = { -0.5f+x, -0.5f+y, 91 };
-    Vector3 p1 = { -0.5f+x, +0.5f+y, 91 };
-    Vector3 p2 = { +0.5f+x, +0.5f+y, 91 };
-    Vector3 p3 = { +0.5f+x, -0.5f+y, 91 };
+    Vector3 p0 = { -0.5f+x+0.5f, -0.5f+y+0.5f, 91 };
+    Vector3 p1 = { -0.5f+x+0.5f, +0.5f+y+0.5f, 91 };
+    Vector3 p2 = { +0.5f+x+0.5f, +0.5f+y+0.5f, 91 };
+    Vector3 p3 = { +0.5f+x+0.5f, -0.5f+y+0.5f, 91 };
     BitmapDrawTriangle(bitmap, p0, p1, p2);
     BitmapDrawTriangle(bitmap, p2, p3, p0);
 }
@@ -103,12 +126,28 @@ void DrawCollision(Bitmap* bitmap, Vector3 p0, Vector3 p1)
         }
     }
 }
+void DrawVoxels(Bitmap* bitmap)
+{
+    // DrawSquare(bitmap, 0, 0);
+    for (int z = 0; z < UNIT; z++)
+    for (int y = 0; y < UNIT; y++)
+    for (int x = 0; x < UNIT; x++)
+    {
+        if (voxels[x][y][z] == 1)
+        {
+            x -= 10;
+            y -= 10;
+            DrawSquare(bitmap, x, y);
+        }
+    }
+}
 
 void Draw(Bitmap* bitmap)
 {
     DrawGrid(bitmap);
     DrawLine(bitmap);
     DrawCollision(bitmap, p0, p1);
+    DrawVoxels(bitmap);
 }
 
 int main()

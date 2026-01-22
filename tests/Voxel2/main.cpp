@@ -15,23 +15,18 @@
 uint8_t voxels[UNIT][UNIT][UNIT];
 void SetVoxel(int x, int y, int z, uint8_t value)
 {
-    x += 10;
-    y += 10;
-    z += 10;
-    if (x < 0 || x >= UNIT) return;
-    if (x < 0 || y >= UNIT) return;
-    if (x < 0 || z >= UNIT) return;
-    voxels[x][y][z] = value;
+    // x += 10; if (x < 0 || x >= UNIT) return;
+    // y += 10; if (y < 0 || y >= UNIT) return;
+    // z += 10; if (z < 0 || z >= UNIT) return;
+    // voxels[x][y][z] = value;
 }
 uint8_t GetVoxel(int x, int y, int z)
 {
-    x += 10;
-    y += 10;
-    z += 10;
-    if (x < 0 || x >= UNIT) return 1;
-    if (x < 0 || y >= UNIT) return 1;
-    if (x < 0 || z >= UNIT) return 1;
+    // x += 10; if (x < 0 || x >= UNIT) return 1;
+    // y += 10; if (y < 0 || y >= UNIT) return 1;
+    // z += 10; if (z < 0 || z >= UNIT) return 1;
     return voxels[x][y][z];
+    // return 0;
 }
 void InitVoxels()
 {
