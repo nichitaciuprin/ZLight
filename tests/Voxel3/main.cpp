@@ -43,6 +43,46 @@ Vector3 Clamp(Vector3 v)
     return v;
 }
 
+bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
+{
+    Vector3 diff = Vector3Sub(p1, p0);
+    float length = Vector3Length(diff);
+    Vector3 dir = Vector3Div(diff, length);
+
+    float dx = length / fabsf(diff.x);
+    float dy = length / fabsf(diff.y);
+
+    int sx = signbit(diff.x) == 0 ? +1 : -1;
+    int sy = signbit(diff.y) == 0 ? +1 : -1;
+
+    int ix = (int)floorf(p0.x);
+    int iy = (int)floorf(p0.y);
+
+    float ox = p0.x < p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
+    float oy = p0.y < p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
+
+    float tx = dx*ox;
+    float ty = dy*oy;
+
+    for (int i = 0; i < 99; i++)
+    {
+        if (length < tx && length < ty) break;
+
+        int state;
+
+        if (tx < ty) { state = 0; }
+        else         { state = 1; }
+
+        switch (state)
+        {
+            case 0: { if (GetVoxel(ix, iy) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tx)); dist = tx; return true; } tx += dx; ix += sx; break; }
+            case 1: { if (GetVoxel(ix, iy) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, ty)); dist = ty; return true; } ty += dy; iy += sy; break; }
+        }
+    }
+
+    return false;
+}
+
 void DrawGrid(Bitmap* bitmap)
 {
     // for (int x = -10; x < 10; x++)
@@ -133,7 +173,6 @@ void DrawCollision(Bitmap* bitmap, Vector3 p0, Vector3 p1)
 }
 void DrawVoxels(Bitmap* bitmap)
 {
-    // DrawSquare(bitmap, 0, 0);
     for (int x = 0; x < UNIT; x++)
     for (int y = 0; y < UNIT; y++)
     {
@@ -143,13 +182,23 @@ void DrawVoxels(Bitmap* bitmap)
         }
     }
 }
+void DrawHit(Bitmap* bitmap, Vector3 p0, Vector3 p1)
+{
+    Vector3 pos; float dist;
+    if (Trace(p0, p1, pos, dist))
+    {
+        DrawPoint(bitmap, pos);
+    }
+}
+
 
 void Draw(Bitmap* bitmap)
 {
     DrawGrid(bitmap);
     DrawLine(bitmap);
-    DrawCollision(bitmap, p0, p1);
     DrawVoxels(bitmap);
+    // DrawCollision(bitmap, p0, p1);
+    DrawHit(bitmap, p0, p1);
 }
 
 int main()

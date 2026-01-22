@@ -66,7 +66,7 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist)
 
     for (int i = 0; i < 99; i++)
     {
-        if (length < tx && length < ty) break;
+        if (length < tx && length < ty && length < tz) break;
 
         int state;
 
