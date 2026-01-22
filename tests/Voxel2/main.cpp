@@ -45,6 +45,55 @@ void InitVoxels()
     }
 }
 
+bool Intersects(Vector3 p0, Vector3 p1)
+{
+    Vector3 diff = Vector3Sub(p1, p0);
+    float length = Vector3Length(diff);
+    Vector3 dir = Vector3Div(diff, length);
+
+    float dx = length / fabsf(diff.x);
+    float dy = length / fabsf(diff.y);
+    float dz = length / fabsf(diff.z);
+
+    int sx = signbit(diff.x) == 0 ? +1 : -1;
+    int sy = signbit(diff.y) == 0 ? +1 : -1;
+    int sz = signbit(diff.z) == 0 ? +1 : -1;
+
+    int ix = (int)floorf(p0.x);
+    int iy = (int)floorf(p0.y);
+    int iz = (int)floorf(p0.z);
+
+    float ox = p0.x <= p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
+    float oy = p0.y <= p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
+    float oz = p0.z <= p1.z ? 1.0f - (p0.z - floorf(p0.z)) : p0.z - floorf(p0.z);
+
+    float tx = dx*ox;
+    float ty = dy*oy;
+    float tz = dz*oz;
+
+    for (int i = 0; i < 99; i++)
+    {
+        if (length < tx && length < ty && length < tz) break;
+
+        if (GetVoxel(ix, iy, iz) == 1) return true;
+
+        int state;
+
+        if (tx < ty) { if (tx < tz) { state = 0; } else { state = 2; } }
+        else         { if (ty < tz) { state = 1; } else { state = 2; } }
+
+        switch (state)
+        {
+            case 0: { ix += sx; tx += dx; break; }
+            case 1: { iy += sy; ty += dy; break; }
+            case 2: { iz += sz; tz += dz; break; }
+        }
+    }
+
+    if (GetVoxel(ix, iy, iz) == 1) return true;
+
+    return false;
+}
 bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 {
     Vector3 diff = Vector3Sub(p1, p0);
@@ -63,9 +112,9 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
     int iy = (int)floorf(p0.y);
     int iz = (int)floorf(p0.z);
 
-    float ox = p0.x < p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
-    float oy = p0.y < p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
-    float oz = p0.z < p1.z ? 1.0f - (p0.z - floorf(p0.z)) : p0.z - floorf(p0.z);
+    float ox = p0.x <= p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
+    float oy = p0.y <= p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
+    float oz = p0.z <= p1.z ? 1.0f - (p0.z - floorf(p0.z)) : p0.z - floorf(p0.z);
 
     float tx = dx*ox;
     float ty = dy*oy;

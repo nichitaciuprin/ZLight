@@ -1,6 +1,7 @@
 #include "SysHelper.h"
 #include "SysWindow.h"
 #include "Bitmap.h"
+#include "BitmapExt.h"
 #include "Print.h"
 
 Vector3 _p0 = { 0, 0, 0 };
@@ -74,9 +75,9 @@ void InitVoxels()
     for (int i = -6; i < +6; i++)
     {
         SetVoxel(i, +5, 1);
-        SetVoxel(i, -5, 1);
+        SetVoxel(i, -6, 1);
         SetVoxel(+5, i, 1);
-        SetVoxel(-5, i, 1);
+        SetVoxel(-6, i, 1);
     }
 }
 
@@ -87,7 +88,7 @@ Vector3 Clamp(Vector3 v)
     return v;
 }
 
-bool CanTrace(Vector3 p0)
+bool OutSide(Vector3 p0)
 {
     int ix = (int)floorf(p0.x);
     int iy = (int)floorf(p0.y);
@@ -108,8 +109,8 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
     int ix = (int)floorf(p0.x);
     int iy = (int)floorf(p0.y);
 
-    float ox = p0.x < p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
-    float oy = p0.y < p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
+    float ox = p0.x <= p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
+    float oy = p0.y <= p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
 
     float tx = dx*ox;
     float ty = dy*oy;
@@ -149,6 +150,42 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
     return false;
 }
 
+bool Intersects(Vector3 p0, Vector3 p1)
+{
+    Vector3 diff = Vector3Sub(p1, p0);
+    float length = Vector3Length(diff);
+
+    float dx = length / fabsf(diff.x);
+    float dy = length / fabsf(diff.y);
+
+    int sx = signbit(diff.x) == 0 ? +1 : -1;
+    int sy = signbit(diff.y) == 0 ? +1 : -1;
+
+    int ix = (int)floorf(p0.x);
+    int iy = (int)floorf(p0.y);
+
+    float ox = p0.x <= p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
+    float oy = p0.y <= p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
+
+    float tx = dx*ox;
+    float ty = dy*oy;
+
+    for (int i = 0; i < 99; i++)
+    {
+        if (length < tx && length < ty) break;
+
+        if (GetVoxel(ix, iy) == 1) return true;
+
+        if (tx < ty) { ix += sx; tx += dx; }
+        else         { iy += sy; ty += dy; }
+    }
+
+    if (GetVoxel(ix, iy) == 1) return true;
+
+    return false;
+}
+
+
 void DrawLine(Bitmap* bitmap)
 {
     // p0.x += 0.5f;
@@ -175,8 +212,8 @@ void DrawCollision(Bitmap* bitmap, Vector3 p0, Vector3 p1)
     float dx = length / fabsf(diff.x);
     float dy = length / fabsf(diff.y);
 
-    float ox = p0.x < p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
-    float oy = p0.y < p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
+    float ox = p0.x <= p1.x ? 1.0f - (p0.x - floorf(p0.x)) : p0.x - floorf(p0.x);
+    float oy = p0.y <= p1.y ? 1.0f - (p0.y - floorf(p0.y)) : p0.y - floorf(p0.y);
 
     float tx = dx*ox;
     float ty = dy*oy;
@@ -224,8 +261,20 @@ void Draw(Bitmap* bitmap)
     DrawLine(bitmap);
     DrawVoxels(bitmap);
     // DrawCollision(bitmap, p0, p1);
-    if (CanTrace(p0))
+
+    if (OutSide(p0))
         DrawHit(bitmap, p0, p1);
+
+    // char sign;
+    // if (!OutSide(p0))            sign = '1';
+    // else if (Intersects(p0, p1)) sign = '1';
+    // else                         sign = '0';
+    // BitmapExtDrawChar(bitmap, 0, 0, sign);
+
+    if (Intersects(p0, p1))
+        BitmapExtDrawChar(bitmap, 0, 0, '1');
+    else
+        BitmapExtDrawChar(bitmap, 0, 0, '0');
 }
 
 int main()
