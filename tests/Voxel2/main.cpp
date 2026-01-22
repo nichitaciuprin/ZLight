@@ -40,9 +40,13 @@ void InitVoxels()
     for (int z = 0; z < UNIT; z++)
     for (int y = 0; y < UNIT; y++)
     for (int x = 0; x < UNIT; x++)
-    {
-        voxels[x][y][z] = Subgen1FractionUnsigned() < 0.8f ? 0 : 1;
-    }
+        // voxels[x][y][z] = Subgen1FractionUnsigned() < 0.8f ? 0 : 1;
+        voxels[x][y][z] = Subgen1FractionUnsigned() < 0.95f ? 0 : 1;
+
+    for (int z = -1; z <= 1; z++)
+    for (int y = -1; y <= 1; y++)
+    for (int x = -1; x <= 1; x++)
+        SetVoxel(x, y, z, 0);
 }
 
 bool Intersects(Vector3 p0, Vector3 p1)
@@ -192,14 +196,14 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
 {
     Vector3 ro = camera->pos;
 
-    Vector3 lightPos = camera->pos + CameraGetAxisZ(camera);
+    // Vector3 lightPos = camera->pos + CameraGetAxisZ(camera);
 
     Matrix view = MatrixView1({}, camera->yaw, camera->pitch);
 
     int w = bitmap->width;
     int h = bitmap->height;
 
-    // uint32_t* pixels = (uint32_t*)bitmap->buffer;
+    uint32_t* pixels = (uint32_t*)bitmap->buffer;
 
     for (int y = 0; y < h; y++)
     for (int x = 0; x < w; x++)
@@ -214,14 +218,26 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         Vector3 p1 = ro+rd*100;
 
         Vector3 pos;
-        float t;
+        {
+            float t;
+            if (!Trace(p0, p1, pos, t)) continue;
+        }
 
-        if (!Trace(p0, p1, pos, t)) continue;
+        pos = Vector3MoveTowards1(pos, p0, 0.01f);
 
-        Vector3 ndc = WorldToNdc(pos, bitmap->view, bitmap->proj);
-        t = ndc.z;
-        t = MathClamp(t, -1, +1);
-        BitmapSetDepth(bitmap, x, y, t);
+        if (Intersects(pos, {})) continue;
+
+        // BitmapSetDepth(bitmap, x, y, +0.9);
+
+        int i = x + y * bitmap->width;
+        float t = Vector3Length(pos) * 0.05f;
+        t = 1 - (t > 1 ? 1 : t);
+        pixels[i] = ColorCreateBwFloat(t);
+
+        // Vector3 ndc = WorldToNdc(pos, bitmap->view, bitmap->proj);
+        // t = ndc.z;
+        // t = MathClamp(t, -1, +1);
+        // BitmapSetDepth(bitmap, x, y, t);
 
         // BitmapSetDepth(bitmap, x, y, +0.9);
 
@@ -230,12 +246,13 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
     }
 }
 
-Camera camera = { 0, 1.70f, -1 };
+// Camera camera = { 0, 1.70f, -1 };
+Camera camera = {};
 
 void Draw(Bitmap* bitmap)
 {
     // BitmapExtDrawPlane(bitmap);
-    BitmapExtDrawCube(bitmap, {}, {}, {1,1,1});
+    // BitmapExtDrawCube(bitmap, {}, {}, {1,1,1});
     // DrawPlaneInf(&camera, bitmap);
     DrawPlaneInf2(&camera, bitmap);
 }
@@ -244,7 +261,8 @@ int main()
 {
     InitVoxels();
 
-    Bitmap* bitmap = BitmapCreate(128, 128);
+    // Bitmap* bitmap = BitmapCreate(128, 128);
+    Bitmap* bitmap = BitmapCreate(256, 256);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     // SysWindowSetFullscreen(window, true);
@@ -260,7 +278,7 @@ int main()
         BitmapReset(bitmap);
         Draw(bitmap);
         // BitmapApplyDepthInvert(bitmap);
-        BitmapApplyDepthAdjustedInvert(bitmap);
+        // BitmapApplyDepthAdjustedInvert(bitmap);
         // BitmapApplyDepthAdjusted(bitmap);
         REC_2
 
