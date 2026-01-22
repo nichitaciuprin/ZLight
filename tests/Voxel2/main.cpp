@@ -12,9 +12,7 @@
 #include "Helper.h"
 
 #define UNIT 20
-
 uint8_t voxels[UNIT][UNIT][UNIT];
-
 void SetVoxel(int x, int y, int z, uint8_t value)
 {
     x += 10;
