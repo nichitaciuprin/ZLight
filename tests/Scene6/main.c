@@ -116,6 +116,7 @@ int main()
     zlbitmap* bitmap = ZlBitmapCreate(512, 512);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
+    SysWindowSetFullscreen(window, true);
     SysWindowShow(window);
 
     float near = 0.1f;
