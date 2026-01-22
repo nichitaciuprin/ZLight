@@ -113,10 +113,6 @@ void Draw(zlbitmap* bitmap)
 
 int main()
 {
-    // printf("%f\n", ClampRight(-1.4f));
-    // return 0;
-
-    // zlbitmap* bitmap = ZlBitmapCreate(256, 256);
     zlbitmap* bitmap = ZlBitmapCreate(512, 512);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
