@@ -15,30 +15,37 @@
 uint8_t voxels[UNIT][UNIT][UNIT];
 void SetVoxel(int x, int y, int z, uint8_t value)
 {
-    // x += 10; if (x < 0 || x >= UNIT) return;
-    // y += 10; if (y < 0 || y >= UNIT) return;
-    // z += 10; if (z < 0 || z >= UNIT) return;
-    // voxels[x][y][z] = value;
+    x += 10; if (x < 0 || x >= UNIT) return;
+    y += 10; if (y < 0 || y >= UNIT) return;
+    z += 10; if (z < 0 || z >= UNIT) return;
+    voxels[x][y][z] = value;
 }
 uint8_t GetVoxel(int x, int y, int z)
 {
-    // x += 10; if (x < 0 || x >= UNIT) return 1;
-    // y += 10; if (y < 0 || y >= UNIT) return 1;
-    // z += 10; if (z < 0 || z >= UNIT) return 1;
+    x += 10; if (x < 0 || x >= UNIT) return 1;
+    y += 10; if (y < 0 || y >= UNIT) return 1;
+    z += 10; if (z < 0 || z >= UNIT) return 1;
     return voxels[x][y][z];
     // return 0;
 }
 void InitVoxels()
 {
+    // for (int z = 0; z < UNIT; z++)
+    // for (int y = 0; y < UNIT; y++)
+    // for (int x = 0; x < UNIT; x++)
+    // {
+    //     voxels[x][y][z] = 0;
+    // }
+
     for (int z = 0; z < UNIT; z++)
     for (int y = 0; y < UNIT; y++)
     for (int x = 0; x < UNIT; x++)
     {
-        voxels[x][y][z] = 0;
+        voxels[x][y][z] = Subgen1FractionUnsigned() < 0.8f ? 0 : 1;
     }
 }
 
-bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist)
+bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 {
     Vector3 diff = Vector3Sub(p1, p0);
     float length = Vector3Length(diff);
@@ -64,6 +71,8 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist)
     float ty = dy*oy;
     float tz = dz*oz;
 
+    // DrawSquare(bitmap, ix, iy);
+
     for (int i = 0; i < 99; i++)
     {
         if (length < tx && length < ty && length < tz) break;
@@ -75,10 +84,12 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist)
 
         switch (state)
         {
-            case 0: { if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tx)); dist = tx; return true; } tx += dx; ix += sx; break; }
-            case 1: { if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, ty)); dist = ty; return true; } ty += dy; iy += sy; break; }
-            case 2: { if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tz)); dist = tz; return true; } tz += dz; iz += sz; break; }
+            case 0: { ix += sx; if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tx)); dist = tx; return true; } tx += dx; break; }
+            case 1: { iy += sy; if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, ty)); dist = ty; return true; } ty += dy; break; }
+            case 2: { iz += sz; if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tz)); dist = tz; return true; } tz += dz; break; }
         }
+
+        // DrawSquare(bitmap, ix, iy);
     }
 
     return false;
@@ -147,7 +158,7 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         Vector3 rd = view * Vector3Normalize(ndc);
 
         Vector3 p0 = ro;
-        Vector3 p1 = ro+rd*10;
+        Vector3 p1 = ro+rd*100;
 
         Vector3 pos;
         float t;
@@ -180,21 +191,25 @@ int main()
 {
     InitVoxels();
 
-    Bitmap* bitmap = BitmapCreate(512, 512);
+    // Bitmap* bitmap = BitmapCreate(512, 512);
+    Bitmap* bitmap = BitmapCreate(256, 256);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
-    SysWindowSetFullscreen(window, true);
+    // SysWindowSetFullscreen(window, true);
     SysWindowShow(window);
 
     while (SysWindowExists(window))
     {
-        UpdatePlayerCamera(&camera, window);
+        // UpdatePlayerCamera(&camera, window);
+        UpdatePlayerCameraFree(&camera, window);
 
         REC_1
         BitmapSetView(bitmap, &camera);
         BitmapReset(bitmap);
         Draw(bitmap);
+        // BitmapApplyDepthInvert(bitmap);
         BitmapApplyDepthAdjustedInvert(bitmap);
+        // BitmapApplyDepthAdjusted(bitmap);
         REC_2
 
         SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
