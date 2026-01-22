@@ -71,10 +71,13 @@ void InitVoxels()
         voxels[x][y] = 0;
     }
 
-    SetVoxel(0, 5, 1);
-    SetVoxel(1, 5, 1);
-    SetVoxel(2, 5, 1);
-    SetVoxel(3, 5, 1);
+    for (int i = -6; i < +6; i++)
+    {
+        SetVoxel(i, +5, 1);
+        SetVoxel(i, -5, 1);
+        SetVoxel(+5, i, 1);
+        SetVoxel(-5, i, 1);
+    }
 }
 
 Vector3 Clamp(Vector3 v)
@@ -105,35 +108,36 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
     float tx = dx*ox;
     float ty = dy*oy;
 
+    // DrawSquare(bitmap, ix, iy);
+
     for (int i = 0; i < 99; i++)
     {
         if (length < tx && length < ty) break;
 
-        int state;
-
-        DrawSquare(bitmap, ix, iy);
-
         if (tx < ty)
         {
-            printf("%i\n", ix);
+            ix += sx;
             if (GetVoxel(ix, iy) == 1)
             {
                 pos = Vector3Add(p0, Vector3Mul(dir, tx));
                 dist = tx;
                 return true;
             }
-            tx += dx; ix += sx;
+            tx += dx;
         }
         else
         {
+            iy += sy;
             if (GetVoxel(ix, iy) == 1)
             {
                 pos = Vector3Add(p0, Vector3Mul(dir, ty));
                 dist = ty;
                 return true;
             }
-            ty += dy; iy += sy;
+            ty += dy;
         }
+
+        // DrawSquare(bitmap, ix, iy);
     }
 
     return false;
