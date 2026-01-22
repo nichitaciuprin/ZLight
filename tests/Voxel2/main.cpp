@@ -1,9 +1,10 @@
 #include "SysHelper.h"
 #include "SysWindow.h"
 #include "Bitmap.h"
+#include "BitmapExt.h"
 
-// #define DELTA_TIME 20
-#define DELTA_TIME 0.020f
+#define DELTA_TIME_MS 20
+#define DELTA_TIME DELTA_TIME_MS*0.001f
 
 #include "Subgen.h"
 #include "Helper.h"
@@ -110,14 +111,16 @@ void DrawCollision(Bitmap* bitmap, Vector3 p0, Vector3 p1)
     }
 }
 
+Camera camera = { 0, 1.70f, -1 };
+
 void Draw(Bitmap* bitmap)
 {
-    DrawGrid(bitmap);
-    DrawLine(bitmap);
-    DrawCollision(bitmap, p0, p1);
+    // DrawGrid(bitmap);
+    // DrawLine(bitmap);
+    // DrawCollision(bitmap, p0, p1);
+    BitmapExtDrawPlane(bitmap);
+    BitmapExtDrawCube(bitmap, {}, {}, {1,1,1});
 }
-
-Camera camera = { 0, 0, -1 };
 
 int main()
 {
@@ -139,7 +142,8 @@ int main()
     {
         // time += 0.020f;
 
-        UpdatePlayerCamera(&camera, window);
+        // UpdatePlayerCamera(&camera, window);
+        UpdatePlayerCameraFree(&camera, window);
 
         if (SysWindowKeyDown(window, 'A')) _p0.x -= 0.1f;
         if (SysWindowKeyDown(window, 'D')) _p0.x += 0.1f;
