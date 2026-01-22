@@ -87,6 +87,12 @@ Vector3 Clamp(Vector3 v)
     return v;
 }
 
+bool CanTrace(Vector3 p0)
+{
+    int ix = (int)floorf(p0.x);
+    int iy = (int)floorf(p0.y);
+    return !(bool)GetVoxel(ix, iy);
+}
 bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 {
     Vector3 diff = Vector3Sub(p1, p0);
@@ -209,9 +215,7 @@ void DrawHit(Bitmap* bitmap, Vector3 p0, Vector3 p1)
 {
     Vector3 pos; float dist;
     if (Trace(p0, p1, pos, dist))
-    {
         DrawPoint(bitmap, pos);
-    }
 }
 
 void Draw(Bitmap* bitmap)
@@ -220,7 +224,8 @@ void Draw(Bitmap* bitmap)
     DrawLine(bitmap);
     DrawVoxels(bitmap);
     // DrawCollision(bitmap, p0, p1);
-    DrawHit(bitmap, p0, p1);
+    if (CanTrace(p0))
+        DrawHit(bitmap, p0, p1);
 }
 
 int main()
