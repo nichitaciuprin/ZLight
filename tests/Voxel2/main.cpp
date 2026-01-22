@@ -2,6 +2,12 @@
 #include "SysWindow.h"
 #include "Bitmap.h"
 
+// #define DELTA_TIME 20
+#define DELTA_TIME 0.020f
+
+#include "Subgen.h"
+#include "Helper.h"
+
 Vector3 _p0 = { 0, 0, 0 };
 Vector3 _p1 = { 5, 7, 0 };
 
@@ -111,6 +117,8 @@ void Draw(Bitmap* bitmap)
     DrawCollision(bitmap, p0, p1);
 }
 
+Camera camera = { 0, 0, -1 };
+
 int main()
 {
     Bitmap* bitmap = BitmapCreate(512, 512);
@@ -119,17 +127,19 @@ int main()
     SysWindowSetFullscreen(window, true);
     SysWindowShow(window);
 
-    float near = 0.1f;
-    float far = 100.0f;
-    bitmap->neari = 1.0f / near;
-    bitmap->far = far;
-    bitmap->proj = MatrixProjOrthographic(19, 19, near, far);
+    // float near = 0.1f;
+    // float far = 100.0f;
+    // bitmap->neari = 1.0f / near;
+    // bitmap->far = far;
+    // bitmap->proj = MatrixProjOrthographic(19, 19, near, far);
 
     // float time = 0;
 
     while (SysWindowExists(window))
     {
         // time += 0.020f;
+
+        UpdatePlayerCamera(&camera, window);
 
         if (SysWindowKeyDown(window, 'A')) _p0.x -= 0.1f;
         if (SysWindowKeyDown(window, 'D')) _p0.x += 0.1f;
@@ -146,6 +156,7 @@ int main()
         // p0.x = (float)(int)p0.x;
         // p1.x = (float)(int)p1.x;
 
+        BitmapSetView(bitmap, &camera);
         BitmapReset(bitmap);
         // Vector3 eye = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
         // BitmapSetViewByTarget(bitmap, eye, (Vector3){}, (Vector3){0,1,0});
