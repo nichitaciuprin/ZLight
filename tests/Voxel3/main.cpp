@@ -1,12 +1,53 @@
 #include "SysHelper.h"
 #include "SysWindow.h"
 #include "Bitmap.h"
+#include "Print.h"
 
 Vector3 _p0 = { 0, 0, 0 };
 Vector3 _p1 = { 5, 7, 0 };
 
 Vector3 p0 = {};
 Vector3 p1 = {};
+
+Bitmap* bitmap;
+
+void DrawGrid(Bitmap* bitmap)
+{
+    // for (int x = -10; x < 10; x++)
+    // {
+    //     Vector3 p0 = { x+0.5f, -10, 0 };
+    //     Vector3 p1 = { x+0.5f, +10, 0 };
+    //     BitmapDrawLine(bitmap, p0, p1);
+    // }
+    // for (int y = -10; y < 10; y++)
+    // {
+    //     Vector3 p0 = { -10, y+0.5f, 0 };
+    //     Vector3 p1 = { +10, y+0.5f, 0 };
+    //     BitmapDrawLine(bitmap, p0, p1);
+    // }
+
+    for (int x = -10; x < 10; x++)
+    {
+        Vector3 p0 = { (float)x, -10, 0 };
+        Vector3 p1 = { (float)x, +10, 0 };
+        BitmapDrawLine(bitmap, p0, p1);
+    }
+    for (int y = -10; y < 10; y++)
+    {
+        Vector3 p0 = { -10, (float)y, 0 };
+        Vector3 p1 = { +10, (float)y, 0 };
+        BitmapDrawLine(bitmap, p0, p1);
+    }
+}
+void DrawSquare(Bitmap* bitmap, int x, int y)
+{
+    Vector3 p0 = { -0.5f+x+0.5f, -0.5f+y+0.5f, 91 };
+    Vector3 p1 = { -0.5f+x+0.5f, +0.5f+y+0.5f, 91 };
+    Vector3 p2 = { +0.5f+x+0.5f, +0.5f+y+0.5f, 91 };
+    Vector3 p3 = { +0.5f+x+0.5f, -0.5f+y+0.5f, 91 };
+    BitmapDrawTriangle(bitmap, p0, p1, p2);
+    BitmapDrawTriangle(bitmap, p2, p3, p0);
+}
 
 #define UNIT 20
 uint8_t voxels[UNIT][UNIT];
@@ -70,56 +111,34 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 
         int state;
 
-        if (tx < ty) { state = 0; }
-        else         { state = 1; }
+        DrawSquare(bitmap, ix, iy);
 
-        switch (state)
+        if (tx < ty)
         {
-            case 0: { if (GetVoxel(ix, iy) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tx)); dist = tx; return true; } tx += dx; ix += sx; break; }
-            case 1: { if (GetVoxel(ix, iy) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, ty)); dist = ty; return true; } ty += dy; iy += sy; break; }
+            printf("%i\n", ix);
+            if (GetVoxel(ix, iy) == 1)
+            {
+                pos = Vector3Add(p0, Vector3Mul(dir, tx));
+                dist = tx;
+                return true;
+            }
+            tx += dx; ix += sx;
+        }
+        else
+        {
+            if (GetVoxel(ix, iy) == 1)
+            {
+                pos = Vector3Add(p0, Vector3Mul(dir, ty));
+                dist = ty;
+                return true;
+            }
+            ty += dy; iy += sy;
         }
     }
 
     return false;
 }
 
-void DrawGrid(Bitmap* bitmap)
-{
-    // for (int x = -10; x < 10; x++)
-    // {
-    //     Vector3 p0 = { x+0.5f, -10, 0 };
-    //     Vector3 p1 = { x+0.5f, +10, 0 };
-    //     BitmapDrawLine(bitmap, p0, p1);
-    // }
-    // for (int y = -10; y < 10; y++)
-    // {
-    //     Vector3 p0 = { -10, y+0.5f, 0 };
-    //     Vector3 p1 = { +10, y+0.5f, 0 };
-    //     BitmapDrawLine(bitmap, p0, p1);
-    // }
-
-    for (int x = -10; x < 10; x++)
-    {
-        Vector3 p0 = { (float)x, -10, 0 };
-        Vector3 p1 = { (float)x, +10, 0 };
-        BitmapDrawLine(bitmap, p0, p1);
-    }
-    for (int y = -10; y < 10; y++)
-    {
-        Vector3 p0 = { -10, (float)y, 0 };
-        Vector3 p1 = { +10, (float)y, 0 };
-        BitmapDrawLine(bitmap, p0, p1);
-    }
-}
-void DrawSquare(Bitmap* bitmap, int x, int y)
-{
-    Vector3 p0 = { -0.5f+x+0.5f, -0.5f+y+0.5f, 91 };
-    Vector3 p1 = { -0.5f+x+0.5f, +0.5f+y+0.5f, 91 };
-    Vector3 p2 = { +0.5f+x+0.5f, +0.5f+y+0.5f, 91 };
-    Vector3 p3 = { +0.5f+x+0.5f, -0.5f+y+0.5f, 91 };
-    BitmapDrawTriangle(bitmap, p0, p1, p2);
-    BitmapDrawTriangle(bitmap, p2, p3, p0);
-}
 void DrawLine(Bitmap* bitmap)
 {
     // p0.x += 0.5f;
@@ -191,7 +210,6 @@ void DrawHit(Bitmap* bitmap, Vector3 p0, Vector3 p1)
     }
 }
 
-
 void Draw(Bitmap* bitmap)
 {
     DrawGrid(bitmap);
@@ -205,7 +223,7 @@ int main()
 {
     InitVoxels();
 
-    Bitmap* bitmap = BitmapCreate(512, 512);
+    bitmap = BitmapCreate(512, 512);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowSetFullscreen(window, true);
