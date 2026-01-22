@@ -1,79 +1,79 @@
 #include "SysHelper.h"
 #include "SysWindow.h"
-#include "ZLight.h"
+#include "Bitmap.h"
 
-zlvec3 _p0 = { 0, 0, 0 };
-zlvec3 _p1 = { 5, 7, 0 };
+Vector3 _p0 = { 0, 0, 0 };
+Vector3 _p1 = { 5, 7, 0 };
 
-zlvec3 p0 = {};
-zlvec3 p1 = {};
+Vector3 p0 = {};
+Vector3 p1 = {};
 
-zlvec3 Clamp(zlvec3 v)
+Vector3 Clamp(Vector3 v)
 {
     v.x = (float)(int)v.x;
     v.y = (float)(int)v.y;
     return v;
 }
 
-void DrawGrid(zlbitmap* bitmap)
+void DrawGrid(Bitmap* bitmap)
 {
     // for (int x = -10; x < 10; x++)
     // {
-    //     zlvec3 p0 = { x+0.5f, -10, 0 };
-    //     zlvec3 p1 = { x+0.5f, +10, 0 };
-    //     ZlBitmapDrawLine(bitmap, p0, p1);
+    //     Vector3 p0 = { x+0.5f, -10, 0 };
+    //     Vector3 p1 = { x+0.5f, +10, 0 };
+    //     BitmapDrawLine(bitmap, p0, p1);
     // }
     // for (int y = -10; y < 10; y++)
     // {
-    //     zlvec3 p0 = { -10, y+0.5f, 0 };
-    //     zlvec3 p1 = { +10, y+0.5f, 0 };
-    //     ZlBitmapDrawLine(bitmap, p0, p1);
+    //     Vector3 p0 = { -10, y+0.5f, 0 };
+    //     Vector3 p1 = { +10, y+0.5f, 0 };
+    //     BitmapDrawLine(bitmap, p0, p1);
     // }
 
     for (int x = -10; x < 10; x++)
     {
-        zlvec3 p0 = { x, -10, 0 };
-        zlvec3 p1 = { x, +10, 0 };
-        ZlBitmapDrawLine(bitmap, p0, p1);
+        Vector3 p0 = { (float)x, -10, 0 };
+        Vector3 p1 = { (float)x, +10, 0 };
+        BitmapDrawLine(bitmap, p0, p1);
     }
     for (int y = -10; y < 10; y++)
     {
-        zlvec3 p0 = { -10, y, 0 };
-        zlvec3 p1 = { +10, y, 0 };
-        ZlBitmapDrawLine(bitmap, p0, p1);
+        Vector3 p0 = { -10, (float)y, 0 };
+        Vector3 p1 = { +10, (float)y, 0 };
+        BitmapDrawLine(bitmap, p0, p1);
     }
 }
-void DrawSquare(zlbitmap* bitmap, int x, int y)
+void DrawSquare(Bitmap* bitmap, int x, int y)
 {
-    zlvec3 p0 = { -0.5f+x, -0.5f+y, 91 };
-    zlvec3 p1 = { -0.5f+x, +0.5f+y, 91 };
-    zlvec3 p2 = { +0.5f+x, +0.5f+y, 91 };
-    zlvec3 p3 = { +0.5f+x, -0.5f+y, 91 };
-    ZlBitmapDrawTriangle(bitmap, p0, p1, p2);
-    ZlBitmapDrawTriangle(bitmap, p2, p3, p0);
+    Vector3 p0 = { -0.5f+x, -0.5f+y, 91 };
+    Vector3 p1 = { -0.5f+x, +0.5f+y, 91 };
+    Vector3 p2 = { +0.5f+x, +0.5f+y, 91 };
+    Vector3 p3 = { +0.5f+x, -0.5f+y, 91 };
+    BitmapDrawTriangle(bitmap, p0, p1, p2);
+    BitmapDrawTriangle(bitmap, p2, p3, p0);
 }
-void DrawLine(zlbitmap* bitmap)
+void DrawLine(Bitmap* bitmap)
 {
     // p0.x += 0.5f;
     // p0.y += 0.5f;
     // p1.x += 0.5f;
     // p1.y += 0.5f;
-    ZlBitmapDrawLine(bitmap, p0, p1);
+    BitmapDrawLine(bitmap, p0, p1);
 }
-void DrawPoint(zlbitmap* bitmap, zlvec3 p)
+void DrawPoint(Bitmap* bitmap, Vector3 p)
 {
-    zlvec3 p0 = { p.x-0.1f, p.y-0.1f, 0 };
-    zlvec3 p1 = { p.x-0.1f, p.y+0.1f, 0 };
-    zlvec3 p2 = { p.x+0.1f, p.y+0.1f, 0 };
-    zlvec3 p3 = { p.x+0.1f, p.y-0.1f, 0 };
-    ZlBitmapDrawTriangle(bitmap, p0, p1, p2);
-    ZlBitmapDrawTriangle(bitmap, p2, p3, p0);
+    Vector3 p0 = { p.x-0.1f, p.y-0.1f, 0 };
+    Vector3 p1 = { p.x-0.1f, p.y+0.1f, 0 };
+    Vector3 p2 = { p.x+0.1f, p.y+0.1f, 0 };
+    Vector3 p3 = { p.x+0.1f, p.y-0.1f, 0 };
+    BitmapDrawTriangle(bitmap, p0, p1, p2);
+    BitmapDrawTriangle(bitmap, p2, p3, p0);
 }
-void DrawCollision(zlbitmap* bitmap, zlvec3 p0, zlvec3 p1)
+void DrawCollision(Bitmap* bitmap, Vector3 p0, Vector3 p1)
 {
-    zlvec3 diff = _ZlVector3Sub(p1, p0);
-    float length = _ZlVector3Length(diff);
-    zlvec3 dir = _ZlVector3Div(diff, length);
+    Vector3 diff = Vector3Sub(p1, p0);
+    float length = Vector3Length(diff);
+    Vector3 dir = Vector3Div(diff, length);
 
     float dx = length / fabsf(diff.x);
     float dy = length / fabsf(diff.y);
@@ -91,20 +91,20 @@ void DrawCollision(zlbitmap* bitmap, zlvec3 p0, zlvec3 p1)
 
         if (tx < ty)
         {
-            zlvec3 cp = _ZlVector3Add(p0, _ZlVector3Mul(dir, tx));
+            Vector3 cp = Vector3Add(p0, Vector3Mul(dir, tx));
             DrawPoint(bitmap, cp);
             tx += dx;
         }
         else
         {
-            zlvec3 cp = _ZlVector3Add(p0, _ZlVector3Mul(dir, ty));
+            Vector3 cp = Vector3Add(p0, Vector3Mul(dir, ty));
             DrawPoint(bitmap, cp);
             ty += dy;
         }
     }
 }
 
-void Draw(zlbitmap* bitmap)
+void Draw(Bitmap* bitmap)
 {
     DrawGrid(bitmap);
     DrawLine(bitmap);
@@ -113,7 +113,7 @@ void Draw(zlbitmap* bitmap)
 
 int main()
 {
-    zlbitmap* bitmap = ZlBitmapCreate(512, 512);
+    Bitmap* bitmap = BitmapCreate(512, 512);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowSetFullscreen(window, true);
@@ -123,7 +123,7 @@ int main()
     float far = 100.0f;
     bitmap->neari = 1.0f / near;
     bitmap->far = far;
-    bitmap->proj = _ZlMatrixProjOrthographic(19, 19, near, far);
+    bitmap->proj = MatrixProjOrthographic(19, 19, near, far);
 
     // float time = 0;
 
@@ -146,11 +146,11 @@ int main()
         // p0.x = (float)(int)p0.x;
         // p1.x = (float)(int)p1.x;
 
-        ZlBitmapReset(bitmap);
-        // zlvec3 eye = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
-        // ZlBitmapSetViewByTarget(bitmap, eye, (zlvec3){}, (zlvec3){0,1,0});
+        BitmapReset(bitmap);
+        // Vector3 eye = { sinf(time)*2, sin(time)+2, cosf(time)*4 };
+        // BitmapSetViewByTarget(bitmap, eye, (Vector3){}, (Vector3){0,1,0});
         Draw(bitmap);
-        ZlBitmapApplyDepthAdjustedInvert(bitmap);
+        BitmapApplyDepthAdjustedInvert(bitmap);
         SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
         SysWindowUpdate(window);
         SysHelperHaltLoop(20);
