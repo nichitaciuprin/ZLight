@@ -11,6 +11,8 @@
 #include "Subgen.h"
 #include "Helper.h"
 
+uint8_t acc[256][256];
+
 #define UNIT 20
 uint8_t voxels[UNIT][UNIT][UNIT];
 void SetVoxel(int x, int y, int z, uint8_t value)
@@ -55,6 +57,13 @@ void InitVoxels()
     SetVoxel(0, 3, 0, 0);
 }
 
+Vector3 Vector3Rand()
+{
+    float x = Subgen1FractionSigned();
+    float y = Subgen1FractionSigned();
+    float z = Subgen1FractionSigned();
+    return Vector3Normalize({ x, y, z });
+}
 bool Intersects(Vector3 p0, Vector3 p1)
 {
     Vector3 diff = Vector3Sub(p1, p0);
@@ -238,6 +247,8 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
 {
     Vector3 ro = camera->pos;
 
+    // PrintVector3(camera->pos);
+
     // Vector3 lightPos = camera->pos + CameraGetAxisZ(camera);
 
     Matrix view = MatrixView1({}, camera->yaw, camera->pitch);
@@ -273,28 +284,29 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
             pixels[i] = COLOR_WHITE;
             continue;
         }
-
         pos = Vector3MoveTowards1(pos, p0, 0.01f);
-
-        if (Intersects(pos, {})) continue;
-        // if (Intersects(pos, {1,0,0})) continue;
-
-        // BitmapSetDepth(bitmap, x, y, +0.9);
-
-        float t = Vector3Length(pos) * 0.070f;
-        // float t = Vector3LengthSqrt(pos) * 0.070f;
+        p0 = pos;
+        // p1 = pos+Vector3Rand()*100;
+        p1 = { 0.5f, 2.5f, 0.5f };
+        if (!Trace(p0, p1, pos, dist, vox)) continue;
+        if (vox != 2) continue;
+        float t = Vector3Distance(p0, p1) * 0.070f;
         t = 1 - (t > 1 ? 1 : t);
         pixels[i] = ColorCreateBwFloat(t);
+
+        // pos = Vector3MoveTowards1(pos, p0, 0.01f);
+        // if (Intersects(pos, {})) continue;
+        // float t = Vector3Length(pos) * 0.070f;
+        // t = 1 - (t > 1 ? 1 : t);
+        // pixels[i] = ColorCreateBwFloat(t);
+
         // pixels[i] = ColorSetLightValueFloat(COLOR_YELLOW, t);
         // pixels[i] = ColorCreateBwFloat(1);
-
         // Vector3 ndc = WorldToNdc(pos, bitmap->view, bitmap->proj);
         // t = ndc.z;
         // t = MathClamp(t, -1, +1);
         // BitmapSetDepth(bitmap, x, y, t);
-
         // BitmapSetDepth(bitmap, x, y, +0.9);
-
         // BitmapDrawVertex(bitmap, pos);
         // BitmapSetDepth(bitmap, x, y, 0);
     }
@@ -313,6 +325,10 @@ void Draw(Bitmap* bitmap)
 
 int main()
 {
+    for (int i0 = 0; i0 < 256; i0++)
+    for (int i1 = 0; i1 < 256; i1++)
+        acc[i0][i1] = 0;
+
     InitVoxels();
 
     // Bitmap* bitmap = BitmapCreate(128, 128);
