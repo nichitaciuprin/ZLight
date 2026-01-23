@@ -47,6 +47,8 @@ void InitVoxels()
         // voxels[x][y][z] = Subgen1FractionUnsigned() < 0.8f ? 0 : 1;
         voxels[x][y][z] = Subgen1FractionUnsigned() < 0.95f ? 0 : 1;
 
+    SetVoxel(0, 2, 0, 2);
+
     for (int z = -1; z <= 1; z++)
     for (int y = -1; y <= 1; y++)
     for (int x = -1; x <= 1; x++)
