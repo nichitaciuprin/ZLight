@@ -44,15 +44,15 @@ void InitVoxels()
     for (int z = 0; z < UNIT; z++)
     for (int y = 0; y < UNIT; y++)
     for (int x = 0; x < UNIT; x++)
-        // voxels[x][y][z] = Subgen1FractionUnsigned() < 0.8f ? 0 : 1;
         voxels[x][y][z] = Subgen1FractionUnsigned() < 0.95f ? 0 : 1;
-
-    SetVoxel(0, 2, 0, 2);
 
     for (int z = -1; z <= 1; z++)
     for (int y = -1; y <= 1; y++)
     for (int x = -1; x <= 1; x++)
         SetVoxel(x, y, z, 0);
+
+    SetVoxel(0, 2, 0, 2);
+    SetVoxel(0, 3, 0, 0);
 }
 
 bool Intersects(Vector3 p0, Vector3 p1)
@@ -104,7 +104,7 @@ bool Intersects(Vector3 p0, Vector3 p1)
 
     return false;
 }
-bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
+bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist, int& vox)
 {
     Vector3 diff = Vector3Sub(p1, p0);
     float length = Vector3Length(diff);
@@ -143,9 +143,45 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 
         switch (state)
         {
-            case 0: { ix += sx; if (VoxelExists(ix, iy, iz)) { pos = Vector3Add(p0, Vector3Mul(dir, tx)); dist = tx; return true; } tx += dx; break; }
-            case 1: { iy += sy; if (VoxelExists(ix, iy, iz)) { pos = Vector3Add(p0, Vector3Mul(dir, ty)); dist = ty; return true; } ty += dy; break; }
-            case 2: { iz += sz; if (VoxelExists(ix, iy, iz)) { pos = Vector3Add(p0, Vector3Mul(dir, tz)); dist = tz; return true; } tz += dz; break; }
+            case 0:
+            {
+                ix += sx;
+                vox = GetVoxel(ix, iy, iz);
+                if (vox != 0)
+                {
+                    pos = Vector3Add(p0, Vector3Mul(dir, tx));
+                    dist = tx;
+                    return true;
+                }
+                tx += dx;
+                break;
+            }
+            case 1:
+            {
+                iy += sy;
+                vox = GetVoxel(ix, iy, iz);
+                if (vox != 0)
+                {
+                    pos = Vector3Add(p0, Vector3Mul(dir, ty));
+                    dist = ty;
+                    return true;
+                }
+                ty += dy;
+                break;
+            }
+            case 2:
+            {
+                iz += sz;
+                vox = GetVoxel(ix, iy, iz);
+                if (vox != 0)
+                {
+                    pos = Vector3Add(p0, Vector3Mul(dir, tz));
+                    dist = tz;
+                    return true;
+                }
+                tz += dz;
+                break;
+            }
         }
 
         // DrawSquare(bitmap, ix, iy);
@@ -228,9 +264,16 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         Vector3 p1 = ro+rd*100;
 
         Vector3 pos;
+        int vox;
         {
             float t;
-            if (!Trace(p0, p1, pos, t)) continue;
+            if (!Trace(p0, p1, pos, t, vox)) continue;
+        }
+
+        if (vox == 2)
+        {
+            pixels[i] = COLOR_WHITE;
+            continue;
         }
 
         pos = Vector3MoveTowards1(pos, p0, 0.01f);
