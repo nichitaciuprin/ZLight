@@ -28,6 +28,10 @@ uint8_t GetVoxel(int x, int y, int z)
     return voxels[x][y][z];
     // return 0;
 }
+bool VoxelExists(int x, int y, int z)
+{
+    return GetVoxel(x, y, z) != 0;
+}
 void InitVoxels()
 {
     // for (int z = 0; z < UNIT; z++)
@@ -79,7 +83,7 @@ bool Intersects(Vector3 p0, Vector3 p1)
     {
         if (length < tx && length < ty && length < tz) break;
 
-        if (GetVoxel(ix, iy, iz) == 1) return true;
+        if (VoxelExists(ix, iy, iz)) return true;
 
         int state;
 
@@ -94,7 +98,7 @@ bool Intersects(Vector3 p0, Vector3 p1)
         }
     }
 
-    if (GetVoxel(ix, iy, iz) == 1) return true;
+    if (VoxelExists(ix, iy, iz)) return true;
 
     return false;
 }
@@ -137,9 +141,9 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 
         switch (state)
         {
-            case 0: { ix += sx; if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tx)); dist = tx; return true; } tx += dx; break; }
-            case 1: { iy += sy; if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, ty)); dist = ty; return true; } ty += dy; break; }
-            case 2: { iz += sz; if (GetVoxel(ix, iy, iz) == 1) { pos = Vector3Add(p0, Vector3Mul(dir, tz)); dist = tz; return true; } tz += dz; break; }
+            case 0: { ix += sx; if (VoxelExists(ix, iy, iz)) { pos = Vector3Add(p0, Vector3Mul(dir, tx)); dist = tx; return true; } tx += dx; break; }
+            case 1: { iy += sy; if (VoxelExists(ix, iy, iz)) { pos = Vector3Add(p0, Vector3Mul(dir, ty)); dist = ty; return true; } ty += dy; break; }
+            case 2: { iz += sz; if (VoxelExists(ix, iy, iz)) { pos = Vector3Add(p0, Vector3Mul(dir, tz)); dist = tz; return true; } tz += dz; break; }
         }
 
         // DrawSquare(bitmap, ix, iy);
