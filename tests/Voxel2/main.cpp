@@ -208,6 +208,10 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
     for (int y = 0; y < h; y++)
     for (int x = 0; x < w; x++)
     {
+        int i = x + y * bitmap->width;
+
+        pixels[i] = 0;
+
         Vector3 rd;
         rd = { (float)x, (float)y, 1 };
         rd = ScreenSpaceToNdc(rd, w, h);
@@ -230,11 +234,11 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
 
         // BitmapSetDepth(bitmap, x, y, +0.9);
 
-        int i = x + y * bitmap->width;
         float t = Vector3Length(pos) * 0.070f;
         // float t = Vector3LengthSqrt(pos) * 0.070f;
         t = 1 - (t > 1 ? 1 : t);
         pixels[i] = ColorCreateBwFloat(t);
+        // pixels[i] = ColorSetLightValueFloat(COLOR_YELLOW, t);
         // pixels[i] = ColorCreateBwFloat(1);
 
         // Vector3 ndc = WorldToNdc(pos, bitmap->view, bitmap->proj);
@@ -267,7 +271,8 @@ int main()
     // Bitmap* bitmap = BitmapCreate(128, 128);
     Bitmap* bitmap = BitmapCreate(256, 256);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
-    SysWindowSetFormatBw(window);
+    // SysWindowSetFormatBw(window);
+    SysWindowSetFormatRgb(window);
     // SysWindowSetFullscreen(window, true);
     SysWindowShow(window);
 
@@ -285,7 +290,8 @@ int main()
         // BitmapApplyDepthAdjusted(bitmap);
         REC_2
 
-        SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
+        // SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
+        SysWindowSetPixelsAutoScaleRgb1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
 
         SysWindowUpdate(window);
         SysHelperHaltLoop(20);
