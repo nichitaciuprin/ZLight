@@ -96,15 +96,13 @@ bool OutSide(Vector3 p0)
 }
 bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 {
-    Vector3 diff = Vector3Sub(p1, p0);
-    float length = Vector3Length(diff);
-    Vector3 dir = Vector3Div(diff, length);
+    Vector3 ray = Vector3Normalize(Vector3Sub(p1, p0));
 
-    float dx = length / fabsf(diff.x);
-    float dy = length / fabsf(diff.y);
+    float dx = 1 / fabsf(ray.x);
+    float dy = 1 / fabsf(ray.y);
 
-    int sx = signbit(diff.x) == 0 ? +1 : -1;
-    int sy = signbit(diff.y) == 0 ? +1 : -1;
+    int sx = signbit(ray.x) == 0 ? +1 : -1;
+    int sy = signbit(ray.y) == 0 ? +1 : -1;
 
     int ix = (int)floorf(p0.x);
     int iy = (int)floorf(p0.y);
@@ -119,14 +117,14 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
 
     for (int i = 0; i < 99; i++)
     {
-        if (length < tx && length < ty) break;
+        // if (length < tx && length < ty) break;
 
         if (tx < ty)
         {
             ix += sx;
             if (GetVoxel(ix, iy) == 1)
             {
-                pos = Vector3Add(p0, Vector3Mul(dir, tx));
+                pos = Vector3Add(p0, Vector3Mul(ray, tx));
                 dist = tx;
                 return true;
             }
@@ -137,7 +135,7 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float dist)
             iy += sy;
             if (GetVoxel(ix, iy) == 1)
             {
-                pos = Vector3Add(p0, Vector3Mul(dir, ty));
+                pos = Vector3Add(p0, Vector3Mul(ray, ty));
                 dist = ty;
                 return true;
             }
