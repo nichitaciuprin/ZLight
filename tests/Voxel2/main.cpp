@@ -265,10 +265,8 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
 
         Vector3 pos;
         int vox;
-        {
-            float t;
-            if (!Trace(p0, p1, pos, t, vox)) continue;
-        }
+        float dist;
+        if (!Trace(p0, p1, pos, dist, vox)) continue;
 
         if (vox == 2)
         {
