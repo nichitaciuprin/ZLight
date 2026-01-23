@@ -11,7 +11,13 @@
 #include "Subgen.h"
 #include "Helper.h"
 
-uint8_t acc[256][256];
+uint8_t acc[256*256];
+
+int Reduse(int value, int size)
+{
+    if (value <= size) return 0;
+    return value -= size;
+}
 
 #define UNIT 20
 uint8_t voxels[UNIT][UNIT][UNIT];
@@ -139,8 +145,6 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist, int& vox)
     float ty = dy*oy;
     float tz = dz*oz;
 
-    // DrawSquare(bitmap, ix, iy);
-
     for (int i = 0; i < 99; i++)
     {
         if (length < tx && length < ty && length < tz) break;
@@ -263,7 +267,8 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
     {
         int i = x + y * bitmap->width;
 
-        pixels[i] = 0;
+        // pixels[i] = 0;
+        pixels[i] = acc[i];
 
         Vector3 rd;
         rd = { (float)x, (float)y, 1 };
@@ -279,20 +284,28 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         float dist;
         if (!Trace(p0, p1, pos, dist, vox)) continue;
 
+        // float t = 1 - MathClamp(dist / 10, 0, 1);
+        // pixels[i] = ColorCreateBwFloat(t);
+
         if (vox == 2)
         {
-            pixels[i] = COLOR_WHITE;
+            // pixels[i] = COLOR_WHITE;
+            // acc[i] = 255;
             continue;
         }
         pos = Vector3MoveTowards1(pos, p0, 0.01f);
         p0 = pos;
-        // p1 = pos+Vector3Rand()*100;
-        p1 = { 0.5f, 2.5f, 0.5f };
+        p1 = pos+Vector3Rand()*10;
+        // p1 = { 0.5f, 2.5f, 0.5f };
+        // p1 = Vector3Normalize(p1 - p0) * 10;
         if (!Trace(p0, p1, pos, dist, vox)) continue;
         if (vox != 2) continue;
         float t = Vector3Distance(p0, p1) * 0.070f;
         t = 1 - (t > 1 ? 1 : t);
-        pixels[i] = ColorCreateBwFloat(t);
+        acc[i] = 255*t;
+        // acc[i] = 255;
+        pixels[i] = ColorCreateBwByte(acc[i]);
+        // pixels[i] = ColorCreateBwByte(255);
 
         // pos = Vector3MoveTowards1(pos, p0, 0.01f);
         // if (Intersects(pos, {})) continue;
@@ -325,19 +338,20 @@ void Draw(Bitmap* bitmap)
 
 int main()
 {
-    for (int i0 = 0; i0 < 256; i0++)
-    for (int i1 = 0; i1 < 256; i1++)
-        acc[i0][i1] = 0;
+    for (int i = 0; i < 256*256; i++)
+        acc[i] = 0;
 
     InitVoxels();
 
     // Bitmap* bitmap = BitmapCreate(128, 128);
     Bitmap* bitmap = BitmapCreate(256, 256);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
-    // SysWindowSetFormatBw(window);
-    SysWindowSetFormatRgb(window);
+    SysWindowSetFormatBw(window);
+    // SysWindowSetFormatRgb(window);
     // SysWindowSetFullscreen(window, true);
     SysWindowShow(window);
+
+    // BitmapReset(bitmap);
 
     while (SysWindowExists(window))
     {
@@ -345,6 +359,10 @@ int main()
         UpdatePlayerCameraFree(&camera, window);
 
         REC_1
+        for (int i = 0; i < 256*256; i++)
+            acc[i] = Reduse(acc[i], 5);
+            // acc[i] = 0;
+
         BitmapSetView(bitmap, &camera);
         BitmapReset(bitmap);
         Draw(bitmap);
@@ -353,8 +371,8 @@ int main()
         // BitmapApplyDepthAdjusted(bitmap);
         REC_2
 
-        // SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
-        SysWindowSetPixelsAutoScaleRgb1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
+        SysWindowSetPixelsAutoScaleBw1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
+        // SysWindowSetPixelsAutoScaleRgb1(window, (uint32_t*)bitmap->buffer, bitmap->width, bitmap->height);
 
         SysWindowUpdate(window);
         SysHelperHaltLoop(20);
