@@ -35,7 +35,8 @@ int main()
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
     SysWindowSetFormatBw(window);
     SysWindowShow(window);
-    Bitmap* bitmap = BitmapCreate(128, 128);
+    // Bitmap* bitmap = BitmapCreate(128, 128);
+    Bitmap* bitmap = BitmapCreate(256, 256);
 
     ModelCave::Init();
 

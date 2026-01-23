@@ -210,7 +210,7 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
     {
         Vector3 rd;
         rd = { (float)x, (float)y, 1 };
-        rd = ScreenSpaceToNdc(rd, bitmap->width, bitmap->height);
+        rd = ScreenSpaceToNdc(rd, w, h);
         rd = Vector3Normalize(rd);
         rd = view * rd;
 
@@ -226,13 +226,16 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         pos = Vector3MoveTowards1(pos, p0, 0.01f);
 
         if (Intersects(pos, {})) continue;
+        // if (Intersects(pos, {1,0,0})) continue;
 
         // BitmapSetDepth(bitmap, x, y, +0.9);
 
         int i = x + y * bitmap->width;
-        float t = Vector3Length(pos) * 0.05f;
+        float t = Vector3Length(pos) * 0.070f;
+        // float t = Vector3LengthSqrt(pos) * 0.070f;
         t = 1 - (t > 1 ? 1 : t);
         pixels[i] = ColorCreateBwFloat(t);
+        // pixels[i] = ColorCreateBwFloat(1);
 
         // Vector3 ndc = WorldToNdc(pos, bitmap->view, bitmap->proj);
         // t = ndc.z;
