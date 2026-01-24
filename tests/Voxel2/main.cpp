@@ -202,6 +202,87 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist, int& vox)
 
     return false;
 }
+bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox)
+{
+    float dx = 1 / fabsf(ray.x);
+    float dy = 1 / fabsf(ray.y);
+    float dz = 1 / fabsf(ray.z);
+
+    int sx = signbit(ray.x) == 0 ? +1 : -1;
+    int sy = signbit(ray.y) == 0 ? +1 : -1;
+    int sz = signbit(ray.z) == 0 ? +1 : -1;
+
+    int ix = (int)floorf(ro.x);
+    int iy = (int)floorf(ro.y);
+    int iz = (int)floorf(ro.z);
+
+    float ox = ray.x >= 0 ? 1.0f - (ro.x - floorf(ro.x)) : ro.x - floorf(ro.x);
+    float oy = ray.y >= 0 ? 1.0f - (ro.y - floorf(ro.y)) : ro.y - floorf(ro.y);
+    float oz = ray.z >= 0 ? 1.0f - (ro.z - floorf(ro.z)) : ro.z - floorf(ro.z);
+
+    float tx = dx*ox;
+    float ty = dy*oy;
+    float tz = dz*oz;
+
+    float length = 100;
+
+    for (int i = 0; i < 99; i++)
+    {
+        if (length < tx && length < ty && length < tz) break;
+
+        int state;
+
+        if (tx < ty) { if (tx < tz) { state = 0; } else { state = 2; } }
+        else         { if (ty < tz) { state = 1; } else { state = 2; } }
+
+        switch (state)
+        {
+            case 0:
+            {
+                ix += sx;
+                vox = GetVoxel(ix, iy, iz);
+                if (vox != 0)
+                {
+                    pos = Vector3Add(ro, Vector3Mul(ray, tx));
+                    dist = tx;
+                    return true;
+                }
+                tx += dx;
+                break;
+            }
+            case 1:
+            {
+                iy += sy;
+                vox = GetVoxel(ix, iy, iz);
+                if (vox != 0)
+                {
+                    pos = Vector3Add(ro, Vector3Mul(ray, ty));
+                    dist = ty;
+                    return true;
+                }
+                ty += dy;
+                break;
+            }
+            case 2:
+            {
+                iz += sz;
+                vox = GetVoxel(ix, iy, iz);
+                if (vox != 0)
+                {
+                    pos = Vector3Add(ro, Vector3Mul(ray, tz));
+                    dist = tz;
+                    return true;
+                }
+                tz += dz;
+                break;
+            }
+        }
+
+        // DrawSquare(bitmap, ix, iy);
+    }
+
+    return false;
+}
 bool GetPlanePos(Vector3 ro, Vector3 rd, Vector3& pos, float& dist)
 {
     if (rd.y == 0) return false;
@@ -282,7 +363,8 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         Vector3 pos;
         int vox;
         float dist;
-        if (!Trace(p0, p1, pos, dist, vox)) continue;
+        // if (!Trace(p0, p1, pos, dist, vox)) continue;
+        if (!Trace2(ro, rd, pos, dist, vox)) continue;
 
         // float t = 1 - MathClamp(dist / 10, 0, 1);
         // pixels[i] = ColorCreateBwFloat(t);
@@ -294,11 +376,14 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
             continue;
         }
         pos = Vector3MoveTowards1(pos, p0, 0.01f);
+        // p0 = pos;
+        // p1 = pos+Vector3Rand()*10;
         p0 = pos;
-        p1 = pos+Vector3Rand()*10;
+        p1 = Vector3Rand();
         // p1 = { 0.5f, 2.5f, 0.5f };
         // p1 = Vector3Normalize(p1 - p0) * 10;
-        if (!Trace(p0, p1, pos, dist, vox)) continue;
+        // if (!Trace(p0, p1, pos, dist, vox)) continue;
+        if (!Trace2(p0, p1, pos, dist, vox)) continue;
         if (vox != 2) continue;
         float t = Vector3Distance(p0, p1) * 0.070f;
         t = 1 - (t > 1 ? 1 : t);
@@ -360,7 +445,7 @@ int main()
 
         REC_1
         for (int i = 0; i < 256*256; i++)
-            acc[i] = Reduse(acc[i], 5);
+            acc[i] = Reduse(acc[i], 10);
             // acc[i] = 0;
 
         BitmapSetView(bitmap, &camera);
