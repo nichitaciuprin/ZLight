@@ -70,6 +70,53 @@ Vector3 Vector3Rand()
     float z = Subgen1FractionSigned();
     return Vector3Normalize({ x, y, z });
 }
+Vector3 Vector3Rand(uint8_t normal)
+{
+    // float x = Subgen1FractionSigned();
+    // float y = Subgen1FractionUnsigned();
+    // float z = Subgen1FractionSigned();
+    // return Vector3Normalize({ x, y, z });
+
+    float x = Subgen1FractionSigned();
+    float y = Subgen1FractionSigned();
+    float z = Subgen1FractionSigned();
+    if (z > 0) z = -z;
+    return Vector3Normalize({ x, y, z });
+
+    // float x = Subgen1FractionSigned();
+    // float y = Subgen1FractionSigned();
+    // float z = Subgen1FractionSigned();
+    // switch (normal)
+    // {
+    //     case 0: { if (x > 0) x = -x; break; }
+    //     case 1: { if (x < 0) x = -x; break; }
+    //     case 2: { if (y > 0) y = -y; break; }
+    //     case 3: { if (y < 0) y = -y; break; }
+    //     case 4: { if (z > 0) z = -z; break; }
+    //     case 5: { if (z < 0) z = -z; break; }
+    // }
+    // return Vector3Normalize({ x, y, z });
+}
+
+int randstep = 0;
+Vector3 randvec = { 1, 0, 0 };
+void Vector3Rand2Update()
+{
+    // int s = 10;
+    // randstep++;
+    // if (randstep > s*s*s)
+    //     randstep = 0;
+    // float x = randstep      % s;
+    // float y = randstep/s    % s;
+    // float z = randstep/s/s  % s;
+    // x = x / s * 2 - 1;
+    // y = y / s * 2 - 1;
+    // z = z / s * 2 - 1;
+    // randvec = Vector3Normalize({ x, y, z });
+
+    // randvec = Vector3Rand();
+}
+
 bool Intersects(Vector3 p0, Vector3 p1)
 {
     Vector3 diff = Vector3Sub(p1, p0);
@@ -202,7 +249,7 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist, int& vox)
 
     return false;
 }
-bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox)
+bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox, uint8_t normal)
 {
     float dx = 1 / fabsf(ray.x);
     float dy = 1 / fabsf(ray.y);
@@ -245,6 +292,7 @@ bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox)
                 {
                     pos = Vector3Add(ro, Vector3Mul(ray, tx));
                     dist = tx;
+                    normal = sx == 1 ? 0 : 1;
                     return true;
                 }
                 tx += dx;
@@ -258,6 +306,7 @@ bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox)
                 {
                     pos = Vector3Add(ro, Vector3Mul(ray, ty));
                     dist = ty;
+                    normal = sy == 1 ? 2 : 3;
                     return true;
                 }
                 ty += dy;
@@ -271,15 +320,16 @@ bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox)
                 {
                     pos = Vector3Add(ro, Vector3Mul(ray, tz));
                     dist = tz;
+                    normal = sz == 1 ? 4 : 5;
                     return true;
                 }
                 tz += dz;
                 break;
             }
         }
-
-        // DrawSquare(bitmap, ix, iy);
     }
+
+    normal = 0;
 
     return false;
 }
@@ -332,10 +382,6 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
 {
     Vector3 ro = camera->pos;
 
-    // PrintVector3(camera->pos);
-
-    // Vector3 lightPos = camera->pos + CameraGetAxisZ(camera);
-
     Matrix view = MatrixView1({}, camera->yaw, camera->pitch);
 
     int w = bitmap->width;
@@ -363,40 +409,43 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         Vector3 pos;
         int vox;
         float dist;
+        uint8_t normal;
         // if (!Trace(p0, p1, pos, dist, vox)) continue;
-        if (!Trace2(ro, rd, pos, dist, vox)) continue;
+        if (!Trace2(ro, rd, pos, dist, vox, normal)) continue;
 
         // float t = 1 - MathClamp(dist / 10, 0, 1);
         // pixels[i] = ColorCreateBwFloat(t);
 
-        if (vox == 2)
-        {
-            // pixels[i] = COLOR_WHITE;
-            // acc[i] = 255;
-            continue;
-        }
-        pos = Vector3MoveTowards1(pos, p0, 0.01f);
-        // p0 = pos;
-        // p1 = pos+Vector3Rand()*10;
-        p0 = pos;
-        p1 = Vector3Rand();
-        // p1 = { 0.5f, 2.5f, 0.5f };
-        // p1 = Vector3Normalize(p1 - p0) * 10;
-        // if (!Trace(p0, p1, pos, dist, vox)) continue;
-        if (!Trace2(p0, p1, pos, dist, vox)) continue;
-        if (vox != 2) continue;
-        float t = Vector3Distance(p0, p1) * 0.070f;
-        t = 1 - (t > 1 ? 1 : t);
-        acc[i] = 255*t;
-        // acc[i] = 255;
-        pixels[i] = ColorCreateBwByte(acc[i]);
-        // pixels[i] = ColorCreateBwByte(255);
-
+        // if (vox == 2)
+        // {
+        //     // pixels[i] = COLOR_WHITE;
+        //     // acc[i] = 255;
+        //     continue;
+        // }
         // pos = Vector3MoveTowards1(pos, p0, 0.01f);
-        // if (Intersects(pos, {})) continue;
-        // float t = Vector3Length(pos) * 0.070f;
+        // // p0 = pos;
+        // // p1 = pos+Vector3Rand()*10;
+        // p0 = pos;
+        // // p1 = Vector3Rand();
+        // p1 = Vector3Rand(normal);
+        // // p1 = randvec;
+        // // p1 = { 0.5f, 2.5f, 0.5f };
+        // // p1 = Vector3Normalize(p1 - p0) * 10;
+        // // if (!Trace(p0, p1, pos, dist, vox)) continue;
+        // if (!Trace2(p0, p1, pos, dist, vox, normal)) continue;
+        // if (vox != 2) continue;
+        // float t = dist * 0.070f;
         // t = 1 - (t > 1 ? 1 : t);
-        // pixels[i] = ColorCreateBwFloat(t);
+        // acc[i] = 255*t;
+        // // acc[i] = 255;
+        // pixels[i] = ColorCreateBwByte(acc[i]);
+        // // pixels[i] = ColorCreateBwByte(255);
+
+        pos = Vector3MoveTowards1(pos, p0, 0.01f);
+        if (Intersects(pos, {})) continue;
+        float t = Vector3Length(pos) * 0.070f;
+        t = 1 - (t > 1 ? 1 : t);
+        pixels[i] = ColorCreateBwFloat(t);
 
         // pixels[i] = ColorSetLightValueFloat(COLOR_YELLOW, t);
         // pixels[i] = ColorCreateBwFloat(1);
@@ -415,10 +464,27 @@ Camera camera = {};
 
 void Draw(Bitmap* bitmap)
 {
+    // static float angle = 0;
+    // if (angle != camera.yaw)
+    // {
+    //     for (int i = 0; i < 256*256; i++)
+    //         // acc[i] = Reduse(acc[i], 5);
+    //         acc[i] = 0;
+    //     angle = camera.yaw;
+    // }
+
+    for (int i = 0; i < 256*256; i++)
+        acc[i] = Reduse(acc[i], 20);
+
+    Vector3Rand2Update();
+
     // BitmapExtDrawPlane(bitmap);
     // BitmapExtDrawCube(bitmap, {}, {}, {1,1,1});
     // DrawPlaneInf(&camera, bitmap);
     DrawPlaneInf2(&camera, bitmap);
+    // DrawPlaneInf2(&camera, bitmap);
+    // DrawPlaneInf2(&camera, bitmap);
+    // DrawPlaneInf2(&camera, bitmap);
 }
 
 int main()
@@ -444,9 +510,6 @@ int main()
         UpdatePlayerCameraFree(&camera, window);
 
         REC_1
-        for (int i = 0; i < 256*256; i++)
-            acc[i] = Reduse(acc[i], 10);
-            // acc[i] = 0;
 
         BitmapSetView(bitmap, &camera);
         BitmapReset(bitmap);
