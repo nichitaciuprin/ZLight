@@ -12,17 +12,17 @@
 #include "Helper.h"
 
 uint8_t acc[256*256];
-#define UNIT 20
-uint8_t voxels[UNIT][UNIT][UNIT];
-uint8_t voxels2[UNIT*UNIT*UNIT];
-
 int Reduse(int value, int size)
 {
     if (value <= size) return 0;
     return value -= size;
 }
 
-uint32_t expandBits(uint32_t v)
+#define DEPTH 15
+#define UNIT 20
+#define UNIT2 UNIT/2
+uint8_t voxels[UNIT*UNIT*UNIT];
+uint32_t ExpandBits(uint32_t v)
 {
     v = (v | (v << 16)) & 0x030000FF;
     v = (v | (v <<  8)) & 0x0300F00F;
@@ -30,38 +30,37 @@ uint32_t expandBits(uint32_t v)
     v = (v | (v <<  2)) & 0x09249249;
     return v;
 }
-
-// Generates a 30-bit Morton code (10 bits per dimension)
 uint32_t GetIndex(int x, int y, int z)
 {
-    // return (expandBits(z) << 2) | (expandBits(y) << 1) | expandBits(x);
     x += 10;
     y += 10;
     z += 10;
     return x + y*UNIT + z*UNIT*UNIT;
-}
 
-void SetVoxel(int x, int y, int z, uint8_t value)
-{
-    x += 10; if (x < 0 || x >= UNIT) return;
-    y += 10; if (y < 0 || y >= UNIT) return;
-    z += 10; if (z < 0 || z >= UNIT) return;
-    voxels[x][y][z] = value;
-
-    // int i = GetIndex(x, y, z);
-    // if (i >= UNIT*UNIT*UNIT) return;
-    // voxels2[i] = value;
+    // x += 10;
+    // y += 10;
+    // z += 10;
+    // return (ExpandBits(z) << 2) | (ExpandBits(y) << 1) | ExpandBits(x);
 }
 uint8_t GetVoxel(int x, int y, int z)
 {
-    x += 10; if (x < 0 || x >= UNIT) return 1;
-    y += 10; if (y < 0 || y >= UNIT) return 1;
-    z += 10; if (z < 0 || z >= UNIT) return 1;
-    return voxels[x][y][z];
+    if (x < -UNIT2 || +UNIT2 < x) return 1;
+    if (y < -UNIT2 || +UNIT2 < y) return 1;
+    if (z < -UNIT2 || +UNIT2 < z) return 1;
 
-    // int i = GetIndex(x, y, z);
-    // if (i >= UNIT*UNIT*UNIT) return 1;
-    // return voxels2[i];
+    int i = GetIndex(x, y, z);
+
+    return voxels[i];
+}
+void SetVoxel(int x, int y, int z, uint8_t value)
+{
+    if (x < -UNIT2 || +UNIT2 < x) return;
+    if (y < -UNIT2 || +UNIT2 < y) return;
+    if (z < -UNIT2 || +UNIT2 < z) return;
+
+    int i = GetIndex(x, y, z);
+
+    voxels[i] = value;
 }
 bool VoxelExists(int x, int y, int z)
 {
@@ -69,17 +68,8 @@ bool VoxelExists(int x, int y, int z)
 }
 void InitVoxels()
 {
-    // for (int z = 0; z < UNIT; z++)
-    // for (int y = 0; y < UNIT; y++)
-    // for (int x = 0; x < UNIT; x++)
-    // {
-    //     voxels[x][y][z] = 0;
-    // }
-
-    for (int z = 0; z < UNIT; z++)
-    for (int y = 0; y < UNIT; y++)
-    for (int x = 0; x < UNIT; x++)
-        voxels[x][y][z] = Subgen1FractionUnsigned() < 0.95f ? 0 : 1;
+    for (int i = 0; i < UNIT*UNIT*UNIT; i++)
+        voxels[i] = Subgen1FractionUnsigned() < 0.95f ? 0 : 1;
 
     for (int z = -1; z <= 1; z++)
     for (int y = -1; y <= 1; y++)
@@ -301,7 +291,7 @@ bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox, uint8_
     float ty = dy*oy;
     float tz = dz*oz;
 
-    float length = 100;
+    float length = DEPTH;
 
     for (int i = 0; i < 99; i++)
     {
@@ -488,6 +478,48 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         // BitmapSetDepth(bitmap, x, y, 0);
     }
 }
+void DrawPlaneInf3(Camera* camera, Bitmap* bitmap)
+{
+    Vector3 ro = camera->pos;
+
+    Matrix view = MatrixView1({}, camera->yaw, camera->pitch);
+
+    uint32_t* pixels = (uint32_t*)bitmap->buffer;
+
+    int w = bitmap->width;
+    int h = bitmap->height;
+
+    for (int x = 0; x < w; x++)
+    for (int y = 0; y < h; y++)
+    {
+        int i = x + y * bitmap->width;
+
+        Vector3 rd;
+        rd = { (float)x, (float)y, 1 };
+        rd = ScreenSpaceToNdc(rd, w, h);
+        rd = Vector3Normalize(rd);
+        rd = view * rd;
+
+        Vector3 p0 = ro;
+        Vector3 p1 = ro+rd*100;
+
+        Vector3 pos;
+        int vox;
+        float dist;
+        uint8_t normal;
+        // if (!Trace(p0, p1, pos, dist, vox)) continue;
+        if (!Trace2(ro, rd, pos, dist, vox, normal)) continue;
+
+        float t = 1 - MathClamp(dist / DEPTH, 0, 1);
+        pixels[i] = ColorCreateBwFloat(t);
+
+        // if (vox == 2)
+        // {
+        //     pixels[i] = COLOR_WHITE;
+        //     continue;
+        // }
+    }
+}
 
 // Camera camera = { 0, 1.70f, -1 };
 Camera camera = {};
@@ -511,7 +543,8 @@ void Draw(Bitmap* bitmap)
     // BitmapExtDrawPlane(bitmap);
     // BitmapExtDrawCube(bitmap, {}, {}, {1,1,1});
     // DrawPlaneInf(&camera, bitmap);
-    DrawPlaneInf2(&camera, bitmap);
+    // DrawPlaneInf2(&camera, bitmap);
+    DrawPlaneInf3(&camera, bitmap);
     // DrawPlaneInf2(&camera, bitmap);
     // DrawPlaneInf2(&camera, bitmap);
     // DrawPlaneInf2(&camera, bitmap);
@@ -524,6 +557,7 @@ int main()
 
     InitVoxels();
 
+    // Bitmap* bitmap = BitmapCreate(64, 64);
     // Bitmap* bitmap = BitmapCreate(128, 128);
     Bitmap* bitmap = BitmapCreate(256, 256);
     SysWindow* window = SysWindowCreate(1000, 250, 512, 512);
