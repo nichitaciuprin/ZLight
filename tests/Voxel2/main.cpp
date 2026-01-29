@@ -12,6 +12,9 @@
 #include "Helper.h"
 
 uint8_t acc[256*256];
+#define UNIT 20
+uint8_t voxels[UNIT][UNIT][UNIT];
+uint8_t voxels2[UNIT*UNIT*UNIT];
 
 int Reduse(int value, int size)
 {
@@ -19,14 +22,35 @@ int Reduse(int value, int size)
     return value -= size;
 }
 
-#define UNIT 20
-uint8_t voxels[UNIT][UNIT][UNIT];
+uint32_t expandBits(uint32_t v)
+{
+    v = (v | (v << 16)) & 0x030000FF;
+    v = (v | (v <<  8)) & 0x0300F00F;
+    v = (v | (v <<  4)) & 0x030C30C3;
+    v = (v | (v <<  2)) & 0x09249249;
+    return v;
+}
+
+// Generates a 30-bit Morton code (10 bits per dimension)
+uint32_t GetIndex(int x, int y, int z)
+{
+    // return (expandBits(z) << 2) | (expandBits(y) << 1) | expandBits(x);
+    x += 10;
+    y += 10;
+    z += 10;
+    return x + y*UNIT + z*UNIT*UNIT;
+}
+
 void SetVoxel(int x, int y, int z, uint8_t value)
 {
     x += 10; if (x < 0 || x >= UNIT) return;
     y += 10; if (y < 0 || y >= UNIT) return;
     z += 10; if (z < 0 || z >= UNIT) return;
     voxels[x][y][z] = value;
+
+    // int i = GetIndex(x, y, z);
+    // if (i >= UNIT*UNIT*UNIT) return;
+    // voxels2[i] = value;
 }
 uint8_t GetVoxel(int x, int y, int z)
 {
@@ -34,7 +58,10 @@ uint8_t GetVoxel(int x, int y, int z)
     y += 10; if (y < 0 || y >= UNIT) return 1;
     z += 10; if (z < 0 || z >= UNIT) return 1;
     return voxels[x][y][z];
-    // return 0;
+
+    // int i = GetIndex(x, y, z);
+    // if (i >= UNIT*UNIT*UNIT) return 1;
+    // return voxels2[i];
 }
 bool VoxelExists(int x, int y, int z)
 {
@@ -251,6 +278,9 @@ bool Trace(Vector3 p0, Vector3 p1, Vector3& pos, float& dist, int& vox)
 }
 bool Trace2(Vector3 ro, Vector3 ray, Vector3& pos, float& dist, int& vox, uint8_t normal)
 {
+    // return GetVoxel((float)ro.x, (float)ro.y, (float)ro.z) == 0;
+    // return GetVoxel(0, 0, 0) == 0;
+
     float dx = 1 / fabsf(ray.x);
     float dy = 1 / fabsf(ray.y);
     float dz = 1 / fabsf(ray.z);
@@ -473,10 +503,10 @@ void Draw(Bitmap* bitmap)
     //     angle = camera.yaw;
     // }
 
-    for (int i = 0; i < 256*256; i++)
-        acc[i] = Reduse(acc[i], 20);
+    // for (int i = 0; i < 256*256; i++)
+    //     acc[i] = Reduse(acc[i], 20);
 
-    Vector3Rand2Update();
+    // Vector3Rand2Update();
 
     // BitmapExtDrawPlane(bitmap);
     // BitmapExtDrawCube(bitmap, {}, {}, {1,1,1});
