@@ -508,10 +508,16 @@ void DrawPlaneInf3(Camera* camera, Bitmap* bitmap)
         float dist;
         uint8_t normal;
         // if (!Trace(p0, p1, pos, dist, vox)) continue;
-        if (!Trace2(ro, rd, pos, dist, vox, normal)) continue;
+        if (!Trace2(ro, rd, pos, dist, vox, normal))
+        {
+            pixels[i] = 0;
+            continue;
+        }
 
         float t = 1 - MathClamp(dist / DEPTH, 0, 1);
         pixels[i] = ColorCreateBwFloat(t);
+        // pixels[i] = ColorCreateBwFloat(1.0f);
+        // pixels[i] = ColorCreate(255, 255, 0, 0);
 
         // if (vox == 2)
         // {

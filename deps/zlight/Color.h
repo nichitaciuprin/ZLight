@@ -35,6 +35,14 @@ static inline uint32_t ColorCreateRgb(uint8_t r, uint8_t g, uint8_t b)
     result += g; result <<= 8;
     result += b;
     return result;
+
+    // uint8_t a = 255;
+    // Color result = 0;
+    // result += r; result <<= 8;
+    // result += g; result <<= 8;
+    // result += b; result <<= 8;
+    // result += a;
+    // return result;
 }
 static inline uint32_t ColorCreateBw(uint32_t color)
 {

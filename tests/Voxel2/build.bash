@@ -13,8 +13,10 @@ src="$src $deps/sys/src/SysHelper.c"
 src="$src $deps/sys/src/SysWindow.c"
 src="$src $deps/sys/src/SysNet.c"
 
-include="$include -I$deps/corelib"
 include="$include -I$deps/sys/include"
+include="$include -I$deps/corelib"
+include="$include -I$deps/zlight"
+include="$include -I$deps/shared"
 
 lib="$lib -lX11"
 

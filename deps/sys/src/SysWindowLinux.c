@@ -120,6 +120,14 @@ void SysWindowUpdate(SysWindow* instance)
     }
 }
 
+void SysWindowSetFormatBw(SysWindow* instance)
+{
+    // if (instance->pixelFormat == 1) return;
+    //     instance->pixelFormat = 1;
+
+    // _SysWindowBitmapResetBw(instance, instance->width, instance->height);
+}
+
 void SysWindowShow(SysWindow* instance)
 {
 }
@@ -213,6 +221,45 @@ void SysWindowSetPixelsAutoScale2(SysWindow* instance, uint8_t* pixels, int widt
         }
     }
 }
+
+void SysWindowSetPixelsAutoScaleBw1(SysWindow* instance, uint32_t* pixels, int width, int height)
+{
+    if (!SysWindowExists(instance)) return;
+
+    int _width = instance->width;
+    int _height = instance->height;
+
+    int widthScale = _width / width;
+    int heightScale = _height / height;
+
+    int scale =
+        widthScale < heightScale ?
+        widthScale : heightScale;
+
+    int offsetx = (_width  - scale * width)  / 2;
+    int offsety = (_height - scale * height) / 2;
+
+    for (int y = 0; y < height; y++)
+    for (int x = 0; x < width;  x++)
+    {
+        uint32_t pixel = pixels[x + y * width];
+        int x2 = x * scale;
+        int y2 = y * scale;
+        for (int i = 0; i < scale; i++)
+        for (int j = 0; j < scale; j++)
+        {
+            int _x = x2+i+offsetx;
+            int _y = y2+j+offsety;
+            // int r = (uint8_t)(pixel >> 8 * 2);
+            // int g = (uint8_t)(pixel >> 8 * 1);
+            // int b = (uint8_t)(pixel >> 8 * 0);
+            // ((uint8_t*)instance->pixels)[_x + _y * _width] = (r + g + b) / 3;
+            // ((uint8_t*)instance->pixels)[_x + _y * _width] = (uint8_t)(pixel >> 8 * 0);
+            (instance->pixels)[_x + _y * _width] = pixel;
+        }
+    }
+}
+
 
 void SysWindowDrawDebugBorder(SysWindow* instance)
 {
