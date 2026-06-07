@@ -1,9 +1,18 @@
+#!/bin/bash
+
 deps=./../../deps
 build=./build
 main=./main.cpp
 
 flags="$flags -std=c++17 -m64 -pthread"
 flags="$flags -g3 -Og"
+
+flags="$flags -std=c++17 -m64 -pthread"
+flags="$flags -g0 -O3 -D NDEBUG"
+
+# flags="$flags -Werror -Wall"
+# flags="$flags -std=c99 -m64 -pthread"
+# flags="$flags -g0 -O3 -D NDEBUG"
 
 # lib="$lib -L$deps/sys/lib -lsyshelperlin"
 # lib="$lib -L$deps/sys/lib -lsyswindowlin"

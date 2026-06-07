@@ -426,12 +426,14 @@ void DrawPlaneInf2(Camera* camera, Bitmap* bitmap)
         Vector3 p0 = ro;
         Vector3 p1 = ro+rd*100;
 
+        // pixels[i] = 0;
+
         Vector3 pos;
         int vox;
         float dist;
         uint8_t normal;
-        // if (!Trace(p0, p1, pos, dist, vox)) continue;
-        if (!Trace2(ro, rd, pos, dist, vox, normal)) continue;
+        if (!Trace(p0, p1, pos, dist, vox)) continue;
+        // if (!Trace2(ro, rd, pos, dist, vox, normal)) continue;
 
         // float t = 1 - MathClamp(dist / 10, 0, 1);
         // pixels[i] = ColorCreateBwFloat(t);
@@ -549,11 +551,8 @@ void Draw(Bitmap* bitmap)
     // BitmapExtDrawPlane(bitmap);
     // BitmapExtDrawCube(bitmap, {}, {}, {1,1,1});
     // DrawPlaneInf(&camera, bitmap);
-    // DrawPlaneInf2(&camera, bitmap);
-    DrawPlaneInf3(&camera, bitmap);
-    // DrawPlaneInf2(&camera, bitmap);
-    // DrawPlaneInf2(&camera, bitmap);
-    // DrawPlaneInf2(&camera, bitmap);
+    DrawPlaneInf2(&camera, bitmap);
+    // DrawPlaneInf3(&camera, bitmap);
 }
 
 int main()
